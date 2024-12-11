@@ -1,5 +1,5 @@
 const express = require('express')
-const db = require('./users')
+const db = require('./users.js')
 const bodyParser = require('body-parser')
 const app = express()
 const port = 8000
