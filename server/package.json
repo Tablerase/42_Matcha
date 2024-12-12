@@ -30,6 +30,7 @@
   },
   "_moduleAliases": {
     "@controllers": "dist/src/controllers",
-    "@routes": "dist/src/routes"
+    "@routes": "dist/src/routes",
+    "@models": "dist/src/models"
   }
 }
