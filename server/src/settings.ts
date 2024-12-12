@@ -6,11 +6,11 @@ dotenv.config();
 export const serverPort = process.env.SERVER_PORT || 8000;
 
 const db_config = {
-  user: process.env.POSTGRES_USER,
-  host: process.env.POSTGRES_HOST,
-  database: process.env.POSTGRES_DB,
-  password: process.env.POSTGRES_PASSWORD,
-  port: process.env.DB_PORT,
+  user: process.env.POSTGRES_USER as string,
+  host: process.env.POSTGRES_HOST as string,
+  database: process.env.POSTGRES_DB as string,
+  password: process.env.POSTGRES_PASSWORD as string,
+  port: parseInt(process.env.DB_PORT as string, 10),
 };
 
 const pool = new Pool(db_config);
@@ -82,6 +82,7 @@ async function seed() {
      */
 
     await pool.query(createTableQuery);
+
     /*INTERESTS TAGS TABLE*/
     const createInterestsTagTableQuery = `
       CREATE TABLE IF NOT EXISTS tags (
@@ -91,6 +92,10 @@ async function seed() {
     `;
     await pool.query(createInterestsTagTableQuery);
 
+    const checkTagsTableQuery = `
+      SELECT count(*) FROM tags;
+    `;
+    const res = await pool.query(checkTagsTableQuery);
     const insertTagsQuery = `
       INSERT INTO tags (tag)
       VALUES
@@ -122,16 +127,17 @@ async function seed() {
         ('spirituality'),
         ('astrology'),
         ('tarot')
-        ;
+      ON CONFLICT (tag) DO NOTHING;
     `;
-    await pool.query(insertTagsQuery);
+    if (parseInt(res.rows[0].count) === 0) {
+      await pool.query(insertTagsQuery);
+    }
 
-    /*CHAT TABLE*/
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
-        user_1 INT REFERENCES users(id),
-        user_2 INT REFERENCES users(id),
+        user_1 INT REFERENCES users(id) ON DELETE CASCADE,
+        user_2 INT REFERENCES users(id) ON DELETE CASCADE,
         deleted_by INT[]
       );
     `;
@@ -142,8 +148,8 @@ async function seed() {
         CREATE TABLE IF NOT EXISTS msgs (
         id SERIAL PRIMARY KEY,
         content VARCHAR(100) NOT NULL,
-        chat_id INT REFERENCES chats(id),
-        sender_id INT REFERENCES users(id),
+        chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
+        sender_id INT REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
@@ -153,26 +159,31 @@ async function seed() {
     const createViewsQuery = `
         CREATE TABLE IF NOT EXISTS views (
             id SERIAL PRIMARY KEY,
-            user_id INT REFERENCES users(id),
-            chat_id INT REFERENCES chats(id),
+            user_id INT REFERENCES users(id) ON DELETE CASCADE,
+            chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
             viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
     await pool.query(createViewsQuery);
 
-    /*VIEWS HISTORY TABLE*/
-
     /*REPORTED USERS TABLE*/
+    const createReportedUsersQuery = `
+        CREATE TABLE IF NOT EXISTS reported_users (
+            id SERIAL PRIMARY KEY,
+            reporter_id INT REFERENCES users(id) ON DELETE CASCADE,
+            reported_id INT REFERENCES users(id) ON DELETE CASCADE,
+            reason VARCHAR(255) NOT NULL,
+            reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+    await pool.query(createReportedUsersQuery);
   } catch (err) {
     console.error("Error seeding the database:", err);
+  } finally {
+    // Close the database connection
+    // await pool.release();
   }
-  // TODO: Close the database connection (like await pool.end()) somewhere ?!
 }
 
 // Run the seed function
 seed();
-
-// module.exports = {
-//   query: (text, params) => pool.query(text, params),
-//   serverPort,
-// };

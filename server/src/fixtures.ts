@@ -1,7 +1,4 @@
-const db_config = require("./settings").db_config;
-
-const Pool = require("pg").Pool;
-const pool = new Pool(db_config);
+import { pool } from "./settings";
 
 async function truncateAndInsertFixtures() {
   try {
@@ -46,7 +43,6 @@ async function truncateAndInsertFixtures() {
         (1, 1);
     `;
     await pool.query(insertViewsQuery);
-
     // Insert data into the `reported_users` table
     const insertReportedUsersQuery = `
       INSERT INTO reported_users (reporter_id, reported_id, reason)
@@ -57,7 +53,7 @@ async function truncateAndInsertFixtures() {
   } catch (err) {
     console.error("Error seeding the database:", err);
   } finally {
-    await pool.end();
+    // await pool.release();
   }
 }
 

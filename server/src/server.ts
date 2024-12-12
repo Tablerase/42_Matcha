@@ -1,8 +1,8 @@
-import 'module-alias/register';
+import "module-alias/register";
 import express, { Request, Response, Application } from "express";
 import bodyParser from "body-parser";
 import userRoutes from "@routes/userRoutes";
-import { serverPort } from "../settings";
+import { serverPort } from "./settings";
 
 const app: Application = express();
 

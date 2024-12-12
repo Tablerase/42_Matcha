@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { QueryResult } from "pg";
-import { pool } from "../../settings";
+import { pool } from "../settings";
 import { User } from "@interfaces/userInterface";
 
 // TODO: add filtering based on query params and pagination
