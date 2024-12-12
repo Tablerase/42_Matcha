@@ -1,8 +1,9 @@
-const dotenv = require("dotenv");
-dotenv.config();
-const serverPort = process.env.PORT || 8000;
+import { Pool, QueryConfig, QueryResult } from "pg";
+import dotenv from "dotenv";
 
-const Pool = require("pg").Pool;
+dotenv.config();
+
+export const serverPort = process.env.SERVER_PORT || 8000;
 
 const db_config = {
   user: process.env.POSTGRES_USER,
@@ -14,6 +15,23 @@ const db_config = {
 
 const pool = new Pool(db_config);
 
+export interface DbQuery {
+  query: <T extends QueryResult = any>(
+    text: string,
+    params?: any[]
+  ) => Promise<QueryResult<T>>;
+}
+
+export const db: DbQuery = {
+  query: <T extends QueryResult = any>(
+    text: string,
+    params?: any[]
+  ): Promise<QueryResult<T>> => pool.query(text, params),
+};
+
+export { pool };
+
+// console.log(pool)
 async function seed() {
   try {
     await pool.connect();
@@ -64,7 +82,6 @@ async function seed() {
      */
 
     await pool.query(createTableQuery);
-
     /*INTERESTS TAGS TABLE*/
     const createInterestsTagTableQuery = `
       CREATE TABLE IF NOT EXISTS tags (
@@ -74,10 +91,6 @@ async function seed() {
     `;
     await pool.query(createInterestsTagTableQuery);
 
-    const checkTagsTableQuery = `
-      SELECT count(*) FROM tags;
-    `;
-    const res = await pool.query(checkTagsTableQuery);
     const insertTagsQuery = `
       INSERT INTO tags (tag)
       VALUES
@@ -109,17 +122,16 @@ async function seed() {
         ('spirituality'),
         ('astrology'),
         ('tarot')
-      ON CONFLICT (tag) DO NOTHING;
+        ;
     `;
-    if (parseInt(res.rows[0].count) === 0) {
-      await pool.query(insertTagsQuery);
-    }
+    await pool.query(insertTagsQuery);
 
+    /*CHAT TABLE*/
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
-        user_1 INT REFERENCES users(id) ON DELETE CASCADE,
-        user_2 INT REFERENCES users(id) ON DELETE CASCADE,
+        user_1 INT REFERENCES users(id),
+        user_2 INT REFERENCES users(id),
         deleted_by INT[]
       );
     `;
@@ -130,8 +142,8 @@ async function seed() {
         CREATE TABLE IF NOT EXISTS msgs (
         id SERIAL PRIMARY KEY,
         content VARCHAR(100) NOT NULL,
-        chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
-        sender_id INT REFERENCES users(id) ON DELETE CASCADE,
+        chat_id INT REFERENCES chats(id),
+        sender_id INT REFERENCES users(id),
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
@@ -141,33 +153,26 @@ async function seed() {
     const createViewsQuery = `
         CREATE TABLE IF NOT EXISTS views (
             id SERIAL PRIMARY KEY,
-            user_id INT REFERENCES users(id) ON DELETE CASCADE,
-            chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
+            user_id INT REFERENCES users(id),
+            chat_id INT REFERENCES chats(id),
             viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
     await pool.query(createViewsQuery);
 
+    /*VIEWS HISTORY TABLE*/
+
     /*REPORTED USERS TABLE*/
-    const createReportedUsersQuery = `
-        CREATE TABLE IF NOT EXISTS reported_users (
-            id SERIAL PRIMARY KEY,
-            reporter_id INT REFERENCES users(id) ON DELETE CASCADE,
-            reported_id INT REFERENCES users(id) ON DELETE CASCADE,
-            reason VARCHAR(255) NOT NULL,
-            reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `;
-    await pool.query(createReportedUsersQuery);
   } catch (err) {
     console.error("Error seeding the database:", err);
-  } finally {
-    // Close the database connection
-    await pool.end();
   }
+  // TODO: Close the database connection (like await pool.end()) somewhere ?!
 }
 
 // Run the seed function
 seed();
 
-module.exports = { db_config, serverPort };
+// module.exports = {
+//   query: (text, params) => pool.query(text, params),
+//   serverPort,
+// };
