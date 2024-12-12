@@ -12,18 +12,11 @@ const db_config = {
   port: process.env.DB_PORT,
 };
 
-// console.log(process.env.POSTGRES_USER, process.env.POSTGRES_HOST, process.env.POSTGRES_DB, process.env.POSTGRES_PASSWORD, process.env.DB_PORT)
 const pool = new Pool(db_config);
 
-// console.log(pool)
 async function seed() {
   try {
     await pool.connect();
-
-    // await pool.query("DROP TABLE IF EXISTS chats CASCADE;");
-    // await pool.query("DROP TABLE IF EXISTS msgs;");
-    // await pool.query("DROP TABLE IF EXISTS users;");
-    // await pool.query("DROP TABLE IF EXISTS views;");
 
     /*USERS TABLE*/
     const checkTypeQuery = `
