@@ -19,9 +19,10 @@ async function seed() {
     await pool.connect();
 
     await pool.query("DROP TABLE IF EXISTS tags;");
-    await pool.query("DROP TABLE IF EXISTS chats;");
+    await pool.query("DROP TABLE IF EXISTS chats CASCADE;");
     await pool.query("DROP TABLE IF EXISTS msgs;");
     await pool.query("DROP TABLE IF EXISTS users;");
+    await pool.query("DROP TABLE IF EXISTS views;");
 
     /*USERS TABLE*/
     const checkTypeQuery = `
@@ -59,7 +60,7 @@ async function seed() {
       );
     `;
     //TODO: add complex data types to users:
-    /** 
+    /**
      * pictures
      * interests
      * matches
@@ -125,25 +126,24 @@ async function seed() {
     `;
     await pool.query(insertTagsQuery);
 
-    
     /*CHAT TABLE*/
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
-        user_1 INT REFERENCES users(id),
-        user_2 INT REFERENCES users(id),
+        user_1 INT REFERENCES users(id) ON DELETE CASCADE,
+        user_2 INT REFERENCES users(id) ON DELETE CASCADE,
         deleted_by INT[]
       );
-    `
+    `;
     await pool.query(createChatQuery);
-   
+
     /*MESSAGES TABLE*/
     const createMsgQuery = `
         CREATE TABLE IF NOT EXISTS msgs (
         id SERIAL PRIMARY KEY,
         content VARCHAR(100) NOT NULL,
-        chat_id INT REFERENCES chats(id),
-        sender_id INT REFERENCES users(id),
+        chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
+        sender_id INT REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
@@ -153,16 +153,24 @@ async function seed() {
     const createViewsQuery = `
         CREATE TABLE IF NOT EXISTS views (
             id SERIAL PRIMARY KEY,
-            user_id INT REFERENCES users(id),
-            chat_id INT REFERENCES chats(id),
+            user_id INT REFERENCES users(id) ON DELETE CASCADE,
+            chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
             viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
     await pool.query(createViewsQuery);
 
-    /*VIEWS HISTORY TABLE*/
-    
     /*REPORTED USERS TABLE*/
+    const createReportedUsersQuery = `
+        CREATE TABLE IF NOT EXISTS reported_users (
+            id SERIAL PRIMARY KEY,
+            reporter_id INT REFERENCES users(id) ON DELETE CASCADE,
+            reported_id INT REFERENCES users(id) ON DELETE CASCADE,
+            reason VARCHAR(255) NOT NULL,
+            reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        );
+    `;
+    await pool.query(createReportedUsersQuery);
   } catch (err) {
     console.error("Error seeding the database:", err);
   } finally {
