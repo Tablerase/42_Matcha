@@ -4,25 +4,26 @@ const serverPort = process.env.PORT || 8000;
 
 const Pool = require("pg").Pool;
 
-// console.log(process.env.POSTGRES_USER, process.env.POSTGRES_HOST, process.env.POSTGRES_DB, process.env.POSTGRES_PASSWORD, process.env.DB_PORT)
-const pool = new Pool({
+const db_config = {
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
   port: process.env.DB_PORT,
-});
+};
+
+// console.log(process.env.POSTGRES_USER, process.env.POSTGRES_HOST, process.env.POSTGRES_DB, process.env.POSTGRES_PASSWORD, process.env.DB_PORT)
+const pool = new Pool(db_config);
 
 // console.log(pool)
 async function seed() {
   try {
     await pool.connect();
 
-    await pool.query("DROP TABLE IF EXISTS tags;");
-    await pool.query("DROP TABLE IF EXISTS chats CASCADE;");
-    await pool.query("DROP TABLE IF EXISTS msgs;");
-    await pool.query("DROP TABLE IF EXISTS users;");
-    await pool.query("DROP TABLE IF EXISTS views;");
+    // await pool.query("DROP TABLE IF EXISTS chats CASCADE;");
+    // await pool.query("DROP TABLE IF EXISTS msgs;");
+    // await pool.query("DROP TABLE IF EXISTS users;");
+    // await pool.query("DROP TABLE IF EXISTS views;");
 
     /*USERS TABLE*/
     const checkTypeQuery = `
@@ -71,17 +72,6 @@ async function seed() {
 
     await pool.query(createTableQuery);
 
-    const insertDataQuery = `
-      INSERT INTO users (first_name, last_name, username, email, password_hash)
-      VALUES
-        ('John', 'Doe', 'username', 'john.doe@example.com', 'hashed_password_1'),
-        ('Jane', 'Smith', 'username1', 'jane.smith@example.com', 'hashed_password_2'),
-        ('Emily', 'Johnson', 'username2', 'emily.johnson@example.com', 'hashed_password_3'),
-        ('Michael', 'Williams', 'username3', 'michael.williams@example.com', 'hashed_password_4'),
-        ('Sarah', 'Brown', 'username4', 'sarah.brown@example.com', 'hashed_password_5')
-    `;
-    await pool.query(insertDataQuery);
-
     /*INTERESTS TAGS TABLE*/
     const createInterestsTagTableQuery = `
       CREATE TABLE IF NOT EXISTS tags (
@@ -91,6 +81,10 @@ async function seed() {
     `;
     await pool.query(createInterestsTagTableQuery);
 
+    const checkTagsTableQuery = `
+      SELECT count(*) FROM tags;
+    `;
+    const res = await pool.query(checkTagsTableQuery);
     const insertTagsQuery = `
       INSERT INTO tags (tag)
       VALUES
@@ -122,11 +116,12 @@ async function seed() {
         ('spirituality'),
         ('astrology'),
         ('tarot')
-        ;
+      ON CONFLICT (tag) DO NOTHING;
     `;
-    await pool.query(insertTagsQuery);
+    if (parseInt(res.rows[0].count) === 0) {
+      await pool.query(insertTagsQuery);
+    }
 
-    /*CHAT TABLE*/
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
@@ -182,4 +177,4 @@ async function seed() {
 // Run the seed function
 seed();
 
-module.exports = { pool, serverPort };
+module.exports = { db_config, serverPort };
