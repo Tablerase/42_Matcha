@@ -1,17 +1,33 @@
-const dotenv = require("dotenv");
+import { Pool, QueryConfig, QueryResult } from 'pg';
+import dotenv from 'dotenv';
+
 dotenv.config();
-const serverPort = process.env.PORT || 8000;
 
-const Pool = require("pg").Pool;
+export const serverPort = process.env.SERVER_PORT || 3001;
 
-// console.log(process.env.POSTGRES_USER, process.env.POSTGRES_HOST, process.env.POSTGRES_DB, process.env.POSTGRES_PASSWORD, process.env.DB_PORT)
 const pool = new Pool({
   user: process.env.POSTGRES_USER,
   host: process.env.POSTGRES_HOST,
   database: process.env.POSTGRES_DB,
   password: process.env.POSTGRES_PASSWORD,
-  port: process.env.DB_PORT,
+  port: parseInt(process.env.DB_PORT || '5432'),
 });
+
+export interface DbQuery {
+  query: <T extends QueryResult = any>(
+    text: string,
+    params?: any[]
+  ) => Promise<QueryResult<T>>;
+}
+
+export const db: DbQuery = {
+  query: <T extends QueryResult = any>(
+    text: string,
+    params?: any[]
+  ): Promise<QueryResult<T>> => pool.query(text, params),
+};
+
+export { pool };
 
 // console.log(pool)
 async function seed() {
@@ -175,7 +191,7 @@ seed();
 
 
 
-module.exports = {
-  query: (text, params) => pool.query(text, params),
-  serverPort,
-};
+// module.exports = {
+//   query: (text, params) => pool.query(text, params),
+//   serverPort,
+// };
