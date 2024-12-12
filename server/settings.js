@@ -163,15 +163,19 @@ async function seed() {
     /*VIEWS HISTORY TABLE*/
     
     /*REPORTED USERS TABLE*/
+    
   } catch (err) {
     console.error("Error seeding the database:", err);
-  } finally {
-    // Close the database connection
-    await pool.end();
-  }
+  } 
+  // TODO: Close the database connection (like await pool.end()) somewhere ?!
 }
 
 // Run the seed function
 seed();
 
-module.exports = { pool, serverPort };
+
+
+module.exports = {
+  query: (text, params) => pool.query(text, params),
+  serverPort,
+};
