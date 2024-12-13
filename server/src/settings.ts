@@ -4,6 +4,9 @@ import dotenv from "dotenv";
 dotenv.config();
 
 export const serverPort = process.env.SERVER_PORT || 8000;
+export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
+export const ACCESSTOKEN_EXPIRES_IN = process.env.ACCESSTOKEN_EXPIRES_IN || "15m";
+export const REFRESHTOKEN_EXPIRES_IN = process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
 
 const db_config = {
   user: process.env.POSTGRES_USER as string,
@@ -59,7 +62,7 @@ async function seed() {
         last_name VARCHAR(100) NOT NULL,
         username VARCHAR(100) UNIQUE NOT NULL,
         email VARCHAR(255) UNIQUE NOT NULL,
-        password_hash VARCHAR(255) NOT NULL,
+        password VARCHAR(255) NOT NULL,
         gender gender DEFAULT 'other',
         preferences preferences DEFAULT 'bisexual',
         date_of_birth DATE,
@@ -177,6 +180,17 @@ async function seed() {
         );
     `;
     await pool.query(createReportedUsersQuery);
+
+    /* REFRESH TOKENS TABLE */
+    const createRefreshTokensQuery = `
+        CREATE TABLE IF NOT EXISTS refresh_tokens (
+            id SERIAL PRIMARY KEY,
+            user_id INT REFERENCES users(id) ON DELETE CASCADE,
+            token VARCHAR(512) NOT NULL,
+            expires_at TIMESTAMP NOT NULL
+        );
+    `;
+    await pool.query(createRefreshTokensQuery);
   } catch (err) {
     console.error("Error seeding the database:", err);
   } finally {

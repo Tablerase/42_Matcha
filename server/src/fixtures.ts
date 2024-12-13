@@ -13,7 +13,7 @@ async function truncateAndInsertFixtures() {
 
     // Insert data into the `users` table
     const insertUsersQuery = `
-      INSERT INTO users (first_name, last_name, username, email, password_hash, gender, preferences, date_of_birth, bio, location, fame_rate, last_seen)
+      INSERT INTO users (first_name, last_name, username, email, password, gender, preferences, date_of_birth, bio, location, fame_rate, last_seen)
       VALUES
         ('John', 'Doe', 'johndoe', 'john@example.com', 'hashedpassword', 'male', 'heterosexual', '1990-01-01', 'Bio of John', POINT(40.7128, -74.0060), 10, NOW()),
         ('Jane', 'Doe', 'janedoe', 'jane@example.com', 'hashedpassword', 'female', 'homosexual', '1992-02-02', 'Bio of Jane', POINT(34.0522, -118.2437), 20, NOW());
