@@ -28,15 +28,17 @@ class UserModel {
   }
 
   async createUser(userData: Partial<User>): Promise<User> {
+    console.log("Model User creation");
     const query = {
       text: `
-          INSERT INTO users (first_name, last_name, email, password_hash)
-          VALUES ($1, $2, $3, $4)
+          INSERT INTO users (first_name, last_name, username, email, password)
+          VALUES ($1, $2, $3, $4, $5)
           RETURNING *
         `,
       values: [
         userData.firstName,
         userData.lastName,
+        userData.username,
         userData.email,
         userData.password,
       ],
@@ -52,6 +54,7 @@ class UserModel {
 
   async getUserByEmail(email: string | undefined): Promise<User | null> {
     try {
+      console.log(email);
       const results: QueryResult<User> = await pool.query(
         "SELECT * FROM users WHERE email = $1",
         [email]

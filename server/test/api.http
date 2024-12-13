@@ -1,0 +1,14 @@
+
+GET http://localhost:8000
+
+###
+
+POST http://localhost:8000/auth/register
+
+{
+    "firstName" : "test",
+    "lastName": "error", 
+    "username": "SyntaxTerror",
+    "email": "ttttt@example.com",
+    "password": "secret"
+}

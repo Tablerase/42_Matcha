@@ -1,15 +1,17 @@
 import { Request, Response } from "express";
 import { User } from "@interfaces/userInterface";
-import { user as userModel } from "@models/userModel";
+import { user, user as userModel } from "@models/userModel";
 import { createAccessToken } from "@utils/jwt";
 
 export const createUser = async (
   req: Request,
   res: Response
 ): Promise<void> => {
+  console.log("Trying to register" + req);
   try {
     const userData: Partial<User> = req.body;
     const existingUser = await userModel.getUserByEmail(userData.email);
+    console.log(userData + " ====== " + existingUser);
     if (existingUser) {
       res.status(400).json({
         status: 400,
@@ -33,7 +35,10 @@ export const createUser = async (
   }
 };
 
-export const authenticateUser = async (req: Request, res: Response): Promise<void> => {
+export const authenticateUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
   try {
     const user = req.body;
 
@@ -46,12 +51,11 @@ export const authenticateUser = async (req: Request, res: Response): Promise<voi
         status: 404,
         message: "User not found",
       });
-return;
+      return;
     }
 
     // TODO HASH THE PASSWORD
-    const isPasswordMatched =
-      isUserExist?.password === password;
+    const isPasswordMatched = isUserExist?.password === password;
 
     if (!isPasswordMatched) {
       res.status(400).json({
@@ -59,10 +63,13 @@ return;
         success: false,
         message: "wrong password",
       });
-        return;
+      return;
     }
-    
-    const token = createAccessToken({id: isUserExist.id, email: isUserExist.email});
+
+    const token = createAccessToken({
+      id: isUserExist.id,
+      email: isUserExist.email,
+    });
 
     res.status(200).json({
       status: 200,
