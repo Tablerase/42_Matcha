@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "@interfaces/userInterface";
-import { user, user as userModel } from "@models/userModel";
+import { user as userModel } from "@models/userModel";
 import { createAccessToken } from "@utils/jwt";
 
 export const createUser = async (
@@ -10,9 +10,30 @@ export const createUser = async (
   console.log("Trying to register" + req);
   try {
     const userData: Partial<User> = req.body;
-    const existingUser = await userModel.getUserByEmail(userData.email);
-    console.log(userData + " ====== " + existingUser);
-    if (existingUser) {
+    // TODO verify userData with middleware
+    if (
+      !userData.email ||
+      !userData.username ||
+      !userData.password ||
+      !userData.firstName ||
+      !userData.lastName
+    ) {
+      res.status(400).json({
+        status: 400,
+        message: "All fields are required",
+      });
+      return;
+    }
+    console.log(userData);
+    const existingUserEmail = await userModel.getUserByEmail(userData.email);
+    const existingUserName = await userModel.getUserByUsername(userData.username);
+    if (existingUserName) {
+      res.status(400).json({
+        status: 400,
+        message: "Username already in use",
+      });
+      return;
+    } else if (existingUserEmail) {
       res.status(400).json({
         status: 400,
         message: "Email already in use",

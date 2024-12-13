@@ -4,11 +4,11 @@ GET http://localhost:8000
 ###
 
 POST http://localhost:8000/auth/register
+Content-Type: application/json
 
 {
-    "firstName" : "test",
     "lastName": "error", 
-    "username": "SyntaxTerror",
-    "email": "ttttt@example.com",
+    "username": "SyntaxTerror125435",
+    "email": "ttttt@example.com5",
     "password": "secret"
 }
