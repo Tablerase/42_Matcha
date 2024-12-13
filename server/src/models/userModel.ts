@@ -2,6 +2,7 @@ import { Request, Response } from "express";
 import { QueryResult } from "pg";
 import { pool } from "../settings";
 import { User } from "@interfaces/userInterface";
+import { generateHash } from "@utils/bcrypt";
 
 class UserModel {
   async getUsers(): Promise<User[]> {
@@ -31,6 +32,7 @@ class UserModel {
 
   async createUser(userData: Partial<User>): Promise<User> {
     try {
+      const password = await generateHash(userData.password);
       const query = {
         text: `
           INSERT INTO users (first_name, last_name, username, email, password)
@@ -42,7 +44,7 @@ class UserModel {
           userData.lastName,
           userData.username,
           userData.email,
-          userData.password,
+          password,
         ],
       };
       const result: QueryResult<User> = await pool.query(query);

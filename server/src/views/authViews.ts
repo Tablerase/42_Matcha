@@ -1,7 +1,19 @@
 import { Request, Response } from "express";
 import { User } from "@interfaces/userInterface";
 import { user as userModel } from "@models/userModel";
-import { createAccessToken } from "@utils/jwt";
+import { createAccessToken, createRefreshToken } from "@utils/jwt";
+import { validatePassword } from "@utils/bcrypt";
+
+const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
+  const refreshToken = await createRefreshToken(user);
+  req.res?.cookie("refresh_token", refreshToken, {
+    httpOnly: true,
+    path: "/auth/refresh_token",
+    sameSite: false,
+    maxAge: 60 * 60 * 24 * 100,
+    expires: new Date(Date.now() + 60 * 60 * 24 * 100),
+  });
+};
 
 export const createUser = async (
   req: Request,
@@ -63,9 +75,9 @@ export const authenticateUser = async (
   try {
     const user = req.body;
 
-    const { email, password } = user;
+    const { username, password } = user;
 
-    const isUserExist = await userModel.getUserByEmail(email);
+    const isUserExist = await userModel.getUserByUsername(username);
 
     if (!isUserExist) {
       res.status(404).json({
@@ -75,14 +87,13 @@ export const authenticateUser = async (
       return;
     }
 
-    // TODO HASH THE PASSWORD
-    const isPasswordMatched = isUserExist?.password === password;
-
+    const isPasswordMatched = await validatePassword(password, isUserExist.password);
+    console.log(isPasswordMatched);
     if (!isPasswordMatched) {
       res.status(400).json({
         status: 400,
         success: false,
-        message: "wrong password",
+        message: "Wrong password",
       });
       return;
     }
@@ -91,13 +102,14 @@ export const authenticateUser = async (
       id: isUserExist.id,
       email: isUserExist.email,
     });
-
+    await setRefreshTokenCookie({ id: isUserExist.id, email: isUserExist.email }, req);
     res.status(200).json({
       status: 200,
       success: true,
       message: "login success",
       token: token,
     });
+    
   } catch (error: any) {
     res.status(400).json({
       status: 400,
