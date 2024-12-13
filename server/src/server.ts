@@ -22,7 +22,7 @@ app.get("/", (_req: Request, res: Response): void => {
   res.json({ info: "Welcome to Matcha API" });
 });
 
-// app.use("/users", userRoutes);
+app.use("/users", userRoutes);
 app.use("/auth", authRoutes);
 
 // Start server

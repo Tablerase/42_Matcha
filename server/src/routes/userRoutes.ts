@@ -1,11 +1,10 @@
 import express, { Router } from 'express';
-// import { getUsers, getUserById } from '@models/userModel';
+import { getUsers, getUserById, createUser } from '@views/userViews';
 
 const router: Router = express.Router();
 
-// // TODO: shall be updated to use services ?
-// router.get('/', getUsers);
-// router.get('/:id', getUserById);
-
+router.get('/', getUsers);
+router.get('/:id', getUserById);
+router.post('/', createUser);
 
 export default router;

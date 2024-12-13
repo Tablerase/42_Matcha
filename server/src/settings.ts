@@ -185,9 +185,8 @@ async function seed() {
     const createRefreshTokensQuery = `
         CREATE TABLE IF NOT EXISTS refresh_tokens (
             id SERIAL PRIMARY KEY,
-            user_id INT REFERENCES users(id) ON DELETE CASCADE,
-            token VARCHAR(512) NOT NULL,
-            expires_at TIMESTAMP NOT NULL
+            user_id INT REFERENCES users(id) ON DELETE CASCADE UNIQUE,
+            token VARCHAR(512) NOT NULL
         );
     `;
     await pool.query(createRefreshTokensQuery);

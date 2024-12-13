@@ -3,14 +3,18 @@ GET http://localhost:8000
 
 ###
 
-POST http://localhost:8000/auth/register
+GET http://localhost:8000/users/19
+
+###
+
+POST http://localhost:8000/users
 Content-Type: application/json
 
 {
-    "firstName": "Syntreyax1t3",
-    "lastName": "err3otr1", 
-    "username": "123",
-    "email": "ttttt@e3txrample.com15233",
+    "firstName": "666",
+    "lastName": "661", 
+    "username": "66",
+    "email": "t666rample.co",
     "password": "123"
 }
 
@@ -20,6 +24,6 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "123",
+    "username": "66",
     "password": "123"
 }
