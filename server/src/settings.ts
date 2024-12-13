@@ -46,7 +46,7 @@ async function seed() {
         IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'preferences') THEN
           CREATE TYPE preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
         END IF;
-      END
+      END;
       $$;
     `;
     await pool.query(checkTypeQuery);

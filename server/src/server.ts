@@ -3,6 +3,7 @@ import express, { Request, Response, Application } from "express";
 import bodyParser from "body-parser";
 import userRoutes from "@routes/userRoutes";
 import { serverPort } from "./settings";
+import cors from "cors";
 
 const app: Application = express();
 
@@ -13,6 +14,7 @@ app.use(
     extended: true,
   })
 );
+app.use(cors());
 
 // Routes
 app.get("/", (_req: Request, res: Response): void => {
