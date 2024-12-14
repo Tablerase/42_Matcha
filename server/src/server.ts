@@ -26,17 +26,19 @@ const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
 };
 
 // Public Routes
-app.get("/", (_req: Request, res: Response): void => {
+const publicRoutes = express.Router();
+publicRoutes.get("/", (_req: Request, res: Response) => {
   res.json({ info: "Welcome to Matcha API" });
 });
-app.use("/auth", authRoutes as RequestHandler);
+publicRoutes.use("/auth", authRoutes);
 
 // Protected Routes
-app.use(
-  "/users",
-  authenticateToken as RequestHandler,
-  userRoutes as RequestHandler
-);
+const protectedRoutes = express.Router();
+protectedRoutes.use("/users", userRoutes);
+
+// Apply middleware and routes
+app.use(publicRoutes);
+app.use(authenticateToken as RequestHandler, protectedRoutes);
 
 // Error handler should be last
 app.use(errorHandler);
