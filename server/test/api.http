@@ -1,22 +1,15 @@
+### Protected routes
+
+GET http://localhost:8000/users
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzM0MTg2ODcxLCJleHAiOjE3MzQyNzMyNzF9.lPZi_uSjpzFgwlaapnUOb9QR77cwcnbhdWqzWVoOnFg 
+
+###
+
+GET http://localhost:8000/users/1
+
+### Unprotected routes
 
 GET http://localhost:8000
-
-###
-
-GET http://localhost:8000/users/19
-
-###
-
-POST http://localhost:8000/users
-Content-Type: application/json
-
-{
-    "firstName": "666",
-    "lastName": "661", 
-    "username": "66",
-    "email": "t666rample.co",
-    "password": "123"
-}
 
 ###
 
@@ -24,6 +17,19 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "66",
-    "password": "123"
+    "username": "test",
+    "password": "password"
+}
+
+###
+
+POST http://localhost:8000/auth/signup
+Content-Type: application/json
+
+{
+    "firstName": "testname",
+    "lastName": "tester", 
+    "username": "test",
+    "email": "test@test.com",
+    "password": "password"
 }

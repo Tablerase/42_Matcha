@@ -12,7 +12,7 @@
     "moduleResolution": "node",
     "paths": {
       "@models/*": ["src/models/*"],
-      "@controllers/*": ["src/controllers/*"],
+      // "@controllers/*": ["src/controllers/*"],
       "@views/*": ["src/views/*"],
       "@routes/*": ["src/routes/*"],
       "@interfaces/*": ["src/interfaces/*"],
