@@ -22,7 +22,6 @@ export const createUser = async (
       });
       return;
     }
-    console.log(userData);
     const existingUserEmail = await userModel.getUserByEmail(userData.email);
     const existingUserName = await userModel.getUserByUsername(
       userData.username
