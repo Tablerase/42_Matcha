@@ -19,6 +19,7 @@ export const userCreationSchema = z
         required_error: "Username is required",
       })
       .trim()
+      .regex(/^[a-zA-Z0-9_]*$/, "Username can only contain letters, numbers, and underscores")
       .min(3, "Username must be at least 3 characters"),
     email: z
       .string({
