@@ -1,12 +1,14 @@
-import { Pool, QueryConfig, QueryResult } from "pg";
+import { Pool, QueryResult } from "pg";
 import dotenv from "dotenv";
 
 dotenv.config();
 
 export const serverPort = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
-export const ACCESSTOKEN_EXPIRES_IN = process.env.ACCESSTOKEN_EXPIRES_IN || "15m";
-export const REFRESHTOKEN_EXPIRES_IN = process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
+export const ACCESSTOKEN_EXPIRES_IN =
+  process.env.ACCESSTOKEN_EXPIRES_IN || "15m";
+export const REFRESHTOKEN_EXPIRES_IN =
+  process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
 
 const db_config = {
   user: process.env.POSTGRES_USER as string,
@@ -34,27 +36,34 @@ export const db: DbQuery = {
 
 export { pool };
 
-// console.log(pool)
 async function seed() {
   try {
     await pool.connect();
 
     /*USERS TABLE*/
-    const checkTypeQuery = `
+    const setupEnumTypes = `
+      -- Handle gender type
       DO $$
       BEGIN
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'gender') THEN
-          CREATE TYPE gender AS ENUM ('male', 'female', 'other');
-        END IF;
-        IF NOT EXISTS (SELECT 1 FROM pg_type WHERE typname = 'preferences') THEN
-          CREATE TYPE preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
-        END IF;
-      END;
-      $$;
-    `;
-    await pool.query(checkTypeQuery);
+        DROP TYPE IF EXISTS gender CASCADE;
+        CREATE TYPE gender AS ENUM ('male', 'female', 'other');
+      EXCEPTION 
+        WHEN others THEN
+          RAISE NOTICE 'Error handling gender type: %', SQLERRM;
+      END $$;
 
-    // Create the `users` table
+      -- Handle preferences type
+      DO $$
+      BEGIN
+        DROP TYPE IF EXISTS preferences CASCADE;
+        CREATE TYPE preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
+      EXCEPTION
+        WHEN others THEN
+          RAISE NOTICE 'Error handling preferences type: %', SQLERRM;
+      END $$;
+    `;
+    await pool.query(setupEnumTypes);
+
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS users (
         id SERIAL PRIMARY KEY,

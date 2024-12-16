@@ -6,7 +6,7 @@ import { createAccessToken, createRefreshToken } from "@utils/jwt";
 import { validatePassword } from "@utils/bcrypt";
 
 const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
-  const refreshToken = await createRefreshToken(user);
+  const refreshToken = createRefreshToken(user);
   await authModel.createRefreshToken({ id: user.id, token: refreshToken });
   req.res?.cookie("refresh_token", refreshToken, {
     httpOnly: true,
