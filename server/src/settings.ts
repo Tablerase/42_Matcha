@@ -40,6 +40,56 @@ async function seed() {
   try {
     await pool.connect();
 
+    /*INTERESTS TAGS TABLE*/
+    const createInterestsTagTableQuery = `
+        CREATE TABLE IF NOT EXISTS tags (
+          id SERIAL PRIMARY KEY,
+          tag VARCHAR(100) UNIQUE NOT NULL
+        );
+      `;
+    await pool.query(createInterestsTagTableQuery);
+
+    const checkTagsTableQuery = `
+        SELECT count(*) FROM tags;
+      `;
+    const res = await pool.query(checkTagsTableQuery);
+    const insertTagsQuery = `
+        INSERT INTO tags (tag)
+        VALUES
+          ('art'),
+          ('photography'),
+          ('fashion'),
+          ('technology'),
+          ('science'),
+          ('cooking'),
+          ('food'),
+          ('fitness'),
+          ('gaming'),
+          ('sports'),
+          ('music'),
+          ('movies'),
+          ('books'),
+          ('travel'),
+          ('outdoors'),
+          ('animals'),
+          ('politics'),
+          ('history'),
+          ('wine'),
+          ('beer'),
+          ('coffee'),
+          ('tea'),
+          ('matcha'),
+          ('yoga'),
+          ('meditation'),
+          ('spirituality'),
+          ('astrology'),
+          ('tarot')
+        ON CONFLICT (tag) DO NOTHING;
+      `;
+    if (parseInt(res.rows[0].count) === 0) {
+      await pool.query(insertTagsQuery);
+    }
+
     /*USERS TABLE*/
     const setupEnumTypes = `
       -- Handle gender type
@@ -86,64 +136,70 @@ async function seed() {
     //TODO: add complex data types to users:
     /**
      * pictures
-     * interests
-     * matches
-     * views
-     * likes
-     * blocked
+     * chats
      */
 
     await pool.query(createTableQuery);
 
-    /*INTERESTS TAGS TABLE*/
-    const createInterestsTagTableQuery = `
-      CREATE TABLE IF NOT EXISTS tags (
-        id SERIAL PRIMARY KEY,
-        tag VARCHAR(100) UNIQUE NOT NULL
+    /*USERS TAGS TABLE*/
+
+    const createUserTagsTableQuery = `
+      CREATE TABLE IF NOT EXISTS user_tags (
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        tag_id INTEGER REFERENCES tags(id) ON DELETE CASCADE,
+        PRIMARY KEY (user_id, tag_id)
       );
     `;
-    await pool.query(createInterestsTagTableQuery);
 
-    const checkTagsTableQuery = `
-      SELECT count(*) FROM tags;
+    await pool.query(createUserTagsTableQuery);
+
+    const createMatchesTableQuery = `
+      CREATE TABLE IF NOT EXISTS matches (
+        id SERIAL PRIMARY KEY,
+        user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        matched_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(user_id, matched_user_id)
+      );
     `;
-    const res = await pool.query(checkTagsTableQuery);
-    const insertTagsQuery = `
-      INSERT INTO tags (tag)
-      VALUES
-        ('art'),
-        ('photography'),
-        ('fashion'),
-        ('technology'),
-        ('science'),
-        ('cooking'),
-        ('food'),
-        ('fitness'),
-        ('gaming'),
-        ('sports'),
-        ('music'),
-        ('movies'),
-        ('books'),
-        ('travel'),
-        ('outdoors'),
-        ('animals'),
-        ('politics'),
-        ('history'),
-        ('wine'),
-        ('beer'),
-        ('coffee'),
-        ('tea'),
-        ('matcha'),
-        ('yoga'),
-        ('meditation'),
-        ('spirituality'),
-        ('astrology'),
-        ('tarot')
-      ON CONFLICT (tag) DO NOTHING;
+
+    const createViewsTableQuery = `
+      CREATE TABLE IF NOT EXISTS views (
+        id SERIAL PRIMARY KEY,
+        viewer_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        viewed_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        view_count INTEGER DEFAULT 1,
+        last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(viewer_id, viewed_user_id)
+      );
     `;
-    if (parseInt(res.rows[0].count) === 0) {
-      await pool.query(insertTagsQuery);
-    }
+
+    const createLikesTableQuery = `
+      CREATE TABLE IF NOT EXISTS likes (
+        id SERIAL PRIMARY KEY,
+        liker_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        liked_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(liker_id, liked_user_id)
+      );
+    `;
+
+    const createBlockedTableQuery = `
+      CREATE TABLE IF NOT EXISTS blocked (
+        id SERIAL PRIMARY KEY,
+        blocker_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        blocked_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        UNIQUE(blocker_id, blocked_user_id)
+      );
+    `;
+    await pool.query(createMatchesTableQuery);
+    await pool.query(createViewsTableQuery);
+    await pool.query(createLikesTableQuery);
+    await pool.query(createBlockedTableQuery);
+
+    /*CHAT TABLE*/
 
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
@@ -172,7 +228,7 @@ async function seed() {
         CREATE TABLE IF NOT EXISTS views (
             id SERIAL PRIMARY KEY,
             user_id INT REFERENCES users(id) ON DELETE CASCADE,
-            chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
+            watched_id INT REFERENCES users(id) ON DELETE CASCADE,
             viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
         );
     `;
