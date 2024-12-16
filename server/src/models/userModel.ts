@@ -29,7 +29,7 @@ class UserModel {
     }
   }
 
-  async getUserByEmail(email: string): Promise<User | null> {
+  async getUserByEmail(email: string | undefined): Promise<User | null> {
     try {
       const query = {
         text: "SELECT * FROM users WHERE email = $1",
@@ -42,7 +42,7 @@ class UserModel {
     }
   }
 
-  async getUserByUsername(username: string): Promise<User | null> {
+  async getUserByUsername(username: string | undefined): Promise<User | null> {
     try {
       const query = {
         text: "SELECT * FROM users WHERE username = $1",
@@ -75,6 +75,7 @@ class UserModel {
       const result: QueryResult<User> = await pool.query(query);
       return result.rows[0];
     } catch (error) {
+      console.log(error);
       throw new Error((error as Error).message);
     }
   }

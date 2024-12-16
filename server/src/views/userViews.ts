@@ -8,20 +8,6 @@ export const createUser = async (
 ): Promise<void> => {
   try {
     const userData: Partial<User> = req.body;
-    // TODO verify userData with middleware
-    if (
-      !userData.email ||
-      !userData.username ||
-      !userData.password ||
-      !userData.firstName ||
-      !userData.lastName
-    ) {
-      res.status(400).json({
-        status: 400,
-        message: "All fields are required",
-      });
-      return;
-    }
     const existingUserEmail = await userModel.getUserByEmail(userData.email);
     const existingUserName = await userModel.getUserByUsername(
       userData.username
