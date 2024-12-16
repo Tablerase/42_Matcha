@@ -28,10 +28,11 @@ export const authenticateUser = async (
 
     const isUserExist = await userModel.getUserByUsername(username);
 
+    // We don't want to give any information about the user existence
     if (!isUserExist) {
-      res.status(404).json({
-        status: 404,
-        message: "User not found",
+      res.status(401).json({
+        status: 401,
+        message: "Invalid User or password",
       });
       return;
     }
@@ -40,11 +41,10 @@ export const authenticateUser = async (
       password,
       isUserExist.password
     );
-    console.log(isPasswordMatched);
     if (!isPasswordMatched) {
-      res.status(400).json({
-        status: 400,
-        message: "Wrong password",
+      res.status(401).json({
+        status: 401,
+        message: "Invalid User or password",
       });
       return;
     }
