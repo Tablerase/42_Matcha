@@ -1,0 +1,33 @@
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzM0NDM5NTQwLCJleHAiOjE3MzQ1MjU5NDB9.utNP5ochg6AbTV8P61WRCsVIG2kZb0S4Q3GdrnTZ_zU 
+
+###
+
+GET http://localhost:8000/users
+Authorization: Bearer {{authToken}}
+
+###
+
+GET http://localhost:8000/users/2/tags
+Authorization: Bearer {{authToken}}
+
+###
+
+POST http://localhost:8000/users/1/tags
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "tagId": "10"
+}
+
+###
+
+DELETE http://localhost:8000/users/1/tags
+Authorization: Bearer {{authToken}}
+Content-Type: application/json
+
+{
+    "tagId": "10"
+}
+
+###

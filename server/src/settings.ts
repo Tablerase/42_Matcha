@@ -166,22 +166,22 @@ async function seed() {
     const createViewsTableQuery = `
       CREATE TABLE IF NOT EXISTS views (
         id SERIAL PRIMARY KEY,
-        viewer_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        viewer_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         viewed_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         view_count INTEGER DEFAULT 1,
         last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(viewer_id, viewed_user_id)
+        UNIQUE(viewer_user_id, viewed_user_id)
       );
     `;
 
     const createLikesTableQuery = `
       CREATE TABLE IF NOT EXISTS likes (
         id SERIAL PRIMARY KEY,
-        liker_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        liker_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         liked_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(liker_id, liked_user_id)
+        UNIQUE(liker_user_id, liked_user_id)
       );
     `;
 

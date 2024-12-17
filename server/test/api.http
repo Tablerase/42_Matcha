@@ -1,7 +1,7 @@
 ### Protected routes
 
 GET http://localhost:8000/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzM0MTg2ODcxLCJleHAiOjE3MzQyNzMyNzF9.lPZi_uSjpzFgwlaapnUOb9QR77cwcnbhdWqzWVoOnFg 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzM0NDM5NTQwLCJleHAiOjE3MzQ1MjU5NDB9.utNP5ochg6AbTV8P61WRCsVIG2kZb0S4Q3GdrnTZ_zU 
 
 ###
 
@@ -29,8 +29,8 @@ Content-Type: application/json
 {
     "firstName": "testname",
     "lastName": "tester", 
-    "username": "tesgfhgt",
-    "email": "test@teshgft.com",
+    "username": "test2",
+    "email": "test2@test.com",
     "password": "password"
 
 }
