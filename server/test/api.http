@@ -7,6 +7,25 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 
 GET http://localhost:8000/users
 
+
+###
+
+PUT http://localhost:8000/users/1
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDM0ODA1LCJleHAiOjE3MzQ1MjEyMDV9.7Fhi9_xLExWABCVOJQt2a9zKcPGhJ3uiVt4TQ25okCA
+
+{
+    "firstName": "testname543",
+    "lastName": "tester123",
+    "preferences": "heterosexual",
+    "password": "password123",
+    "gender": "female",
+    "bio": "",
+    "location": "(-100,-399990)",
+    "username": "tesgfhgt",
+    "email": "123@fsf.fsd"
+}
+
 ### Unprotected routes
 
 GET http://localhost:8000
@@ -17,7 +36,7 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "test",
+    "username": "tesgfhgt",
     "password": "password"
 }
 

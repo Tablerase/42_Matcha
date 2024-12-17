@@ -90,3 +90,32 @@ export const getUserById = async (
 // 	throw new Error((error as Error).message);
 //   }
 // };
+
+export const updateUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const id = parseInt(req.params.id);
+    const userData: Partial<User> = req.body;
+    const user = await userModel.getUserById(id);
+    if (!user) {
+      res.status(404).json({
+        status: 404,
+        message: "User not found",
+      });
+      return;
+    }
+    const updatedUser = await userModel.updateUser(id, userData);
+    res.status(200).json({
+      status: 200,
+      message: "User updated successfully",
+      data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+};

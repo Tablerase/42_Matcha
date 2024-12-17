@@ -5,8 +5,9 @@ dotenv.config();
 
 export const serverPort = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
+// TODO: Change the default value of token expiration time
 export const ACCESSTOKEN_EXPIRES_IN =
-  process.env.ACCESSTOKEN_EXPIRES_IN || "15m";
+  process.env.ACCESSTOKEN_EXPIRES_IN || "1d"
 export const REFRESHTOKEN_EXPIRES_IN =
   process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
 
@@ -39,6 +40,27 @@ export { pool };
 async function seed() {
   try {
     await pool.connect();
+
+    const dropTablesQuery = `
+      DROP TABLE IF EXISTS user_tags CASCADE;
+      DROP TABLE IF EXISTS refresh_tokens CASCADE;
+      DROP TABLE IF EXISTS matches CASCADE;
+      DROP TABLE IF EXISTS views CASCADE;
+      DROP TABLE IF EXISTS likes CASCADE;
+      DROP TABLE IF EXISTS blocked CASCADE;
+      DROP TABLE IF EXISTS chats CASCADE;
+      DROP TABLE IF EXISTS msgs CASCADE;
+      DROP TABLE IF EXISTS reported_users CASCADE;
+      DROP TABLE IF EXISTS users CASCADE;
+    `;
+    await pool.query(dropTablesQuery);
+
+    // Drop existing enum types if they exist
+    const dropEnumTypesQuery = `
+      DROP TYPE IF EXISTS gender CASCADE;
+      DROP TYPE IF EXISTS preferences CASCADE;
+    `;
+    await pool.query(dropEnumTypesQuery);
 
     /*INTERESTS TAGS TABLE*/
     const createInterestsTagTableQuery = `
@@ -200,7 +222,6 @@ async function seed() {
     await pool.query(createBlockedTableQuery);
 
     /*CHAT TABLE*/
-
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,

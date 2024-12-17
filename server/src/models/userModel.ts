@@ -79,6 +79,47 @@ class UserModel {
       throw new Error((error as Error).message);
     }
   }
+
+  async updateUser(id: number, userData: Partial<User>): Promise<User> {
+    try {
+      const updates: string[] = [];
+      const values: any[] = [];
+      let parameterIndex = 1;
+  
+      for (const [key, value] of Object.entries(userData)) {
+        if (value !== null && value !== undefined) {
+          const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
+          if (snakeKey === 'password') {
+            continue;
+          }
+          updates.push(`${snakeKey} = $${parameterIndex}`);
+          values.push(value);
+          parameterIndex++;
+        }
+      }
+  
+      if (updates.length === 0) {
+        throw new Error('No valid fields to update');
+      }
+  
+      values.push(id);
+  
+      const query = {
+        text: `
+          UPDATE users
+          SET ${updates.join(', ')}, updated_at = NOW()
+          WHERE id = $${parameterIndex}
+          RETURNING *
+        `,
+        values
+      };
+  
+      const result: QueryResult<User> = await pool.query(query);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
 }
 
 export const user = new UserModel();
