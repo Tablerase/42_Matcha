@@ -80,20 +80,19 @@ export const userUpdateSchema = z
     dateOfBirth: z.date(),
     bio: z.string().max(500, "Bio must be at most 500 characters"),
     // TODO: set up proper validation for location, min/max don't work with this setup
-    location: z
-      .object({
-        latitude: z
-          .number()
-          .min(-90, "Latitude must be between -90 and 90")
-          .max(90, "Latitude must be between -90 and 90"),
-        longitude: z
-          .number()
-          .min(-180, "Longitude must be between -180 and 180")
-          .max(180, "Longitude must be between -180 and 180"),
-      })
-      .transform((val) => `POINT(${val.longitude} ${val.latitude})`),
+    // location: z
+    //   .object({
+    //     latitude: z
+    //       .number()
+    //       .min(-90, "Latitude must be between -90 and 90")
+    //       .max(90, "Latitude must be between -90 and 90"),
+    //     longitude: z
+    //       .number()
+    //       .min(-180, "Longitude must be between -180 and 180")
+    //       .max(180, "Longitude must be between -180 and 180"),
+    //   })
+    //   .transform((val) => `POINT(${val.longitude} ${val.latitude})`),
     lastSeen: z.date(),
-    created: z.date(),
     updated: z.date(),
   })
   .partial();

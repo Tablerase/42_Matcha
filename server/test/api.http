@@ -1,18 +1,37 @@
 ### Protected routes
 
 GET http://localhost:8000/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc3QuY29tIiwiaWF0IjoxNzM0MTg2ODcxLCJleHAiOjE3MzQyNzMyNzF9.lPZi_uSjpzFgwlaapnUOb9QR77cwcnbhdWqzWVoOnFg 
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDQxMDQyLCJleHAiOjE3MzQ1Mjc0NDJ9.VD-nSX7CNGXykdDuGaQEXib8Ade0-40mUSY0tG1p0EE
+### Get users blocked by user with id 3
 
-###
+GET http://localhost:8000/users/3/blocked
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0QHRlc2g0ZzQxdC5jb20iLCJpYXQiOjE3MzQ0NDIzODYsImV4cCI6MTczNDUyODc4Nn0.t0RYtY__tVpLjK6YxuAtr37e2d-rfiUF1jx0UPCHp40
 
-GET http://localhost:8000/users
+### Block user with id 2 for user with id 3
 
+POST http://localhost:8000/users/3/blocked
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0QHRlc2g0ZzQxdC5jb20iLCJpYXQiOjE3MzQ0NDIzODYsImV4cCI6MTczNDUyODc4Nn0.t0RYtY__tVpLjK6YxuAtr37e2d-rfiUF1jx0UPCHp40
+
+{
+    "blockedUserId": 2
+}
+
+### Unblock user with id 1 for user with id 3
+
+DELETE http://localhost:8000/users/3/blocked/
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0QHRlc2g0ZzQxdC5jb20iLCJpYXQiOjE3MzQ0NDIzODYsImV4cCI6MTczNDUyODc4Nn0.t0RYtY__tVpLjK6YxuAtr37e2d-rfiUF1jx0UPCHp40
+
+{
+    "blockedUserId": 1
+}
 
 ###
 
 PUT http://localhost:8000/users/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDM0ODA1LCJleHAiOjE3MzQ1MjEyMDV9.7Fhi9_xLExWABCVOJQt2a9zKcPGhJ3uiVt4TQ25okCA
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDM5NDExLCJleHAiOjE3MzQ1MjU4MTF9.NH1-PAbtz7uD9D3kCh-N5OP1oTSvLgfOyrAGnImveMo
 
 {
     "firstName": "testname543",
@@ -21,7 +40,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
     "password": "password123",
     "gender": "female",
     "bio": "",
-    "location": "(-100,-399990)",
+    "location": "(-100,-39000.90)",
     "username": "tesgfhgt",
     "email": "123@fsf.fsd"
 }
@@ -36,7 +55,7 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "tesgfhgt",
+    "username": "master",
     "password": "password"
 }
 
@@ -46,10 +65,10 @@ POST http://localhost:8000/auth/signup
 Content-Type: application/json
 
 {
-    "firstName": "testname",
-    "lastName": "tester", 
-    "username": "tesgfhgt",
-    "email": "test@teshgft.com",
+    "firstName": "master",
+    "lastName": "tester42", 
+    "username": "master",
+    "email": "test@tesh4g41t.com",
     "password": "password"
 
 }

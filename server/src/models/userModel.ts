@@ -89,7 +89,7 @@ class UserModel {
       for (const [key, value] of Object.entries(userData)) {
         if (value !== null && value !== undefined) {
           const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-          if (snakeKey === 'password') {
+          if (snakeKey === 'password' || snakeKey === 'id' || snakeKey === 'created_at') {
             continue;
           }
           updates.push(`${snakeKey} = $${parameterIndex}`);
