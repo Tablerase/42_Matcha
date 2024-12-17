@@ -6,7 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node -r module-alias/register dist/src/server.js",
-    "dev": "nodemon -r tsconfig-paths/register src/server.ts"
+    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts"
   },
   "keywords": [],
   "author": "",
@@ -32,7 +32,7 @@
     "@types/pg": "^8.11.10",
     "concurrently": "^9.1.0",
     "nodemon": "^3.1.9",
-    "ts-node": "^10.9.2",
+    "ts-node": "^10.9.1",
     "typescript": "^5.7.2"
   },
   "_moduleAliases": {

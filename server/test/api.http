@@ -31,14 +31,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiO
 
 PUT http://localhost:8000/users/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDM5NDExLCJleHAiOjE3MzQ1MjU4MTF9.NH1-PAbtz7uD9D3kCh-N5OP1oTSvLgfOyrAGnImveMo
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NzI0MiwiZXhwIjoxNzM0NTMzNjQyfQ.Ifvrb2HwOFyJ_-nQE9R7ftYy-GUUx8cxV0SHst7Goqs
 
 {
     "firstName": "testname543",
     "lastName": "tester123",
     "preferences": "heterosexual",
-    "password": "password123",
-    "gender": "female",
+    "gender": "male",
     "bio": "",
     "location": "(-100,-39000.90)",
     "username": "tesgfhgt",
