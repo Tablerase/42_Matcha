@@ -5,13 +5,13 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiO
 ### Get users blocked by user with id 3
 
 GET http://localhost:8000/users/3/blocked
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0QHRlc2g0ZzQxdC5jb20iLCJpYXQiOjE3MzQ0NDIzODYsImV4cCI6MTczNDUyODc4Nn0.t0RYtY__tVpLjK6YxuAtr37e2d-rfiUF1jx0UPCHp40
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NDk1OCwiZXhwIjoxNzM0NTMxMzU4fQ.GIaL84DghTTKr4rqPVF7y4vUdv92xwQI8DmQFJ99NMU
 
 ### Block user with id 2 for user with id 3
 
 POST http://localhost:8000/users/3/blocked
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0QHRlc2g0ZzQxdC5jb20iLCJpYXQiOjE3MzQ0NDIzODYsImV4cCI6MTczNDUyODc4Nn0.t0RYtY__tVpLjK6YxuAtr37e2d-rfiUF1jx0UPCHp40
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NDk1OCwiZXhwIjoxNzM0NTMxMzU4fQ.GIaL84DghTTKr4rqPVF7y4vUdv92xwQI8DmQFJ99NMU
 
 {
     "blockedUserId": 2
@@ -21,7 +21,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiO
 
 DELETE http://localhost:8000/users/3/blocked/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MywiZW1haWwiOiJ0ZXN0QHRlc2g0ZzQxdC5jb20iLCJpYXQiOjE3MzQ0NDIzODYsImV4cCI6MTczNDUyODc4Nn0.t0RYtY__tVpLjK6YxuAtr37e2d-rfiUF1jx0UPCHp40
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NDk1OCwiZXhwIjoxNzM0NTMxMzU4fQ.GIaL84DghTTKr4rqPVF7y4vUdv92xwQI8DmQFJ99NMU
 
 {
     "blockedUserId": 1
@@ -55,7 +55,7 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "master",
+    "username": "master123",
     "password": "password"
 }
 
@@ -65,10 +65,10 @@ POST http://localhost:8000/auth/signup
 Content-Type: application/json
 
 {
-    "firstName": "master",
-    "lastName": "tester42", 
-    "username": "master",
-    "email": "test@tesh4g41t.com",
+    "firstName": "master123",
+    "lastName": "tester42123", 
+    "username": "master123",
+    "email": "test@tesh43g411t.com",
     "password": "password"
 
 }

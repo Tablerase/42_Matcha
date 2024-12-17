@@ -3,9 +3,9 @@ import { blocked as blockedUserModel } from "@models/blockedModel";
 
 export const blockUser = async (req: Request, res: Response): Promise<void> => {    
     try {
-        const userId = parseInt(req.params.id);
+        const userId = req?.user?.id;
         const blockedUserId = parseInt(req.body.blockedUserId);
-        const blockedUser = await blockedUserModel.blockUser(userId, blockedUserId);
+        const blockedUser = await blockedUserModel.blockUser(userId!, blockedUserId);
         res.status(201).json({
         status: 201,
         data: blockedUser,
@@ -20,9 +20,9 @@ export const blockUser = async (req: Request, res: Response): Promise<void> => {
 
 export const unblockUser = async (req: Request, res: Response): Promise<void> => {  
     try {
-        const userId = parseInt(req.params.id);
+        const userId = req?.user?.id;
         const blockedUserId = parseInt(req.body.blockedUserId);
-        const blockedUser = await blockedUserModel.unblockUser(userId, blockedUserId);
+        const blockedUser = await blockedUserModel.unblockUser(userId!, blockedUserId);
         res.status(200).json({
         status: 200,
         data: blockedUser,
@@ -40,8 +40,8 @@ export const getUserBlockedUsers = async (
   res: Response
 ): Promise<void> => {
   try {
-    const userId = parseInt(req.params.id);
-    const blockedUsers = await blockedUserModel.getBlockedUsers(userId);
+    const userId = req?.user?.id;
+    const blockedUsers = await blockedUserModel.getBlockedUsers(userId!);
     res.status(200).json({
       status: 200,
       data: blockedUsers,
