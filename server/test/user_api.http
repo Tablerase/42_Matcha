@@ -1,4 +1,4 @@
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NzI0MiwiZXhwIjoxNzM0NTMzNjQyfQ.Ifvrb2HwOFyJ_-nQE9R7ftYy-GUUx8cxV0SHst7Goqs
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ1MDk5MSwiZXhwIjoxNzM0NTM3MzkxfQ.LtmChpZlfCcW5Qsek00CturnDIwOjgsAVlYSc2tfh6g
 
 ###
 
@@ -6,6 +6,34 @@ GET http://localhost:8000/users
 Authorization: Bearer {{authToken}}
 
 ###
+### Likes routes
+###
+
+### Get all likes
+
+GET http://localhost:8000/users/2/likes
+Authorization: Bearer {{authToken}}
+
+### Add like
+
+POST http://localhost:8000/users/2/likes
+Authorization: Bearer {{authToken}}
+
+### Remove like
+
+DELETE http://localhost:8000/users/2/likes
+Authorization: Bearer {{authToken}}
+
+###
+### Matches routes
+###
+
+### Get all matches
+
+GET http://localhost:8000/users/1/matches
+Authorization: Bearer {{authToken}}
+
+### Tags routes
 
 GET http://localhost:8000/users/1/tags
 Authorization: Bearer {{authToken}}
@@ -17,7 +45,7 @@ Authorization: Bearer {{authToken}}
 Content-Type: application/json
 
 {
-    "tagId": "1"
+    "tagId": "10"
 }
 
 ###

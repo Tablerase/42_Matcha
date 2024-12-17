@@ -54,7 +54,7 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "master123",
+    "username": "test",
     "password": "password"
 }
 
@@ -64,10 +64,10 @@ POST http://localhost:8000/auth/signup
 Content-Type: application/json
 
 {
-    "firstName": "master123",
-    "lastName": "tester42123", 
-    "username": "master123",
-    "email": "test@tesh43g411t.com",
+    "firstName": "testname",
+    "lastName": "tester", 
+    "username": "test",
+    "email": "test@example.com",
     "password": "password"
 
 }

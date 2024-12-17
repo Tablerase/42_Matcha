@@ -7,7 +7,7 @@ export const serverPort = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
 // TODO: Change the default value of token expiration time
 export const ACCESSTOKEN_EXPIRES_IN =
-  process.env.ACCESSTOKEN_EXPIRES_IN || "1d"
+  process.env.ACCESSTOKEN_EXPIRES_IN || "15min";
 export const REFRESHTOKEN_EXPIRES_IN =
   process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
 
@@ -53,14 +53,14 @@ async function seed() {
       DROP TABLE IF EXISTS reported_users CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
     `;
-    await pool.query(dropTablesQuery);
+    // await pool.query(dropTablesQuery);
 
     // Drop existing enum types if they exist
     const dropEnumTypesQuery = `
       DROP TYPE IF EXISTS gender CASCADE;
       DROP TYPE IF EXISTS preferences CASCADE;
     `;
-    await pool.query(dropEnumTypesQuery);
+    // await pool.query(dropEnumTypesQuery);
 
     /*INTERESTS TAGS TABLE*/
     const createInterestsTagTableQuery = `
@@ -172,7 +172,6 @@ async function seed() {
         PRIMARY KEY (user_id, tag_id)
       );
     `;
-
     await pool.query(createUserTagsTableQuery);
 
     const createMatchesTableQuery = `
@@ -184,6 +183,7 @@ async function seed() {
         UNIQUE(user_id, matched_user_id)
       );
     `;
+    await pool.query(createMatchesTableQuery);
 
     const createViewsTableQuery = `
       CREATE TABLE IF NOT EXISTS views (
@@ -196,6 +196,7 @@ async function seed() {
         UNIQUE(viewer_user_id, viewed_user_id)
       );
     `;
+    await pool.query(createViewsTableQuery);
 
     const createLikesTableQuery = `
       CREATE TABLE IF NOT EXISTS likes (
@@ -206,6 +207,7 @@ async function seed() {
         UNIQUE(liker_user_id, liked_user_id)
       );
     `;
+    await pool.query(createLikesTableQuery);
 
     const createBlockedTableQuery = `
       CREATE TABLE IF NOT EXISTS blocked (
@@ -216,9 +218,6 @@ async function seed() {
         UNIQUE(blocker_id, blocked_user_id)
       );
     `;
-    await pool.query(createMatchesTableQuery);
-    await pool.query(createViewsTableQuery);
-    await pool.query(createLikesTableQuery);
     await pool.query(createBlockedTableQuery);
 
     /*CHAT TABLE*/
@@ -243,17 +242,6 @@ async function seed() {
       );
     `;
     await pool.query(createMsgQuery);
-
-    /*VIEWS TABLE*/
-    const createViewsQuery = `
-        CREATE TABLE IF NOT EXISTS views (
-            id SERIAL PRIMARY KEY,
-            user_id INT REFERENCES users(id) ON DELETE CASCADE,
-            watched_id INT REFERENCES users(id) ON DELETE CASCADE,
-            viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-        );
-    `;
-    await pool.query(createViewsQuery);
 
     /*REPORTED USERS TABLE*/
     const createReportedUsersQuery = `

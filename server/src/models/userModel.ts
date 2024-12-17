@@ -85,11 +85,18 @@ class UserModel {
       const updates: string[] = [];
       const values: any[] = [];
       let parameterIndex = 1;
-  
+
       for (const [key, value] of Object.entries(userData)) {
         if (value !== null && value !== undefined) {
-          const snakeKey = key.replace(/[A-Z]/g, letter => `_${letter.toLowerCase()}`);
-          if (snakeKey === 'password' || snakeKey === 'id' || snakeKey === 'created_at') {
+          const snakeKey = key.replace(
+            /[A-Z]/g,
+            (letter) => `_${letter.toLowerCase()}`
+          );
+          if (
+            snakeKey === "password" ||
+            snakeKey === "id" ||
+            snakeKey === "created_at"
+          ) {
             continue;
           }
           updates.push(`${snakeKey} = $${parameterIndex}`);
@@ -97,125 +104,29 @@ class UserModel {
           parameterIndex++;
         }
       }
-  
+
       if (updates.length === 0) {
-        throw new Error('No valid fields to update');
+        throw new Error("No valid fields to update");
       }
-  
+
       values.push(id);
-  
+
       const query = {
         text: `
           UPDATE users
-          SET ${updates.join(', ')}, updated_at = NOW()
+          SET ${updates.join(", ")}, updated_at = NOW()
           WHERE id = $${parameterIndex}
           RETURNING *
         `,
-        values
+        values,
       };
-  
+
       const result: QueryResult<User> = await pool.query(query);
       return result.rows[0];
     } catch (error) {
       throw new Error((error as Error).message);
     }
   }
-
-  /**
-   * TAGS
-   */
-
-  async getUserTags(userId: number): Promise<any[]> {
-    const query = {
-      text: `SELECT t.* FROM tags t JOIN user_tags ut ON t.id = ut.tag_id WHERE ut.user_id = $1`,
-      values: [userId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
-  async addUserTag(userId: number, tagId: number): Promise<any> {
-    const query = {
-      text: `INSERT INTO user_tags (user_id, tag_id)
-         SELECT $1, $2
-         WHERE NOT EXISTS (
-           SELECT 1 FROM user_tags WHERE user_id = $1 AND tag_id = $2
-         )`,
-      values: [userId, tagId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
-  async deleteUserTag(userId: number, tagId: number): Promise<any> {
-    const query = {
-      text: `DELETE FROM user_tags WHERE user_id = $1 AND tag_id = $2`,
-      values: [userId, tagId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
-  /**
-   * LIKES
-   */
-
-  async getUserLikes(userId: number): Promise<any[]> {
-    const query = {
-      text: `SELECT * FROM likes WHERE liked_user_id = $1`,
-      values: [userId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
-  async addUserLike(likerUserId: number, likedUserId: number): Promise<any> {
-    const query = {
-      text: `INSERT INTO likes (liker_user_id, liked_user_id) VALUES ($1, $2)`,
-      values: [likerUserId, likedUserId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
-  async deleteUserLike(likerUserId: number, likedUserId: number): Promise<any> {
-    const query = {
-      text: `DELETE FROM likes WHERE liker_user_id = $1 AND liked_user_id = $2`,
-      values: [likerUserId, likedUserId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
-  /**
-   * MATCHES
-   */
-
-  async getUserMatches(userId: number): Promise<any[]> {
-    const query = {
-      text: `SELECT * FROM matches WHERE user_id = $1 ORDER BY created_at DESC`,
-      values: [userId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-  async addUserMatch(userId: number, matchedUserId: number): Promise<any> {
-    const query = {
-      text: `INSERT INTO matches (user_id, matched_user_id) VALUES ($1, $2)`,
-      values: [userId, matchedUserId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-  async removeUserMatch(userId: number, matchedUserId: number): Promise<any> {
-    const query = {
-      text: `DELETE FROM matches WHERE user_id = $1 AND matched_user_id = $2`,
-      values: [userId, matchedUserId],
-    };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
-  }
-
   /**
    * VIEWS
    */
