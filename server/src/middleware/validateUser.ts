@@ -2,6 +2,7 @@ import { Request, Response, NextFunction } from "express";
 import {
   userCreationSchema,
   userLoginSchema,
+  userUpdateSchema
 } from "@interfaces/userValidationSchema";
 import { z } from "zod";
 export const validateUserCreation = async (
@@ -38,6 +39,21 @@ export const validateUserLogin = async (
   }
 };
 
-//validation userupdate
+export const validateUserUpdate = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    userUpdateSchema.parse(req.body);
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors });
+    } else {
+      res.status(400).json({ error: "Unknown error" });
+    }
+  }
+};
 
 //validation user params for advanced search

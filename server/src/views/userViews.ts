@@ -50,7 +50,9 @@ export const createUser = async (
 
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
-    const users = await userModel.getUsers();
+    const params = req.query;
+    console.log(params);
+    const users = await userModel.getUsers(params);
     res.status(200).json({
       status: 200,
       data: users,

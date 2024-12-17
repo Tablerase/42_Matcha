@@ -1,3 +1,8 @@
+// export interface Point {
+//   x: number; // longitude
+//   y: number; // latitude
+// }
+
 export interface User {
   id: number;
   firstName: string;
@@ -9,14 +14,16 @@ export interface User {
   preferences?: string;
   dateOfBirth?: Date;
   bio?: string;
-  location?: Point;
+  location?: { x: number; y: number };
   fameRate?: number;
   lastSeen?: Date;
   created?: Date;
   updated?: Date;
 }
 
-export interface Point {
-  x: number; // longitude
-  y: number; // latitude
+export interface SortParams {
+  age?: { min: number; max: number };
+  location?: { x: number; y: number };
+  fameRate?: number;
+  tags?: string[];
 }
