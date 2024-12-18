@@ -7,20 +7,26 @@ import { Matches } from "@pages/browse/Matches";
 import { Browse } from "@pages/browse/Browse";
 import { Profile } from "@pages/profile/Profile";
 import { Chat } from "@pages/chat/Chat";
+import { ThemeProvider } from "@emotion/react";
+import { CssBaseline } from "@mui/material";
+import { theme } from "@components/theme";
 
 export const App = () => {
   return (
     <>
       <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path={routes.REGISTER} element={<Signup />} />
-          <Route path={routes.LOGIN} element={<Login />} />
-          <Route path={routes.MATCHES} element={<Matches />} />
-          <Route path={routes.BROWSE} element={<Browse />} />
-          <Route path={routes.PROFILE} element={<Profile />} />
-          <Route path={routes.CHAT} element={<Chat />} />
-        </Routes>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path={routes.REGISTER} element={<Signup />} />
+            <Route path={routes.LOGIN} element={<Login />} />
+            <Route path={routes.MATCHES} element={<Matches />} />
+            <Route path={routes.BROWSE} element={<Browse />} />
+            <Route path={routes.PROFILE} element={<Profile />} />
+            <Route path={routes.CHAT} element={<Chat />} />
+          </Routes>
+        </ThemeProvider>
       </BrowserRouter>
       {/* <ReactQueryDevtools initialIsOpen /> */}
     </>
