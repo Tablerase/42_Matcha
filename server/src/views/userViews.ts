@@ -84,15 +84,6 @@ export const getUserById = async (
   }
 };
 
-// const getUserByEmail = async (email: string): Promise<User | null> => {
-// 	  try {
-// 	const user = await userModel.getUserByEmail(email);
-// 	return user;
-//   } catch (error) {
-// 	throw new Error((error as Error).message);
-//   }
-// };
-
 export const updateUser = async (
   req: Request,
   res: Response

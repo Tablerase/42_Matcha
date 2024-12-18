@@ -1,10 +1,12 @@
+import { z } from "zod";
 import { Request, Response, NextFunction } from "express";
 import {
   userCreationSchema,
   userLoginSchema,
-  userUpdateSchema
+  userUpdateSchema,
 } from "@interfaces/userValidationSchema";
-import { z } from "zod";
+import { blockedValidationSchema } from "@interfaces/blockedValidationSchema";
+
 export const validateUserCreation = async (
   req: Request,
   res: Response,
@@ -55,5 +57,22 @@ export const validateUserUpdate = async (
     }
   }
 };
+
+export const validateUserBlocked = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    blockedValidationSchema.parse({userId: req?.user?.id, blockeUserId: req.body.blockedUserId});
+    next();
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      res.status(400).json({ error: error.errors });
+    } else {
+      res.status(400).json({ error: "Unknown error" });
+    }
+  }
+}   
 
 //validation user params for advanced search

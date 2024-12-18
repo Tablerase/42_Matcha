@@ -8,7 +8,7 @@ import {
   blockUser,
   unblockUser,
 } from "@views/blockedViews";
-import { validateUserUpdate } from "../middleware/validateUser";
+import { validateUserUpdate, validateUserBlocked } from "../middleware/validateUser";
 
 const router: Router = express.Router();
 
@@ -17,9 +17,9 @@ router.get("/", UserViews.getUsers);
 router.get("/:id", UserViews.getUserById);
 router.put("/:id", validateUserUpdate, UserViews.updateUser);
 
-router.get("/:id/blocked", getUserBlockedUsers);
-router.post("/:id/blocked", blockUser);
-router.delete("/:id/blocked", unblockUser);
+router.get("/:id/blocked", validateUserBlocked, getUserBlockedUsers);
+router.post("/:id/blocked", validateUserBlocked, blockUser);
+router.delete("/:id/blocked", validateUserBlocked, unblockUser);
 
 
 router.get("/:id/tags", TagViews.getUserTags);

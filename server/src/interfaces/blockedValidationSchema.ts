@@ -9,4 +9,4 @@ export const blockedValidationSchema = z
         required_error: "Blocked user ID is required",
         }),
     })
-    .strict();
+    .partial();

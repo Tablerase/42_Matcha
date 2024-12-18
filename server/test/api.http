@@ -4,17 +4,17 @@ GET http://localhost:8000/users
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDQxMDQyLCJleHAiOjE3MzQ1Mjc0NDJ9.VD-nSX7CNGXykdDuGaQEXib8Ade0-40mUSY0tG1p0EE
 ### Get users blocked by user with id 3
 
-GET http://localhost:8000/users/3/blocked
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NDk1OCwiZXhwIjoxNzM0NTMxMzU4fQ.GIaL84DghTTKr4rqPVF7y4vUdv92xwQI8DmQFJ99NMU
+GET http://localhost:8000/users/2/blocked
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTI0ODMxLCJleHAiOjE3MzQ1MjU3MzF9.2HcQX0W-aXM3FaksdY0WaN76f82DO2b-ByyBMSrJOlA
 
 ### Block user with id 2 for user with id 3
 
-POST http://localhost:8000/users/3/blocked
+POST http://localhost:8000/users/2/blocked
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NDk1OCwiZXhwIjoxNzM0NTMxMzU4fQ.GIaL84DghTTKr4rqPVF7y4vUdv92xwQI8DmQFJ99NMU
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTI0ODMxLCJleHAiOjE3MzQ1MjU3MzF9.2HcQX0W-aXM3FaksdY0WaN76f82DO2b-ByyBMSrJOlA
 
 {
-    "blockedUserId": 2
+    "blockedUserId": 1
 }
 
 ### Unblock user with id 1 for user with id 3
