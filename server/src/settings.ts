@@ -3,13 +3,14 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-export const serverPort = process.env.SERVER_PORT || 8000;
+export const SERVER_PORT = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
 // TODO: Change the default value of token expiration time
 export const ACCESSTOKEN_EXPIRES_IN =
   process.env.ACCESSTOKEN_EXPIRES_IN || "15min";
 export const REFRESHTOKEN_EXPIRES_IN =
   process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
+export const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
 
 const db_config = {
   user: process.env.POSTGRES_USER as string,

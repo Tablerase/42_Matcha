@@ -6,7 +6,7 @@ import cors from "cors";
 import authRoutes from "@routes/authRoutes";
 import userRoutes from "@routes/userRoutes";
 import { authenticateToken } from "./middleware/auth";
-import { serverPort } from "./settings";
+import { SERVER_PORT, FRONTEND_ORIGIN } from "./settings";
 
 const app: Application = express();
 
@@ -17,7 +17,11 @@ app.use(
     extended: true,
   }) as RequestHandler
 );
-app.use(cors() as RequestHandler);
+app.use(cors({
+  origin: [FRONTEND_ORIGIN],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true,
+}));
 
 // Error handling middleware
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
@@ -44,8 +48,8 @@ app.use(authenticateToken as RequestHandler, protectedRoutes);
 app.use(errorHandler);
 
 // Start server
-app.listen(serverPort, (): void => {
-  console.log(`Server running on port ${serverPort}`);
+app.listen(SERVER_PORT, (): void => {
+  console.log(`Server running on port ${SERVER_PORT}`);
 });
 
 export default app;

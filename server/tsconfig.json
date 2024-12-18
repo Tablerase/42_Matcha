@@ -12,7 +12,6 @@
     "moduleResolution": "node",
     "paths": {
       "@models/*": ["src/models/*"],
-      // "@controllers/*": ["src/controllers/*"],
       "@views/*": ["src/views/*"],
       "@routes/*": ["src/routes/*"],
       "@interfaces/*": ["src/interfaces/*"],
