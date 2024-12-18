@@ -31,17 +31,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiO
 
 PUT http://localhost:8000/users/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NzI0MiwiZXhwIjoxNzM0NTMzNjQyfQ.Ifvrb2HwOFyJ_-nQE9R7ftYy-GUUx8cxV0SHst7Goqs
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTE3MTE4LCJleHAiOjE3MzQ1MTgwMTh9.lTYskz5VZRpCylaexzk23xwhITAqhByaGmO_J4-gr5Y
 
 {
     "firstName": "testname543",
     "lastName": "tester123",
     "preferences": "heterosexual",
     "gender": "male",
-    "bio": "",
+    "bio": "fdhdfh",
     "location": "(-100,-39000.90)",
-    "username": "tesgfhgt",
-    "email": "123@fsf.fsd"
+    "username": "tesgfhgt"
 }
 
 ### Unprotected routes
@@ -54,7 +53,7 @@ POST http://localhost:8000/auth/login
 Content-Type: application/json
 
 {
-    "username": "master123",
+    "username": "test",
     "password": "password"
 }
 
@@ -64,10 +63,10 @@ POST http://localhost:8000/auth/signup
 Content-Type: application/json
 
 {
-    "firstName": "master123",
-    "lastName": "tester42123", 
-    "username": "master123",
-    "email": "test@tesh43g411t.com",
+    "firstName": "testname",
+    "lastName": "tester", 
+    "username": "test",
+    "email": "test@example.com",
     "password": "password"
 
 }

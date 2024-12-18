@@ -19,38 +19,38 @@ class BlockedUserModel {
     }
   }
 
-    async unblockUser(userId: number, blockedUserId: number) {
-        try {
-        const query = {
-            text: `
+  async unblockUser(userId: number, blockedUserId: number) {
+    try {
+      const query = {
+        text: `
             DELETE FROM blocked
             WHERE blocker_id = $1 AND blocked_user_id = $2
             RETURNING *
         `,
-            values: [userId, blockedUserId],
-        };
-        const result = await pool.query(query);
-        return result.rows[0];
-        } catch (error) {
-        throw new Error((error as Error).message);
-        }
+        values: [userId, blockedUserId],
+      };
+      const result = await pool.query(query);
+      return result.rows[0];
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
+  }
 
-    async getBlockedUsers(userId: number) {
-        try {
-        const query = {
-            text: `
+  async getBlockedUsers(userId: number) {
+    try {
+      const query = {
+        text: `
             SELECT * FROM blocked
             WHERE blocker_id = $1
         `,
-            values: [userId],
-        };
-        const result = await pool.query(query);
-        return result.rows;
-        } catch (error) {
-        throw new Error((error as Error).message);
-        }
+        values: [userId],
+      };
+      const result = await pool.query(query);
+      return result.rows;
+    } catch (error) {
+      throw new Error((error as Error).message);
     }
+  }
 }
 
 export const blocked = new BlockedUserModel();
