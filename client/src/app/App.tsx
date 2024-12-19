@@ -27,6 +27,7 @@ export const App = () => {
               <Route path="/" element={<Home />} />
               <Route path={routes.REGISTER} element={<Signup />} />
               <Route path={routes.LOGIN} element={<Login />} />
+
               <Route path={routes.MATCHES} element={<Matches />} />
               <Route path={routes.BROWSE} element={<Browse />} />
               <Route path={routes.PROFILE} element={<Profile />} />
