@@ -7,8 +7,17 @@ export interface UserLogin {
 
 export interface User {
   id: number;
+  firstName: string;
+  lastName: string;
   email: string;
   username: string;
+  gender: string;
+  preferences: string;
+  dateOfBirth: Date;
+  bio: string;
+  location?: { x: number; y: number };
+  fameRate: number;
+  lastSeen: Date;
 }
 
 export interface Props {
