@@ -7,5 +7,9 @@ export const MatchaNavBar = styled(List)<ListProps>(({ theme }) => ({
   height: "100vh",
   "& .MuiListItemIcon-root": {
     minWidth: "2em"
+  },
+  [theme.breakpoints.down('sm')]: {
+    height: "auto",
+    zIndex: 1100
   }
 }));

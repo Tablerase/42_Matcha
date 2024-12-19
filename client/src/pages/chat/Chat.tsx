@@ -1,7 +1,9 @@
+import { Layout } from "@components/Layout"
+
 export const Chat = () => {
   return (
-    <div>
+    <Layout>
       <h1>Chat</h1>
-    </div>
+    </Layout>
   );
 };

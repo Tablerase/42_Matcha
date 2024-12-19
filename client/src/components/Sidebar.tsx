@@ -10,49 +10,85 @@ import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import { MatchaNavBar } from "./MatchaNavBar";
 import Box from "@mui/material/Box";
+import { useTheme, useMediaQuery } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { routes } from "@/utils/routes";
 
 export const Sidebar = () => {
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const navigate = useNavigate();
   return (
-    <MatchaNavBar sx={{ display: "flex", flexDirection: "column", padding: 0 }}>
-      <Box>
-        <ListItemButton>
+    <MatchaNavBar
+      sx={{
+        display: "flex",
+        ...(isMobile
+          ? {
+              flexDirection: "row",
+              position: "fixed",
+              bottom: 0,
+              width: "100%",
+              height: "auto",
+              padding: 0,
+              justifyContent: "space-around",
+            }
+          : {
+              flexDirection: "column",
+              padding: 0,
+            }),
+      }}
+    >
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "row" : "column",
+          width: "100%",
+        }}
+      >
+        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.BROWSE)}>
           <ListItemIcon>
             <SearchIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Browse</ListItemText>
+          {!isMobile && <ListItemText>Browse</ListItemText>}
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.MATCHES)}>
           <ListItemIcon>
             <FavoriteIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Matches</ListItemText>
+          {!isMobile && <ListItemText>Matches</ListItemText>}
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.PROFILE)}>
           <ListItemIcon>
             <AccountCircleIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Profile</ListItemText>
+          {!isMobile && <ListItemText>Profile</ListItemText>}
         </ListItemButton>
-        <ListItemButton>
+        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.CHAT)}>
           <ListItemIcon>
             <ChatIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Chat</ListItemText>
+          {!isMobile && <ListItemText>Chat</ListItemText>}
         </ListItemButton>
-        <ListItemButton>
+        {/* TODO: When clicking on Notifications show Drawer */}
+        <ListItemButton disableRipple disableTouchRipple>
           <ListItemIcon>
             <NotificationsIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Notifications</ListItemText>
+          {!isMobile && <ListItemText>Notifications</ListItemText>}
         </ListItemButton>
       </Box>
-      <Box sx={{ mt: "auto" }}>
-        <Divider />
-        <ListItemButton>
+      <Box
+        sx={{
+          mt: isMobile ? 0 : "auto",
+          width: isMobile ? "auto" : "100%",
+        }}
+      >
+        {!isMobile && <Divider />}
+        <ListItemButton disableRipple disableTouchRipple>
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>
-          <ListItemText>Logout</ListItemText>
+          {!isMobile && <ListItemText>Logout</ListItemText>}
         </ListItemButton>
       </Box>
     </MatchaNavBar>

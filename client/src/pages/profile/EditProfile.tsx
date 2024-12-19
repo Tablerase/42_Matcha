@@ -1,7 +1,9 @@
+import { Layout } from "@components/Layout"
+
 export const EditProfile = () => {
   return (
-    <div>
+    <Layout>
       <h1>Edit Profile</h1>
-    </div>
+    </Layout>
   );
 };

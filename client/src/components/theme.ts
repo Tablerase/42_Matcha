@@ -74,49 +74,45 @@ export const theme = createTheme({
               }
             `,
     },
+    MuiButtonBase: {
+      defaultProps: {
+        disableRipple: true, // doesn't have effect on sidebar ?
+        disableTouchRipple: true, // doesn't have effect on sidebar ?
+      },
+    },
     MuiButton: {
+      defaultProps: {
+        disableRipple: true, // doesn't have effect on sidebar ?
+      },
       styleOverrides: {
         root: {
           borderRadius: "20px", // Rounded button edges for a softer look
           padding: "10px 20px",
           boxShadow: "none",
-          // '&:hover': {
-          //   backgroundColor: '#A4D6A7', // Subtle green hover effect
-          //   color: '#FFFFFF',
-          //   transition: 'color 0.3s ease-in-out',
-          // },
         },
         contained: {
           boxShadow: "none",
-          // '&:hover': {
-          //   color: '#FFFFFF',
-          // },
         },
         outlined: {
           boxShadow: "none",
-          // '&:hover': {
-          //   color: '#FFFFFF',
-          // },
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
-        root: {
-          borderRadius: "12px", // Soft rounded edges for cards and paper elements
-          boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)", // Light shadow for depth
-        },
+        root: {},
       },
     },
     MuiTextField: {
       styleOverrides: {
-        root: {
-          "& .MuiInputBase-root": {
-            borderRadius: "8px", // Rounded corners for input fields
-            backgroundColor: "#F4F9F4", // Subtle background for input fields
-          },
-        },
+        root: {},
       },
     },
-  },
+  //   MuiListItemButton: {
+  //     defaultProps: {
+  //       disableRipple: true,
+  //       disableTouchRipple: true
+  //     },
+  // }
+  }
 });
