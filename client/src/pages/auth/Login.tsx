@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { TextField, Button, Typography, Box, Container } from "@mui/material";
 import { theme } from "@components/theme";
-import { useLoginUser } from "./authActions";
+import { useLogin } from "./authActions";
 
 export const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const { mutate: login } = useLoginUser(username, password);
+  const login = useLogin();
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     console.log("Login submitted with:", { username, password });

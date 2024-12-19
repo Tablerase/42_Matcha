@@ -6,9 +6,9 @@ export const Browse = () => {
   return (
     <>
       {isLoading ? <div>Loading...</div> : null}
-      {isSuccess && users
+      {/* {isSuccess && users
         ? users.map((user) => <div key={user.id}>Users</div>)
-        : null}
+        : null} */}
       {isSuccess && !users ? <div>No users found</div> : null}
       {isError ? <div>Something went wrong</div> : null}
     </>

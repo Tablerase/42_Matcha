@@ -1,43 +1,26 @@
-import { AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import {
-  useQuery,
-  useQueryClient,
-  QueryObserverResult,
   useMutation,
-  MutationObserverResult,
-  UseBaseMutationResult,
 } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { queryClient } from "../../app/App";
+import { User, UserLogin } from "@utils/interfaces";
 
-interface UserLogin {
-  username: string;
-  password: string;
-}
-
-const loginUser = async (
-  username: string,
-  password: string
-): Promise<AxiosResponse<UserLogin, any>> => {
-  return await client.post<UserLogin>("/auth/login", { username, password });
+export const loginUser = async (data: UserLogin) => {
+  const user = await client.post<User>("/auth/login", data, { withCredentials: true });
+  return user.data as User;
 };
 
-export const useLoginUser = (
-  username: string,
-  password: string
-): UseBaseMutationResult<
-  AxiosResponse<UserLogin, any>,
-  unknown,
-  UserLogin,
-  unknown
-> => {
-  const queryClient = useQueryClient();
+export const useLogin = () => {
   const navigate = useNavigate();
-  return useMutation({
-    mutationFn: (user) => loginUser(username, password),
+  const { mutate: login } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: loginUser,
     onSuccess: () => {
-      // queryClient.invalidateQueries(["currentUser"]);
-      navigate("/", { replace: true });
+      console.log("Login successful");
+      // queryClient.invalidateQueries(["user"]);
+      navigate("/browse", { replace: true });
     },
   });
+  return login;
 };

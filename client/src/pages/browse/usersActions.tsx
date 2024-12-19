@@ -1,15 +1,10 @@
 import { AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
-
-interface User {
-  id: number;
-  email: string;
-  username: string;
-}
+import { User } from "@utils/interfaces";
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
-  return await client.get<User[]>("/users");
+  return await client.get<User[]>("/users", { withCredentials: true });
 };
 
 export const useFetchUsers = (): QueryObserverResult<User[], any> => {
