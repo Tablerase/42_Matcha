@@ -1,7 +1,10 @@
 ### Protected routes
 
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NjE3NTEzLCJleHAiOjE3MzUyMjIzMTN9.D2N9XdPS0Rs4qGtOhioFNRmP6TFYPfAfq4t4zlIQ08E
+
 GET http://localhost:8000/users
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QHRlc2hnZnQuY29tIiwiaWF0IjoxNzM0NDQxMDQyLCJleHAiOjE3MzQ1Mjc0NDJ9.VD-nSX7CNGXykdDuGaQEXib8Ade0-40mUSY0tG1p0EE
+Cookie: authToken={{authToken}}
+
 ### Get users blocked by user with id 3
 
 GET http://localhost:8000/users/2/blocked

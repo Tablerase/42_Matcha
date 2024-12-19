@@ -22,8 +22,8 @@ function authenticateToken(
   res: Response,
   next: NextFunction
 ): Response | void {
-  const authHeader = req.headers.authorization;
-  const token = authHeader?.split(" ")[1];
+  const authHeader = req.headers.cookie;
+  const token = authHeader?.split("=")[1];
 
   if (!token) {
     return res.sendStatus(401);

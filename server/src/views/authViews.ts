@@ -8,10 +8,9 @@ import { validatePassword } from "@utils/bcrypt";
 const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
   const refreshToken = createRefreshToken(user);
   await authModel.createRefreshToken({ id: user.id, token: refreshToken });
-  req.res?.cookie("refresh_token", refreshToken, {
+  req.res?.cookie("authToken", refreshToken, {
     httpOnly: true,
-    path: "/auth/refresh_token",
-    sameSite: false,
+    path: "/",
     maxAge: 60 * 60 * 24 * 100,
     expires: new Date(Date.now() + 60 * 60 * 24 * 100),
   });
@@ -28,7 +27,6 @@ export const authenticateUser = async (
 
     const isUserExist = await userModel.getUserByUsername(username);
 
-    // We don't want to give any information about the user existence
     if (!isUserExist) {
       res.status(401).json({
         status: 401,
