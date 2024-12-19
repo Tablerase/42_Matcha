@@ -10,44 +10,52 @@ import ContentCut from "@mui/icons-material/ContentCut";
 import ContentCopy from "@mui/icons-material/ContentCopy";
 import ContentPaste from "@mui/icons-material/ContentPaste";
 import Cloud from "@mui/icons-material/Cloud";
+import ChatIcon from "@mui/icons-material/Chat";
+import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import SearchIcon from "@mui/icons-material/Search";
+import FavoriteIcon from "@mui/icons-material/Favorite";
+import LogoutIcon from "@mui/icons-material/Logout";
+import NotificationsIcon from "@mui/icons-material/Notifications";
 import { MatchaNavBar } from "./MatchaNavBar";
 
 export const Sidebar = () => {
   return (
     <MatchaNavBar>
       <ListItemButton>
-        <ListItemIcon>
-          <ContentCut fontSize="small" />
+        <ListItemIcon sx={{ minWidth: "2em" }}>
+          <ChatIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Cut</ListItemText>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          ⌘X
-        </Typography>
+        <ListItemText>Chat</ListItemText>
       </ListItemButton>
       <ListItemButton>
-        <ListItemIcon>
-          <ContentCopy fontSize="small" />
+        <ListItemIcon sx={{ minWidth: "2em" }}>
+          <AccountCircleIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Copy</ListItemText>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          ⌘C
-        </Typography>
+        <ListItemText>Account</ListItemText>
       </ListItemButton>
       <ListItemButton>
-        <ListItemIcon>
-          <ContentPaste fontSize="small" />
+        <ListItemIcon sx={{ minWidth: "2em" }}>
+          <SearchIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Paste</ListItemText>
-        <Typography variant="body2" sx={{ color: "text.secondary" }}>
-          ⌘V
-        </Typography>
+        <ListItemText>Browse</ListItemText>
       </ListItemButton>
-      <Divider />
       <ListItemButton>
-        <ListItemIcon>
-          <Cloud fontSize="small" />
+        <ListItemIcon sx={{ minWidth: "2em" }}>
+          <FavoriteIcon fontSize="small" />
         </ListItemIcon>
-        <ListItemText>Web Clipboard</ListItemText>
+        <ListItemText>Matches</ListItemText>
+      </ListItemButton>
+      <ListItemButton>
+        <ListItemIcon sx={{ minWidth: "2em" }}>
+          <NotificationsIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Notifications</ListItemText>
+      </ListItemButton>
+      <ListItemButton>
+        <ListItemIcon sx={{ minWidth: "2em" }}>
+          <LogoutIcon fontSize="small" />
+        </ListItemIcon>
+        <ListItemText>Logout</ListItemText>
       </ListItemButton>
     </MatchaNavBar>
   );
