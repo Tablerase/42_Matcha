@@ -7,6 +7,8 @@
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.1.10",
     "@mui/material": "^6.1.10",
+    "@tanstack/react-query": "^5.62.8",
+    "@tanstack/react-query-devtools": "^5.62.8",
     "@testing-library/jest-dom": "^5.14.1",
     "@testing-library/react": "^13.0.0",
     "@testing-library/user-event": "^13.2.1",
@@ -14,6 +16,7 @@
     "@types/node": "^16.7.13",
     "@types/react": "^18.0.0",
     "@types/react-dom": "^18.0.0",
+    "axios": "^1.7.9",
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^7.0.2",
@@ -23,7 +26,7 @@
   "scripts": {
     "start": "craco start",
     "build": "craco build",
-    "test":  "craco test",
+    "test": "craco test",
     "eject": "craco eject"
   },
   "eslintConfig": {
