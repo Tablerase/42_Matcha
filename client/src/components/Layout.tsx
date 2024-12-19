@@ -1,15 +1,15 @@
 import React from "react";
 import { Sidebar } from "@components/Sidebar";
 import { Props } from "@utils/interfaces";
-import { Container } from "@mui/material";
+import { Container, Box } from "@mui/material";
 
 export const Layout: React.FC<Props> = (props) => {
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "row-reverse" }}>
       <Sidebar />
-      <Container>
-        <main>{props.children}</main>
+      <Container sx={{ flexGrow: 1 }}>
+        <Box component="main">{props.children}</Box>
       </Container>
-    </>
+    </Box>
   );
 };
