@@ -1,7 +1,6 @@
 ### Protected routes
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NjE3NTEzLCJleHAiOjE3MzUyMjIzMTN9.D2N9XdPS0Rs4qGtOhioFNRmP6TFYPfAfq4t4zlIQ08E
-
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NzA0ODk2LCJleHAiOjE3MzQ3MDU3OTZ9.RP82j6-yiVmcvCOQPYry9jco_kLfEnFc1zk17VY7g9s
 GET http://localhost:8000/users
 Cookie: authToken={{authToken}}
 
@@ -73,3 +72,8 @@ Content-Type: application/json
     "password": "password"
 
 }
+
+###
+
+GET http://localhost:8000/users/me
+

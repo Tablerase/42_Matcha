@@ -1,23 +1,25 @@
 import { Layout } from "@components/Layout"
-import { useFetchUserById } from "../browse/usersActions";
+import { useFetchCurrentUser} from "../browse/usersActions";
+import { ViewProfile } from "./ViewProfile";
+import { LinearProgress } from "@mui/material";
 
 export const Profile = () => {
-  // TODO: Get current user 
-
-  const {data: user, isLoading, isError, isSuccess} = useFetchUserById(1);
-  console.log(user);
-  if (isLoading) return <div>Loading...</div>;
-  if (isError) return <div>Error loading profile</div>;
-
+  const {data: user, isLoading, error, isSuccess} = useFetchCurrentUser();
+  let content;
+  if (isLoading) {
+    content = (
+        <LinearProgress />
+    );
+  }
+  if (isSuccess && user) {
+    content = <ViewProfile {...user} />;
+  }
+  if (error) {
+    content = <>{error.toString()}</>;
+  }
   return (
-    <Layout>
-      <h1>Profile</h1>
-      {/* {user && (
-        <div>
-          <p>Username: {user.username}</p>
-          <p>Email: {user.email}</p>
-        </div>
-      )} */}
-    </Layout>
+    <>
+      <Layout>{content}</Layout>
+    </>
   );
 };

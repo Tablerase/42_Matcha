@@ -2,7 +2,7 @@ import { client } from "@utils/axios";
 import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../app/App";
-import { User, UserLogin } from "@/app/interfaces";
+import { User, UserLogin } from "@app/interfaces";
 
 export const loginUser = async (data: UserLogin) => {
   const user = await client.post<User>("/auth/login", data, {
@@ -18,7 +18,7 @@ export const useLogin = () => {
     mutationFn: loginUser,
     onSuccess: () => {
       console.log("Login successful");
-      // queryClient.invalidateQueries(["user"]);
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       navigate("/browse", { replace: true });
     },
   });

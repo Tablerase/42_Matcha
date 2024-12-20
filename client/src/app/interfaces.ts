@@ -20,6 +20,11 @@ export interface User {
   lastSeen: Date;
 }
 
+export interface UserResponse {
+  data: User;
+  status: number;
+}
+
 export interface Props {
   children: ReactNode;
 }

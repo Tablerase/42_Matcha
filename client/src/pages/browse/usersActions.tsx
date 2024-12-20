@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
-import { User } from "@/app/interfaces";
+import { User, UserResponse } from "@app/interfaces";
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
   return await client.get<User[]>("/users");
@@ -9,6 +9,10 @@ const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
 
 const fetchUserById = async (id: number): Promise<AxiosResponse<User, any>> => {
   return await client.get<User>(`/users/${id}`, { withCredentials: true });
+};
+
+const fetchCurrentUser = async (): Promise<AxiosResponse<UserResponse, any>> => {
+  return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
 };
 
 export const useFetchUsers = (): QueryObserverResult<User[], any> => {
@@ -21,7 +25,7 @@ export const useFetchUsers = (): QueryObserverResult<User[], any> => {
   });
 };
 
-// not for current user
+// TODO: not for current user, probably needs to be changed
 export const useFetchUserById = (
   id: number
 ): QueryObserverResult<User, any> => {
@@ -34,5 +38,30 @@ export const useFetchUserById = (
       return userData as User;
     },
     queryKey: ["user", id],
+  });
+};
+
+export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
+  return useQuery<User, any>({
+    queryFn: async () => {
+      const response = await fetchCurrentUser();
+      const userData: any = response.data.data;
+      console.log(userData);
+      return {
+        id: userData.id,
+        firstName: userData.first_name,
+        lastName: userData.last_name,
+        email: userData.email,
+        username: userData.username,
+        gender: userData.gender,
+        preferences: userData.preferences,
+        dateOfBirth: userData.date_of_birth,
+        bio: userData.bio,
+        location: userData.location,
+        fameRate: userData.fame_rate,
+        lastSeen: userData.last_seen
+      } as User;
+    },
+    queryKey: ["currentUser"],
   });
 };

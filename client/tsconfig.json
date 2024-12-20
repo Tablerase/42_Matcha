@@ -28,6 +28,7 @@
       "@utils/*": ["utils/*"],
       "@styles/*": ["styles/*"],
       "@assets/*": ["assets/*"],
+      "@app/*": ["app/*"],
     }
   },
   "include": ["src"]

@@ -1,6 +1,6 @@
 import React from "react";
 import { Sidebar } from "@components/Sidebar";
-import { Props } from "@/app/interfaces";
+import { Props } from "@app/interfaces";
 import { Container, Box } from "@mui/material";
 
 export const Layout: React.FC<Props> = (props) => {

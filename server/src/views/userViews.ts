@@ -1,6 +1,7 @@
 import { User } from "@interfaces/userInterface";
 import { user as userModel } from "@models/userModel";
 import { Request, Response } from "express";
+import { jwtDecode } from "jwt-decode";
 
 export const createUser = async (
   req: Request,
@@ -76,6 +77,37 @@ export const getUserById = async (
       status: 200,
       data: user,
     });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const getCurrentUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const authHeader = req.headers.cookie;
+    const token = authHeader?.split("=")[1];
+    if (token) {
+      const decoded = jwtDecode(token);
+      const userId = (decoded as { id: number }).id;
+      const user = await userModel.getUserById(userId);
+      if (!user) {
+        res.status(404).json({
+          status: 404,
+          message: "User not found",
+        });
+        return;
+      }
+      res.status(200).json({
+        status: 200,
+        data: user,
+      });
+    }
   } catch (error) {
     res.status(500).json({
       status: 500,
