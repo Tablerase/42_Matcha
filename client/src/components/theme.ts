@@ -114,5 +114,12 @@ export const theme = createTheme({
   //       disableTouchRipple: true
   //     },
   // }
+  // MuiInputLabel: {
+  //   styleOverrides: {
+  //     root: {
+  //       color: 'red'
+  //     }
+  //   }
+  // }
   }
 });
