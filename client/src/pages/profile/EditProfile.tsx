@@ -2,22 +2,26 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import Stack from "@mui/material/Stack";
-import Select from "@mui/material/Select";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import { useState } from "react";
-import { MenuItem, CardContent, TextField, Avatar, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
+import {
+  CardContent,
+  TextField,
+  Avatar,
+  FormLabel,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+} from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import CheckBox from "@mui/material/Checkbox";
-import ListItemText from "@mui/material/ListItemText";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import InputLabel from "@mui/material/InputLabel";
-import Chip from "@mui/material/Chip";
-import OutlinedInput from "@mui/material/OutlinedInput";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { User } from "@/app/interfaces";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import { MultipleSelectChip } from "@/components/MultipleSelectChip";
 
 interface FormData extends Omit<User, "dateOfBirth"> {
   dateOfBirth: Date | null;
@@ -53,7 +57,7 @@ export const EditProfile = (user: User) => {
     setFormData({ ...formData, dateOfBirth: date });
   };
 
-  // for interests tags
+  // for interests tags + preferences
   const [personName, setPersonName] = useState<string[]>([]);
 
   const handleChangeTags = (event: SelectChangeEvent<typeof personName>) => {
@@ -62,29 +66,11 @@ export const EditProfile = (user: User) => {
     } = event;
     setPersonName(typeof value === "string" ? value.split(",") : value);
   };
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
 
-  const names = [
-    "Oliver Hansen",
-    "Van Henry",
-    "April Tucker",
-    "Ralph Hubbard",
-    "Omar Alexander",
-    "Carlos Abbott",
-    "Miriam Wagner",
-    "Bradley Wilkerson",
-    "Virginia Andrews",
-    "Kelly Snyder",
-  ];
+  // TODO: fetch from the backend
+  const items = ["wine", "games", "sport", "travel"];
+
+  const preferences = ["homosexual", "heterosexual", "bisexual"];
 
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
@@ -137,9 +123,7 @@ export const EditProfile = (user: User) => {
           />
 
           <FormControl fullWidth>
-            <FormLabel id="gender">
-              Gender
-            </FormLabel>
+            <FormLabel id="gender">Gender</FormLabel>
             <RadioGroup
               row
               aria-labelledby="gender"
@@ -167,15 +151,7 @@ export const EditProfile = (user: User) => {
 
           <FormControl fullWidth>
             <InputLabel>Preferences</InputLabel>
-            <Select
-              value={formData!.preferences}
-              onChange={handleChange("preferences")}
-              label="Preferences"
-            >
-              <MenuItem value="heterosexual">Heterosexual</MenuItem>
-              <MenuItem value="homosexual">Homosexual</MenuItem>
-              <MenuItem value="bisexual">Bisexual</MenuItem>
-            </Select>
+            <MultipleSelectChip {...preferences} />
           </FormControl>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -189,31 +165,7 @@ export const EditProfile = (user: User) => {
 
           <FormControl fullWidth>
             <InputLabel id="tags">Interests</InputLabel>
-            <Select
-              labelId="Interests"
-              id="Interests"
-              multiple
-              value={personName}
-              onChange={handleChangeTags}
-              input={
-                <OutlinedInput id="select-multiple-chip" label="Interests" />
-              }
-              renderValue={(selected) => (
-                <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                  {selected.map((value) => (
-                    <Chip key={value} label={value} />
-                  ))}
-                </Box>
-              )}
-              MenuProps={MenuProps}
-            >
-              {names.map((name) => (
-                <MenuItem key={name} value={name}>
-                  <CheckBox checked={personName.includes(name)} />
-                  <ListItemText primary={name} />
-                </MenuItem>
-              ))}
-            </Select>
+            <MultipleSelectChip {...items} />
           </FormControl>
         </Stack>
       </CardContent>
