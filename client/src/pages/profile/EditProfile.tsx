@@ -6,7 +6,7 @@ import Select from "@mui/material/Select";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import { useState } from "react";
-import { MenuItem, CardContent, TextField, Avatar } from "@mui/material";
+import { MenuItem, CardContent, TextField, Avatar, FormLabel, RadioGroup, FormControlLabel, Radio } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import CheckBox from "@mui/material/Checkbox";
@@ -60,9 +60,7 @@ export const EditProfile = (user: User) => {
     const {
       target: { value },
     } = event;
-    setPersonName(
-      typeof value === "string" ? value.split(",") : value
-    );
+    setPersonName(typeof value === "string" ? value.split(",") : value);
   };
   const ITEM_HEIGHT = 48;
   const ITEM_PADDING_TOP = 8;
@@ -139,20 +137,32 @@ export const EditProfile = (user: User) => {
           />
 
           <FormControl fullWidth>
-            <InputLabel>Gender</InputLabel>
-            <Select
+            <FormLabel id="gender">
+              Gender
+            </FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="gender"
+              name="gender"
               value={formData.gender}
               onChange={
                 handleChange("gender") as (
                   event: SelectChangeEvent<string>
                 ) => void
               }
-              label="Gender"
             >
-              <MenuItem value="male">Male</MenuItem>
-              <MenuItem value="female">Female</MenuItem>
-              <MenuItem value="other">Other</MenuItem>
-            </Select>
+              <FormControlLabel
+                value="female"
+                control={<Radio />}
+                label="Female"
+              />
+              <FormControlLabel value="male" control={<Radio />} label="Male" />
+              <FormControlLabel
+                value="other"
+                control={<Radio />}
+                label="Other"
+              />
+            </RadioGroup>
           </FormControl>
 
           <FormControl fullWidth>
@@ -174,11 +184,8 @@ export const EditProfile = (user: User) => {
               onChange={() => handleDateChange}
             />
           </LocalizationProvider>
-            {/* TODO: add proper location logic with parsing and setting coordinates */}
-          <TextField
-            label="Location"
-            fullWidth
-          />
+          {/* TODO: add proper location logic with parsing and setting coordinates */}
+          <TextField label="Location" fullWidth />
 
           <FormControl fullWidth>
             <InputLabel id="tags">Interests</InputLabel>
