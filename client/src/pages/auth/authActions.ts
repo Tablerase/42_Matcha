@@ -1,13 +1,13 @@
 import { client } from "@utils/axios";
-import {
-  useMutation,
-} from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../app/App";
 import { User, UserLogin } from "@utils/interfaces";
 
 export const loginUser = async (data: UserLogin) => {
-  const user = await client.post<User>("/auth/login", data, { withCredentials: true });
+  const user = await client.post<User>("/auth/login", data, {
+    withCredentials: true,
+  });
   return user.data as User;
 };
 
@@ -23,4 +23,36 @@ export const useLogin = () => {
     },
   });
   return login;
+};
+
+/**
+ * Logout
+ */
+
+export const logoutUser = async () => {
+  try {
+    const response = await client.post(
+      "/auth/logout",
+      {},
+      { withCredentials: true }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Logout failed:", error);
+    throw error;
+  }
+};
+
+export const useLogout = () => {
+  const navigate = useNavigate();
+  const { mutate: logout } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: logoutUser,
+    onSuccess: () => {
+      console.log("Logout successful");
+      queryClient.clear();
+      navigate("/", { replace: true });
+    },
+  });
+  return logout;
 };
