@@ -15,7 +15,9 @@
       "@views/*": ["src/views/*"],
       "@routes/*": ["src/routes/*"],
       "@interfaces/*": ["src/interfaces/*"],
-      "@utils/*": ["src/utils/*"]
+      "@middlewares/*": ["src/middlewares/*"],
+      "@utils/*": ["src/utils/*"],
+      "@settings": ["src/settings.ts"]
     }
   },
   "include": ["src/**/*", "settings.ts"],

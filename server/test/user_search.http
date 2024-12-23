@@ -1,0 +1,10 @@
+### Auth token
+
+@authToken =eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0OTc0MDA3LCJleHAiOjE3MzU1Nzg4MDd9.pkyntmH_mCFvPzDFMLniXGPXdc67IdvOAi_jzjFAO6M 
+
+### 
+
+GET http://localhost:8000/users
+Cookie: authToken={{authToken}}
+
+###

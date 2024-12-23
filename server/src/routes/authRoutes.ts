@@ -1,12 +1,18 @@
 import express, { Router } from "express";
-import { authenticateUser } from "@views/authViews";
+import {
+  validateUserLogin,
+  validateUserCreation,
+} from "@middlewares/validateUser";
+import { authenticateUser, logoutUser } from "@views/authViews";
 import { createUser } from "@views/userViews";
-import { validateUserLogin, validateUserCreation } from "../middleware/validateUser";
+import { authenticateToken } from "@middlewares/auth";
 
 const router: Router = express.Router();
 
 router.post("/login", validateUserLogin, authenticateUser);
 router.post("/signup", validateUserCreation, createUser);
+
+router.post("/logout", authenticateToken, logoutUser);
 
 // TODO: Implement these routes
 // router.post('/logout', authenticateToken, logoutUser);

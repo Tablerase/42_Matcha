@@ -2,28 +2,32 @@ import "module-alias/register";
 import express, { Request, Response, Application } from "express";
 import { ErrorRequestHandler, RequestHandler } from "express";
 import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 import cors from "cors";
 import authRoutes from "@routes/authRoutes";
 import userRoutes from "@routes/userRoutes";
-import { authenticateToken } from "./middleware/auth";
+import { authenticateToken } from "./middlewares/auth";
 import { SERVER_PORT, FRONTEND_ORIGIN } from "./settings";
 
 const app: Application = express();
 
 // Middleware with proper typing
+app.use(cookieParser());
 app.use(bodyParser.json() as RequestHandler);
 app.use(
   bodyParser.urlencoded({
     extended: true,
   }) as RequestHandler
 );
-app.use(cors({
-  origin: FRONTEND_ORIGIN,
-  credentials: true,
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Set-Cookie'],
-}));
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+    exposedHeaders: ["Set-Cookie"],
+  })
+);
 
 // Error handling middleware
 const errorHandler: ErrorRequestHandler = (err, req, res, next) => {
