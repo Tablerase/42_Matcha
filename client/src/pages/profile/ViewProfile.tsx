@@ -13,10 +13,13 @@ import {
 } from "@mui/material";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
+import { EditProfile } from "./EditProfile";
 
 export const ViewProfile = (user: User) => {
   const [editMode, setEditMode] = useState(false);
-  // TODO: show either editMode or viewMode depending on the boolean
+  if (editMode) {
+    return <EditProfile {...user} />;
+  }
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
@@ -107,6 +110,7 @@ export const ViewProfile = (user: User) => {
           startIcon={<EditRoundedIcon />}
           onClick={() => {
             /* TODO: Add navigation to edit mode */
+            setEditMode(true);
           }}
         >
           Edit Profile

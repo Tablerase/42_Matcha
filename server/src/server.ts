@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import cors from "cors";
 import authRoutes from "@routes/authRoutes";
 import userRoutes from "@routes/userRoutes";
+import tagsRoutes from "@routes/tagsRoutes";
 import { authenticateToken } from "./middleware/auth";
 import { SERVER_PORT, FRONTEND_ORIGIN } from "./settings";
 
@@ -41,6 +42,7 @@ publicRoutes.use("/auth", authRoutes);
 // Protected Routes
 const protectedRoutes = express.Router();
 protectedRoutes.use("/users", userRoutes);
+protectedRoutes.use("/tags", tagsRoutes);
 
 // Apply middleware and routes
 app.use(publicRoutes);

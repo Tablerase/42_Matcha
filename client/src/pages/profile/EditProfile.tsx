@@ -22,13 +22,16 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { User } from "@/app/interfaces";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
+import { useFetchAllTags } from "@pages/browse/usersActions";
 
 interface FormData extends Omit<User, "dateOfBirth"> {
   dateOfBirth: Date | null;
 }
 
 export const EditProfile = (user: User) => {
-  const [formData, setFormData] = useState<FormData>({
+const { data: tags } = useFetchAllTags();
+const tagsArr = tags?.map((tag) => tag.tag) || [];  
+const [formData, setFormData] = useState<FormData>({
     id: 0,
     firstName: "",
     lastName: "",
@@ -165,7 +168,7 @@ export const EditProfile = (user: User) => {
 
           <FormControl fullWidth>
             <InputLabel id="tags">Interests</InputLabel>
-            <MultipleSelectChip {...items} />
+            <MultipleSelectChip {...tagsArr} />
           </FormControl>
         </Stack>
       </CardContent>

@@ -1,5 +1,6 @@
 import { QueryResult } from "pg";
 import { pool } from "../settings";
+import { Tag } from "@interfaces/tagInterface"
 
 class TagModel {
   async getUserTags(userId: number): Promise<any[]> {
@@ -32,6 +33,16 @@ class TagModel {
     const result: QueryResult = await pool.query(query);
     return result.rows;
   }
+
+  async getAllTags(): Promise<Tag[]> {
+    const query = {
+        text: `Select * FROM tags`,
+        values: [] as any[]
+    }
+    const result: QueryResult = await pool.query(query);
+    return result.rows;
+  }
+
 }
 
 export const tagModel = new TagModel();

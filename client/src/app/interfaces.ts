@@ -28,3 +28,8 @@ export interface UserResponse {
 export interface Props {
   children: ReactNode;
 }
+
+export interface Tag {
+    id: number,
+    tag: string
+}

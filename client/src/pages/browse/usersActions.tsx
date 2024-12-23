@@ -1,7 +1,7 @@
 import { AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
-import { User, UserResponse } from "@app/interfaces";
+import { User, UserResponse, Tag } from "@app/interfaces";
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
   return await client.get<User[]>("/users");
@@ -14,6 +14,21 @@ const fetchUserById = async (id: number): Promise<AxiosResponse<User, any>> => {
 const fetchCurrentUser = async (): Promise<AxiosResponse<UserResponse, any>> => {
   return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
 };
+
+const fetchAllTags = async (): Promise<AxiosResponse> => {
+    return await client.get(`/tags`, { withCredentials: true });
+  };
+
+
+export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
+    return useQuery<Tag[], any>({
+      queryFn: async () => {
+        const { data } = await fetchAllTags();
+        return data;
+      },
+      queryKey: ["tags"],
+    });
+  };
 
 export const useFetchUsers = (): QueryObserverResult<User[], any> => {
   return useQuery<User[], any>({

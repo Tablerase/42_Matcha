@@ -71,3 +71,14 @@ export const deleteUserTag = async (
     handleErrorResponse(res, error);
   }
 };
+
+export const getAllTags = async (req: Request,
+    res: Response): Promise<void> => {
+    try {
+        const tags = await tagModel.getAllTags();
+        res.status(200).json(tags)
+    } catch (error) {
+        handleErrorResponse(res, error);
+
+    }
+}

@@ -1,8 +1,9 @@
 ### Protected routes
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NzA0ODk2LCJleHAiOjE3MzQ3MDU3OTZ9.RP82j6-yiVmcvCOQPYry9jco_kLfEnFc1zk17VY7g9s
-GET http://localhost:8000/users
-Cookie: authToken={{authToken}}
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0OTUzNDQ3LCJleHAiOjE3MzQ5NTQzNDd9.9w3HZwHQi8hT1wy06lJsU9KLwf0tHoSxSHwnLTMaMdQ
+
+GET http://localhost:8000/tags
+Set-Cookie: authToken={{authToken}}
 
 ### Get users blocked by user with id 3
 
@@ -75,5 +76,4 @@ Content-Type: application/json
 
 ###
 
-GET http://localhost:8000/users/me
 
