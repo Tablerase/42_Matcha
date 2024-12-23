@@ -28,7 +28,12 @@ interface FormData extends Omit<User, "dateOfBirth"> {
   dateOfBirth: Date | null;
 }
 
-export const EditProfile = (user: User) => {
+interface EditProfileProps {
+    user: User;
+    setEditMode: () => void;
+    }
+
+export const EditProfile = ({user, setEditMode}: EditProfileProps) => {
 const { data: tags } = useFetchAllTags();
 const tagsArr = tags?.map((tag) => tag.tag) || [];  
 const [formData, setFormData] = useState<FormData>({
@@ -173,8 +178,8 @@ const [formData, setFormData] = useState<FormData>({
         </Stack>
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
-        <Button variant="outlined">Cancel</Button>
-        <Button variant="contained">Save Changes</Button>
+        <Button variant="outlined" onClick={setEditMode}>Cancel</Button>
+        <Button variant="contained" onClick={()=>{setEditMode(); console.log(342)}}>Save Changes</Button>
       </CardActions>
     </Card>
   );

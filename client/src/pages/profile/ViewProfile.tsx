@@ -18,7 +18,7 @@ import { EditProfile } from "./EditProfile";
 export const ViewProfile = (user: User) => {
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
-    return <EditProfile {...user} />;
+    return <EditProfile user={user} setEditMode={()=>setEditMode(false)}/>;
   }
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
