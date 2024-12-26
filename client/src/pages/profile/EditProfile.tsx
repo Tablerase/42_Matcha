@@ -23,9 +23,10 @@ import { User } from "@/app/interfaces";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
 import { useUpdateUserProfile, useFetchAllTags } from "@pages/browse/usersActions";
+import dayjs, { Dayjs } from "dayjs";
 
 interface FormData extends Omit<User, "dateOfBirth"> {
-  dateOfBirth: Date | null;
+  dateOfBirth: Dayjs | null;
 }
 
 interface EditProfileProps {
@@ -37,7 +38,8 @@ export const EditProfile = ({user, setEditMode}: EditProfileProps) => {
 const { data: tags } = useFetchAllTags();
 const tagsArr = tags?.map((tag) => tag.tag) || [];  
 const [formData, setFormData] = useState<FormData>({
-    ...user
+    ...user,
+    dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null
   });
 
   const handleChange =
@@ -50,8 +52,15 @@ const [formData, setFormData] = useState<FormData>({
       setFormData({ ...formData, [field]: event.target.value });
     };
 
-  const handleDateChange = (date: Date | null) => {
-    setFormData({ ...formData, dateOfBirth: date });
+  const handleDateChange = (newValue: Dayjs | null) => {
+    if (!newValue || !newValue.isValid()) {
+      return;
+    }
+    
+    setFormData(prev => ({ 
+      ...prev, 
+      dateOfBirth: newValue
+    }));
   };
 
   // for interests tags + preferences
@@ -68,6 +77,17 @@ const [formData, setFormData] = useState<FormData>({
   const preferences = ["homosexual", "heterosexual", "bisexual"];
 
   const updateUser = useUpdateUserProfile();
+  
+  const handleSubmit = async () => {
+    const updatedUser = {
+      ...formData,
+      dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth.toDate() : undefined
+    };
+    
+    updateUser(updatedUser);
+    setEditMode();
+  };
+
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
@@ -153,7 +173,15 @@ const [formData, setFormData] = useState<FormData>({
           <LocalizationProvider dateAdapter={AdapterDayjs}>
             <DatePicker
               label="Date of birth"
-              onChange={() => handleDateChange}
+              value={formData.dateOfBirth}
+              onChange={handleDateChange}
+              format="DD/MM/YYYY"
+              slotProps={{ 
+                textField: { 
+                  fullWidth: true,
+                  error: !formData.dateOfBirth
+                } 
+              }}
             />
           </LocalizationProvider>
           {/* TODO: add proper location logic with parsing and setting coordinates */}
@@ -167,11 +195,7 @@ const [formData, setFormData] = useState<FormData>({
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
         <Button variant="outlined" onClick={setEditMode}>Cancel</Button>
-        <Button variant="contained" onClick={() => {
-          setEditMode();
-          const updatedFormData = { ...formData, dateOfBirth: formData.dateOfBirth || undefined };
-          updateUser(updatedFormData);
-        }}>Save Changes</Button>
+        <Button variant="contained" onClick={handleSubmit}>Save Changes</Button>
       </CardActions>
     </Card>
   );

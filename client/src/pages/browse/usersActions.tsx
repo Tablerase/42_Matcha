@@ -26,13 +26,15 @@ const fetchAllTags = async (): Promise<AxiosResponse> => {
 const updateUser = async (data: Partial<User>) => {
   const updates = {
     bio: data.bio,
-    dateOfBirth: data.dateOfBirth,
+    date_of_birth: data.dateOfBirth,
     email: data.email,
-    firstName: data.firstName,
+    first_name: data.firstName,
     gender: data.gender,
-    lastName: data.lastName,
+    last_name: data.lastName,
     // location: data.location,
   };
+  console.log(`DOB: ${updates.date_of_birth}`)
+  console.log(updates)
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
   });

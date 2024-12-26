@@ -43,7 +43,8 @@ Set-Cookie: authToken={{authToken}}
     "gender": "male",
     "bio": "fdhdfh",
     "location": "(-100,-39000.90)",
-    "username": "test"
+    "username": "test",
+    "date_of_birth": "Fri Dec 20 2024"
 }
 
 ### Unprotected routes

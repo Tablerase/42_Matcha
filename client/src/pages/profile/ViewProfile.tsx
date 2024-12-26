@@ -55,7 +55,7 @@ export const ViewProfile = (user: User) => {
             <Typography variant="subtitle2" color="text.secondary">
               Date of birth
             </Typography>
-            {user.dateOfBirth && <Typography>{user.dateOfBirth.toDateString()}</Typography>}
+            {user.dateOfBirth ? dayjs(user.dateOfBirth).format('MMMM D, YYYY') : 'Not specified'}
           </Box>
 
           <Box>
