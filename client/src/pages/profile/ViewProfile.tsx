@@ -50,12 +50,16 @@ export const ViewProfile = (user: User) => {
             </Typography>
             <Typography>{user.email}</Typography>
           </Box>
-          {/* TODO: display DOB properly */}
+          
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
-              Date of birth
+              Date of Birth
             </Typography>
-            {user.dateOfBirth ? dayjs(user.dateOfBirth).format('MMMM D, YYYY') : 'Not specified'}
+            <Typography>
+              {user.dateOfBirth
+                ? dayjs(user.dateOfBirth).format("MMMM D, YYYY")
+                : "Not specified"}
+            </Typography>
           </Box>
 
           <Box>
@@ -73,17 +77,6 @@ export const ViewProfile = (user: User) => {
             </Typography>
             <Typography sx={{ textTransform: "capitalize" }}>
               {user.preferences}
-            </Typography>
-          </Box>
-
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary">
-              Date of Birth
-            </Typography>
-            <Typography>
-              {user.dateOfBirth
-                ? dayjs(user.dateOfBirth).format("MMMM D, YYYY")
-                : "Not specified"}
             </Typography>
           </Box>
 

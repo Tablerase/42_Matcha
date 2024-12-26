@@ -4,7 +4,7 @@ import { List, ListProps } from "@mui/material";
 export const MatchaNavBar = styled(List)<ListProps>(({ theme }) => ({
   backgroundColor: theme.palette.primary.main,
   color: theme.palette.primary.contrastText,
-  height: "100vh",
+  // height: "100vh",
   "& .MuiListItemIcon-root": {
     minWidth: "2em"
   },
