@@ -2,6 +2,8 @@ import { AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
 import { User, UserResponse, Tag } from "@app/interfaces";
+import { useMutation } from "@tanstack/react-query";
+import { queryClient } from "@/app/App";
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
   return await client.get<User[]>("/users");
@@ -11,24 +13,41 @@ const fetchUserById = async (id: number): Promise<AxiosResponse<User, any>> => {
   return await client.get<User>(`/users/${id}`, { withCredentials: true });
 };
 
-const fetchCurrentUser = async (): Promise<AxiosResponse<UserResponse, any>> => {
+const fetchCurrentUser = async (): Promise<
+  AxiosResponse<UserResponse, any>
+> => {
   return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
 };
 
 const fetchAllTags = async (): Promise<AxiosResponse> => {
-    return await client.get(`/tags`, { withCredentials: true });
-  };
+  return await client.get(`/tags`, { withCredentials: true });
+};
 
+const updateUser = async (data: Partial<User>) => {
+  const updates = {
+    bio: data.bio,
+    dateOfBirth: data.dateOfBirth,
+    email: data.email,
+    firstName: data.firstName,
+    gender: data.gender,
+    lastName: data.lastName,
+    // location: data.location,
+  };
+  const user = await client.put<User>(`/users/${data.id}`, updates, {
+    withCredentials: true,
+  });
+  return user.data as User;
+};
 
 export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
-    return useQuery<Tag[], any>({
-      queryFn: async () => {
-        const { data } = await fetchAllTags();
-        return data;
-      },
-      queryKey: ["tags"],
-    });
-  };
+  return useQuery<Tag[], any>({
+    queryFn: async () => {
+      const { data } = await fetchAllTags();
+      return data;
+    },
+    queryKey: ["tags"],
+  });
+};
 
 export const useFetchUsers = (): QueryObserverResult<User[], any> => {
   return useQuery<User[], any>({
@@ -40,7 +59,7 @@ export const useFetchUsers = (): QueryObserverResult<User[], any> => {
   });
 };
 
-// TODO: not for current user, probably needs to be changed
+// TODO: not for current user
 export const useFetchUserById = (
   id: number
 ): QueryObserverResult<User, any> => {
@@ -74,9 +93,21 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         bio: userData.bio,
         location: userData.location,
         fameRate: userData.fame_rate,
-        lastSeen: userData.last_seen
+        lastSeen: userData.last_seen,
       } as User;
     },
     queryKey: ["currentUser"],
   });
+};
+
+export const useUpdateUserProfile = () => {
+  const { mutate: update } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: updateUser,
+    onSuccess: () => {
+      console.log("Update successful");
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+  return update;
 };

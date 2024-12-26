@@ -50,6 +50,13 @@ export const ViewProfile = (user: User) => {
             </Typography>
             <Typography>{user.email}</Typography>
           </Box>
+          {/* TODO: display DOB properly */}
+          <Box>
+            <Typography variant="subtitle2" color="text.secondary">
+              Date of birth
+            </Typography>
+            {user.dateOfBirth && <Typography>{user.dateOfBirth.toDateString()}</Typography>}
+          </Box>
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary">

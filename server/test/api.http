@@ -1,6 +1,6 @@
 ### Protected routes
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0OTUzNDQ3LCJleHAiOjE3MzQ5NTQzNDd9.9w3HZwHQi8hT1wy06lJsU9KLwf0tHoSxSHwnLTMaMdQ
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM1MjI4Mzc1LCJleHAiOjE3MzUyMjkyNzV9.EwMOrfN2HNm4L8P9YQWj5Co7u1thUXRUzg55f_9Vj6w
 
 GET http://localhost:8000/tags
 Set-Cookie: authToken={{authToken}}
@@ -8,13 +8,13 @@ Set-Cookie: authToken={{authToken}}
 ### Get users blocked by user with id 3
 
 GET http://localhost:8000/users/2/blocked
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTI0ODMxLCJleHAiOjE3MzQ1MjU3MzF9.2HcQX0W-aXM3FaksdY0WaN76f82DO2b-ByyBMSrJOlA
+Set-Cookie: authToken={{authToken}}
 
 ### Block user with id 2 for user with id 3
 
 POST http://localhost:8000/users/2/blocked
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTI0ODMxLCJleHAiOjE3MzQ1MjU3MzF9.2HcQX0W-aXM3FaksdY0WaN76f82DO2b-ByyBMSrJOlA
+Set-Cookie: authToken={{authToken}}
 
 {
     "blockedUserId": 1
@@ -24,7 +24,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiO
 
 DELETE http://localhost:8000/users/3/blocked/
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QHRlc2g0M2c0MTF0LmNvbSIsImlhdCI6MTczNDQ0NDk1OCwiZXhwIjoxNzM0NTMxMzU4fQ.GIaL84DghTTKr4rqPVF7y4vUdv92xwQI8DmQFJ99NMU
+Set-Cookie: authToken={{authToken}}
 
 {
     "blockedUserId": 1
@@ -34,16 +34,16 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiO
 
 PUT http://localhost:8000/users/1
 Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTE3MTE4LCJleHAiOjE3MzQ1MTgwMTh9.lTYskz5VZRpCylaexzk23xwhITAqhByaGmO_J4-gr5Y
+Set-Cookie: authToken={{authToken}}
 
 {
-    "firstName": "testname543",
+    "firstName": "testname",
     "lastName": "tester123",
     "preferences": "heterosexual",
     "gender": "male",
     "bio": "fdhdfh",
     "location": "(-100,-39000.90)",
-    "username": "tesgfhgt"
+    "username": "test"
 }
 
 ### Unprotected routes

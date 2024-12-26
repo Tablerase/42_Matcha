@@ -22,7 +22,7 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { User } from "@/app/interfaces";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
-import { useFetchAllTags } from "@pages/browse/usersActions";
+import { useUpdateUserProfile, useFetchAllTags } from "@pages/browse/usersActions";
 
 interface FormData extends Omit<User, "dateOfBirth"> {
   dateOfBirth: Date | null;
@@ -37,18 +37,7 @@ export const EditProfile = ({user, setEditMode}: EditProfileProps) => {
 const { data: tags } = useFetchAllTags();
 const tagsArr = tags?.map((tag) => tag.tag) || [];  
 const [formData, setFormData] = useState<FormData>({
-    id: 0,
-    firstName: "",
-    lastName: "",
-    email: "",
-    gender: "",
-    bio: "",
-    dateOfBirth: null,
-    location: { x: 0, y: 0 },
-    lastSeen: new Date(),
-    username: "",
-    preferences: "",
-    fameRate: 0,
+    ...user
   });
 
   const handleChange =
@@ -75,11 +64,10 @@ const [formData, setFormData] = useState<FormData>({
     setPersonName(typeof value === "string" ? value.split(",") : value);
   };
 
-  // TODO: fetch from the backend
-  const items = ["wine", "games", "sport", "travel"];
 
   const preferences = ["homosexual", "heterosexual", "bisexual"];
 
+  const updateUser = useUpdateUserProfile();
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
@@ -179,7 +167,11 @@ const [formData, setFormData] = useState<FormData>({
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
         <Button variant="outlined" onClick={setEditMode}>Cancel</Button>
-        <Button variant="contained" onClick={()=>{setEditMode(); console.log(342)}}>Save Changes</Button>
+        <Button variant="contained" onClick={() => {
+          setEditMode();
+          const updatedFormData = { ...formData, dateOfBirth: formData.dateOfBirth || undefined };
+          updateUser(updatedFormData);
+        }}>Save Changes</Button>
       </CardActions>
     </Card>
   );
