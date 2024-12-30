@@ -23,22 +23,52 @@ const fetchAllTags = async (): Promise<AxiosResponse> => {
   return await client.get(`/tags`, { withCredentials: true });
 };
 
+export const fetchUserTags = async (userId?: number): Promise<AxiosResponse> => {
+  return await client.get(`/users/${userId}/tags`, { withCredentials: true });
+};
+
 const updateUser = async (data: Partial<User>) => {
   const updates = {
     bio: data.bio,
-    date_of_birth: data.dateOfBirth,
-    email: data.email,
     first_name: data.firstName,
-    gender: data.gender,
     last_name: data.lastName,
+    username: data.username,
+    email: data.email,
+    gender: data.gender,
+    preferences: "heterosexual",
+    date_of_birth: data.dateOfBirth,
     // location: data.location,
   };
-  console.log(`DOB: ${updates.date_of_birth}`)
-  console.log(updates)
+  console.log(`DOB: ${updates.date_of_birth}`);
+
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
   });
   return user.data as User;
+};
+
+const updateUserTags = async ({
+  userId,
+  tagId,
+}: {
+  userId: number;
+  tagId: number;
+}) => {
+  const response = await client.post(`/users/${userId}/tags`, { tagId });
+  return response.data;
+};
+
+const deleteUserTags = async ({
+  userId,
+  tagId,
+}: {
+  userId: number;
+  tagId: number;
+}) => {
+  const response = await client.delete(`/users/${userId}/tags`, {
+    data: { tagId: tagId },
+  });
+  return response.data;
 };
 
 export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
@@ -82,7 +112,6 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
     queryFn: async () => {
       const response = await fetchCurrentUser();
       const userData: any = response.data.data;
-      console.log(userData);
       return {
         id: userData.id,
         firstName: userData.first_name,
@@ -102,14 +131,48 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
   });
 };
 
+export const useAddUserTags = () => {
+  const { mutate: update } = useMutation({
+    mutationKey: ["userTags"],
+    mutationFn: (variables: { userId: number; tagId: number }) =>
+      updateUserTags(variables),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+  return update;
+};
+
+export const useDeleteUserTags = () => {
+  const { mutate: update } = useMutation({
+    mutationKey: ["userTags"],
+    mutationFn: (variables: { userId: number; tagId: number }) =>
+      deleteUserTags(variables),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+  return update;
+};
+
 export const useUpdateUserProfile = () => {
   const { mutate: update } = useMutation({
     mutationKey: ["user"],
     mutationFn: updateUser,
     onSuccess: () => {
-      console.log("Update successful");
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return update;
+};
+
+export const useFetchUserTags = (userId?: number) => {
+  return useQuery<Tag[], any>({
+    queryFn: async () => {
+      const { data } = await fetchUserTags(userId);
+      return data.data;
+    },
+    queryKey: ["userTags"],
+    enabled: !!userId,
+  });
 };

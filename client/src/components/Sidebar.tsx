@@ -57,7 +57,7 @@ export const Sidebar = () => {
           </ListItemIcon>
           {!isMobile && <ListItemText>Matches</ListItemText>}
         </ListItemButton>
-        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.PROFILE)}>
+        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.ME)}>
           <ListItemIcon>
             <AccountCircleIcon fontSize="small" />
           </ListItemIcon>

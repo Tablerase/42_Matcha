@@ -3,7 +3,8 @@ export const routes = {
     LOGIN: '/auth/login',
     BROWSE: '/browse',
     PROFILE: '/profile/:id',
-    EDIT_PROFILE: '/profile/:id/edit',
+    ME: '/profile/me',
+    EDIT_PROFILE: '/profile/edit',
     CHAT: '/chat',
     MATCHES: '/matches',
   };

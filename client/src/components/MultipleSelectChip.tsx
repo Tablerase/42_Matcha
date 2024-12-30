@@ -6,6 +6,8 @@ import ListItemText from "@mui/material/ListItemText";
 import CheckBox from "@mui/material/Checkbox";
 import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
+import { SelectChangeEvent } from "@mui/material/Select";
+import { Tag } from "@/app/interfaces";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -18,29 +20,38 @@ const MenuProps = {
   },
 };
 
-//TODO: also should take handleChange handler as props
-export const MultipleSelectChip = (items: string[]) => {
-  const [choice, setChoice] = useState<string[]>([]);
+interface MultipleSelectChipProps {
+  items?: Tag[];
+  userTags?: Tag[];
+  handleChange: (event: SelectChangeEvent<string[]>) => void;
+}
 
-  // const handleChange = (event: SelectChangeEvent<typeof choice>) => {
-  //   const {
-  //     target: { value },
-  //   } = event;
-  //   setChoice(
-  //     // On autofill we get a stringified value.
-  //     typeof value === "string" ? value.split(",") : value
-  //   );
-  // };
+function isTagInBothArrays(tag: string, array1?: Tag[], array2?: Tag[]) {
+  // Check if the tag exists in both arrays
+  if (!array1 || !array2) return ;
+  const isInArray1 = array1.some(item => item.tag === tag);
+  const isInArray2 = array2.some(item => item.tag === tag);
 
+  return isInArray1 && isInArray2;
+}
+
+export const MultipleSelectChip = ({items, userTags, handleChange}: MultipleSelectChipProps) => {
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
+
+  const onSelectChange = (event: SelectChangeEvent<string[]>) => {
+    const newSelected = event.target.value as string[];
+    setSelectedItems(newSelected);
+    handleChange(event);
+  };
+  const tagsArr = userTags?.map((tag) => tag.tag) || [];
   return (
     <>
       <Select
-      // pass label as a prop!
         labelId="Interests"
         id="Interests"
         multiple
-        value={choice}
-        // onChange={handleChange}
+        value={tagsArr}
+        onChange={onSelectChange}
         input={<OutlinedInput id="select-multiple-chip" label="Interests" />}
         renderValue={(selected) => (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
@@ -51,10 +62,10 @@ export const MultipleSelectChip = (items: string[]) => {
         )}
         MenuProps={MenuProps}
       >
-        {Object.values(items).map((item) => (
-          <MenuItem key={item} value={item}>
-            <CheckBox checked={choice.includes(item)} />
-            <ListItemText primary={item} />
+        {items?.map((item) => (
+          <MenuItem key={item.id} value={item.tag}>
+            <CheckBox checked={isTagInBothArrays(item.tag, items, userTags)} />
+            <ListItemText primary={item.tag} />
           </MenuItem>
         ))}
       </Select>

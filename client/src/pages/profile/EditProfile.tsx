@@ -19,27 +19,59 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import InputLabel from "@mui/material/InputLabel";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { User } from "@/app/interfaces";
+import { Tag, User } from "@/app/interfaces";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
-import { useUpdateUserProfile, useFetchAllTags } from "@pages/browse/usersActions";
+import {
+  useUpdateUserProfile,
+  useFetchAllTags,
+  useDeleteUserTags,
+} from "@pages/browse/usersActions";
 import dayjs, { Dayjs } from "dayjs";
+import { useAddUserTags } from "@pages/browse/usersActions";
 
 interface FormData extends Omit<User, "dateOfBirth"> {
   dateOfBirth: Dayjs | null;
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  gender: string;
+  preferences: string;
+  bio: string;
+  location?: { x: number; y: number };
+  fameRate: number;
+  lastSeen: Date;
+  interests: Tag[];
 }
 
 interface EditProfileProps {
-    user: User;
-    setEditMode: () => void;
-    }
+  user: Partial<User>;
+  userTags?: Tag[];
+  setEditMode: () => void;
+}
 
-export const EditProfile = ({user, setEditMode}: EditProfileProps) => {
-const { data: tags } = useFetchAllTags();
-const tagsArr = tags?.map((tag) => tag.tag) || [];  
-const [formData, setFormData] = useState<FormData>({
-    ...user,
-    dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null
+export const EditProfile = ({
+  user,
+  userTags,
+  setEditMode,
+}: EditProfileProps) => {
+  const { data: tags } = useFetchAllTags();
+  const [formData, setFormData] = useState<FormData>({
+    id: user.id || 0,
+    firstName: user.firstName || "",
+    lastName: user.lastName || "",
+    email: user.email || "",
+    username: user.username || "",
+    gender: user.gender || "",
+    preferences: user.preferences || "bisexual",
+    bio: user.bio || "",
+    location: user.location,
+    fameRate: user.fameRate || 0,
+    lastSeen: user.lastSeen || new Date(),
+    dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null,
+    interests: [],
   });
 
   const handleChange =
@@ -56,37 +88,59 @@ const [formData, setFormData] = useState<FormData>({
     if (!newValue || !newValue.isValid()) {
       return;
     }
-    setFormData(prev => ({ 
-      ...prev, 
-      dateOfBirth: newValue
-    }));
+    setFormData({
+      ...formData,
+      dateOfBirth: newValue,
+    });
   };
 
-  // for interests tags + preferences
-  const [personName, setPersonName] = useState<string[]>([]);
+  const [interests, setInterests] = useState<Tag[]>(userTags || []);
+  // const [preferences, setPreferences] = useState<string[]>([]);
 
-  const handleChangeTags = (event: SelectChangeEvent<typeof personName>) => {
+  const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
     } = event;
-    setPersonName(typeof value === "string" ? value.split(",") : value);
+    setInterests(tags?.filter((tag) => value.includes(tag.tag)) || []);
+    setFormData({ ...formData, interests: interests });
   };
 
-
-  const preferences = ["homosexual", "heterosexual", "bisexual"];
+  // const preferences = [{id: 1, tag: "homosexual"}, {id: 2, tag: "heterosexual"}, {id: 3, tag: "bisexual"}];
 
   const updateUser = useUpdateUserProfile();
-  
+  const updateUserTags = useAddUserTags();
+  const deleteUserTags = useDeleteUserTags();
+
   const handleSubmit = async () => {
     const updatedUser = {
       ...formData,
-      dateOfBirth: formData.dateOfBirth ? formData.dateOfBirth.toDate() : undefined
+      bio: formData.bio || "",
+      email: formData.email,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
+      gender: formData.gender,
+      username: formData.username,
+      dateOfBirth: formData.dateOfBirth
+        ? formData.dateOfBirth.toDate()
+        : undefined,
     };
-    
+
     updateUser(updatedUser);
+    for (const tag of interests) {
+      if (userTags?.includes(tag)) continue;
+      else if (!userTags?.includes(tag))
+        updateUserTags({ userId: formData.id, tagId: tag.id });
+    }
+    if (userTags) {
+      for (const tag of userTags) {
+        if (!interests?.some((interest) => tag.id === interest.id)) {
+          deleteUserTags({ userId: formData.id, tagId: tag.id });
+        }
+      }
+    }
     setEditMode();
   };
-  
+
   // TODO: geolocation
 
   // if ("geolocation" in navigator) {
@@ -97,7 +151,7 @@ const [formData, setFormData] = useState<FormData>({
   //       // Get the user's latitude and longitude coordinates
   //       const lat = position.coords.latitude;
   //       const lng = position.coords.longitude;
-  
+
   //       // Do something with the location data, e.g. display on a map
   //       console.log(`Latitude: ${lat}, longitude: ${lng}`);
   //     },
@@ -127,7 +181,7 @@ const [formData, setFormData] = useState<FormData>({
           </Box>
           <TextField
             label="Bio"
-            value={formData!.bio}
+            value={formData.bio}
             onChange={handleChange("bio")}
             multiline
             rows={4}
@@ -191,7 +245,7 @@ const [formData, setFormData] = useState<FormData>({
 
           <FormControl fullWidth>
             <InputLabel>Preferences</InputLabel>
-            <MultipleSelectChip {...preferences} />
+            {/* <MultipleSelectChip items={preferences}  handleChange={handleChangeTags}/> */}
           </FormControl>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -200,11 +254,11 @@ const [formData, setFormData] = useState<FormData>({
               value={formData.dateOfBirth}
               onChange={handleDateChange}
               format="DD/MM/YYYY"
-              slotProps={{ 
-                textField: { 
+              slotProps={{
+                textField: {
                   fullWidth: true,
-                  error: !formData.dateOfBirth
-                } 
+                  error: !formData.dateOfBirth,
+                },
               }}
             />
           </LocalizationProvider>
@@ -213,13 +267,21 @@ const [formData, setFormData] = useState<FormData>({
 
           <FormControl fullWidth>
             <InputLabel id="tags">Interests</InputLabel>
-            <MultipleSelectChip {...tagsArr} />
+            <MultipleSelectChip
+              items={tags}
+              userTags={interests}
+              handleChange={handleChangeTags}
+            />
           </FormControl>
         </Stack>
       </CardContent>
       <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
-        <Button variant="outlined" onClick={setEditMode}>Cancel</Button>
-        <Button variant="contained" onClick={handleSubmit}>Save Changes</Button>
+        <Button variant="outlined" onClick={setEditMode}>
+          Cancel
+        </Button>
+        <Button variant="contained" onClick={handleSubmit}>
+          Save Changes
+        </Button>
       </CardActions>
     </Card>
   );

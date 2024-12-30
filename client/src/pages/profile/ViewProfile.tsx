@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { User } from "@/app/interfaces";
+import { Tag, User } from "@/app/interfaces";
 import {
   Card,
   CardContent,
@@ -15,11 +15,17 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
 
-export const ViewProfile = (user: User) => {
+interface ViewProfileProps {
+  user: Partial<User>;
+  tags: Tag[] | undefined;
+}
+
+export const ViewProfile = ({user, tags}: ViewProfileProps) => {
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
-    return <EditProfile user={user} setEditMode={()=>setEditMode(false)}/>;
+    return <EditProfile user={user} userTags={tags} setEditMode={()=>setEditMode(false)}/>;
   }
+  console.log(tags)
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
@@ -98,8 +104,15 @@ export const ViewProfile = (user: User) => {
               Interests
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap">
-              {/* TODO: Add interests/tags when backend integration is ready */}
-              <Chip label="Sample Interest" />
+            {tags && tags?.length > 0 ? (
+      tags?.map((tag: Tag) => (
+        <Chip key={tag.id} label={tag.tag} />
+      ))
+    ) : (
+      <Typography variant="body2" color="text.secondary">
+        No interests added yet
+      </Typography>
+    )}
             </Stack>
           </Box>
         </Stack>

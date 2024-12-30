@@ -30,7 +30,7 @@ export const App = () => {
 
               <Route path={routes.MATCHES} element={<Matches />} />
               <Route path={routes.BROWSE} element={<Browse />} />
-              <Route path={routes.PROFILE} element={<Profile />} />
+              <Route path={routes.ME} element={<Profile />} />
               <Route path={routes.CHAT} element={<Chat />} />
             </Routes>
           </ThemeProvider>
