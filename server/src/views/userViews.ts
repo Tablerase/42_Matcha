@@ -131,6 +131,7 @@ export const updateUser = async (
       });
       return;
     }
+    console.log(userData)
     const updatedUser = await userModel.updateUser(id, userData);
     res.status(200).json({
       status: 200,

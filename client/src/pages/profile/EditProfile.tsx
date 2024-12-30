@@ -59,12 +59,12 @@ export const EditProfile = ({
 }: EditProfileProps) => {
   const { data: tags } = useFetchAllTags();
   const [formData, setFormData] = useState<FormData>({
-    id: user.id || 0,
-    firstName: user.firstName || "",
-    lastName: user.lastName || "",
-    email: user.email || "",
-    username: user.username || "",
-    gender: user.gender || "",
+    id: user.id!,
+    firstName: user.firstName!,
+    lastName: user.lastName!,
+    email: user.email!,
+    username: user.username!,
+    gender: user.gender!,
     preferences: user.preferences || "bisexual",
     bio: user.bio || "",
     location: user.location,
@@ -95,7 +95,6 @@ export const EditProfile = ({
   };
 
   const [interests, setInterests] = useState<Tag[]>(userTags || []);
-  // const [preferences, setPreferences] = useState<string[]>([]);
 
   const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
     const {
@@ -104,8 +103,6 @@ export const EditProfile = ({
     setInterests(tags?.filter((tag) => value.includes(tag.tag)) || []);
     setFormData({ ...formData, interests: interests });
   };
-
-  // const preferences = [{id: 1, tag: "homosexual"}, {id: 2, tag: "heterosexual"}, {id: 3, tag: "bisexual"}];
 
   const updateUser = useUpdateUserProfile();
   const updateUserTags = useAddUserTags();
@@ -119,12 +116,13 @@ export const EditProfile = ({
       firstName: formData.firstName,
       lastName: formData.lastName,
       gender: formData.gender,
+      preferences: formData.preferences,
       username: formData.username,
       dateOfBirth: formData.dateOfBirth
         ? formData.dateOfBirth.toDate()
         : undefined,
     };
-
+    console.log(updatedUser);
     updateUser(updatedUser);
     for (const tag of interests) {
       if (userTags?.includes(tag)) continue;
@@ -192,6 +190,7 @@ export const EditProfile = ({
             value={formData.firstName}
             onChange={handleChange("firstName")}
             fullWidth
+            required
           />
 
           <TextField
@@ -199,6 +198,7 @@ export const EditProfile = ({
             value={formData.lastName}
             onChange={handleChange("lastName")}
             fullWidth
+            required
           />
 
           <TextField
@@ -206,6 +206,7 @@ export const EditProfile = ({
             value={formData.username}
             onChange={handleChange("username")}
             fullWidth
+            required
           />
 
           <TextField
@@ -214,9 +215,10 @@ export const EditProfile = ({
             value={formData.email}
             onChange={handleChange("email")}
             fullWidth
+            required
           />
 
-          <FormControl fullWidth>
+          <FormControl fullWidth required>
             <FormLabel id="gender">Gender</FormLabel>
             <RadioGroup
               row
@@ -243,9 +245,35 @@ export const EditProfile = ({
             </RadioGroup>
           </FormControl>
 
-          <FormControl fullWidth>
-            <InputLabel>Preferences</InputLabel>
-            {/* <MultipleSelectChip items={preferences}  handleChange={handleChangeTags}/> */}
+          <FormControl fullWidth required>
+            <FormLabel id="preferences">Preferences</FormLabel>
+            <RadioGroup
+              row
+              aria-labelledby="preferences"
+              name="preferences"
+              value={formData.preferences}
+              onChange={
+                handleChange("preferences") as (
+                  event: SelectChangeEvent<string>
+                ) => void
+              }
+            >
+              <FormControlLabel
+                value="heterosexual"
+                control={<Radio />}
+                label="Heterosexual"
+              />
+              <FormControlLabel
+                value="homosexual"
+                control={<Radio />}
+                label="Homosexual"
+              />
+              <FormControlLabel
+                value="bisexual"
+                control={<Radio />}
+                label="Bisexual"
+              />
+            </RadioGroup>
           </FormControl>
 
           <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -256,12 +284,12 @@ export const EditProfile = ({
               format="DD/MM/YYYY"
               slotProps={{
                 textField: {
-                  fullWidth: true,
-                  error: !formData.dateOfBirth,
+                  fullWidth: true
                 },
               }}
             />
           </LocalizationProvider>
+
           {/* TODO: add proper location logic with parsing and setting coordinates */}
           <TextField label="Location" fullWidth />
 

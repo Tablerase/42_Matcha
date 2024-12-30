@@ -25,7 +25,6 @@ export const ViewProfile = ({user, tags}: ViewProfileProps) => {
   if (editMode) {
     return <EditProfile user={user} userTags={tags} setEditMode={()=>setEditMode(false)}/>;
   }
-  console.log(tags)
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>

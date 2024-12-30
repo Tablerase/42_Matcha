@@ -35,7 +35,7 @@ const updateUser = async (data: Partial<User>) => {
     username: data.username,
     email: data.email,
     gender: data.gender,
-    preferences: "heterosexual",
+    preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
     // location: data.location,
   };
@@ -127,7 +127,7 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         lastSeen: userData.last_seen,
       } as User;
     },
-    queryKey: ["currentUser"],
+    queryKey: ["currentUser"]
   });
 };
 
@@ -137,7 +137,7 @@ export const useAddUserTags = () => {
     mutationFn: (variables: { userId: number; tagId: number }) =>
       updateUserTags(variables),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["userTags"] });
     },
   });
   return update;
@@ -149,7 +149,7 @@ export const useDeleteUserTags = () => {
     mutationFn: (variables: { userId: number; tagId: number }) =>
       deleteUserTags(variables),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      queryClient.invalidateQueries({ queryKey: ["userTags"] });
     },
   });
   return update;
