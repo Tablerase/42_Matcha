@@ -14,16 +14,19 @@ import {
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
+import { ViewProfileProps } from "@/app/interfaces";
 
-interface ViewProfileProps {
-  user: Partial<User>;
-  tags: Tag[] | undefined;
-}
-
-export const ViewProfile = ({user, tags}: ViewProfileProps) => {
+export const ViewProfile = ({ user, tags }: ViewProfileProps) => {
+  console.log(user.location_postal);
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
-    return <EditProfile user={user} userTags={tags} setEditMode={()=>setEditMode(false)}/>;
+    return (
+      <EditProfile
+        user={user}
+        userTags={tags}
+        setEditMode={() => setEditMode(false)}
+      />
+    );
   }
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
@@ -55,7 +58,7 @@ export const ViewProfile = ({user, tags}: ViewProfileProps) => {
             </Typography>
             <Typography>{user.email}</Typography>
           </Box>
-          
+
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
               Date of Birth
@@ -72,7 +75,7 @@ export const ViewProfile = ({user, tags}: ViewProfileProps) => {
               Gender
             </Typography>
             <Typography sx={{ textTransform: "capitalize" }}>
-              {user.gender}
+              {user.gender ? user.gender : "Not specified"}
             </Typography>
           </Box>
 
@@ -81,37 +84,31 @@ export const ViewProfile = ({user, tags}: ViewProfileProps) => {
               Preferences
             </Typography>
             <Typography sx={{ textTransform: "capitalize" }}>
-              {user.preferences}
+              {user.preferences ? user.preferences : "Not specified"}
             </Typography>
           </Box>
 
-          {user.location && (
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary">
-                Location
-              </Typography>
-              <Typography>
-                {`${user.location.x.toFixed(2)}°N, ${user.location.y.toFixed(
-                  2
-                )}°E`}
-              </Typography>
-            </Box>
-          )}
+          <Box>
+            <Typography variant="subtitle2" color="text.secondary">
+              Location
+            </Typography>
+            <Typography>
+              {user.location_postal ? user.location_postal : "Not specified"}
+            </Typography>
+          </Box>
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary" gutterBottom>
               Interests
             </Typography>
             <Stack direction="row" spacing={1} flexWrap="wrap">
-            {tags && tags?.length > 0 ? (
-      tags?.map((tag: Tag) => (
-        <Chip key={tag.id} label={tag.tag} />
-      ))
-    ) : (
-      <Typography variant="body2" color="text.secondary">
-        No interests added yet
-      </Typography>
-    )}
+              {tags && tags?.length > 0 ? (
+                tags?.map((tag: Tag) => <Chip key={tag.id} label={`#${tag.tag}`} />)
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  No interests added yet
+                </Typography>
+              )}
             </Stack>
           </Box>
         </Stack>

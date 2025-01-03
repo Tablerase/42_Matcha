@@ -150,6 +150,7 @@ async function seed() {
         date_of_birth DATE,
         bio VARCHAR(500),
         location POINT,
+        location_postal VARCHAR(100),
         fame_rate INT DEFAULT 0,
         last_seen TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

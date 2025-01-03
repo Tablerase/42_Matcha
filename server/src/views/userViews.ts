@@ -45,7 +45,6 @@ export const createUser = async (
 export const getUsers = async (req: Request, res: Response): Promise<void> => {
   try {
     const params = req.query;
-    // console.log(params);
     const users = await userModel.getUsers(params);
     res.status(200).json({
       status: 200,
@@ -131,7 +130,6 @@ export const updateUser = async (
       });
       return;
     }
-    console.log(userData)
     const updatedUser = await userModel.updateUser(id, userData);
     res.status(200).json({
       status: 200,

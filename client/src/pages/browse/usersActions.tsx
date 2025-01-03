@@ -4,6 +4,7 @@ import { useQuery, QueryObserverResult } from "@tanstack/react-query";
 import { User, UserResponse, Tag } from "@app/interfaces";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
+import { formatCoordinates } from "@/utils/helpers";
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
   return await client.get<User[]>("/users");
@@ -28,6 +29,7 @@ export const fetchUserTags = async (userId?: number): Promise<AxiosResponse> => 
 };
 
 const updateUser = async (data: Partial<User>) => {
+  const coordinates = formatCoordinates(data.location);
   const updates = {
     bio: data.bio,
     first_name: data.firstName,
@@ -37,10 +39,9 @@ const updateUser = async (data: Partial<User>) => {
     gender: data.gender,
     preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
-    // location: data.location,
+    location: coordinates,
+    location_postal: data.location_postal
   };
-  console.log(`DOB: ${updates.date_of_birth}`);
-
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
   });
@@ -123,6 +124,7 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         dateOfBirth: userData.date_of_birth,
         bio: userData.bio,
         location: userData.location,
+        location_postal: userData.location_postal,
         fameRate: userData.fame_rate,
         lastSeen: userData.last_seen,
       } as User;

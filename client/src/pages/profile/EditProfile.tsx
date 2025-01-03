@@ -13,6 +13,7 @@ import {
   RadioGroup,
   FormControlLabel,
   Radio,
+  Typography,
 } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
@@ -29,28 +30,9 @@ import {
 } from "@pages/browse/usersActions";
 import dayjs, { Dayjs } from "dayjs";
 import { useAddUserTags } from "@pages/browse/usersActions";
-
-interface FormData extends Omit<User, "dateOfBirth"> {
-  dateOfBirth: Dayjs | null;
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  username: string;
-  gender: string;
-  preferences: string;
-  bio: string;
-  location?: { x: number; y: number };
-  fameRate: number;
-  lastSeen: Date;
-  interests: Tag[];
-}
-
-interface EditProfileProps {
-  user: Partial<User>;
-  userTags?: Tag[];
-  setEditMode: () => void;
-}
+import { getIpData, isValidUsername } from "@/utils/helpers";
+import { EditProfileProps, FormData } from "@/app/interfaces";
+import { isValidEmail } from "@/utils/helpers";
 
 export const EditProfile = ({
   user,
@@ -58,6 +40,14 @@ export const EditProfile = ({
   setEditMode,
 }: EditProfileProps) => {
   const { data: tags } = useFetchAllTags();
+  const updateUser = useUpdateUserProfile();
+  const updateUserTags = useAddUserTags();
+  const deleteUserTags = useDeleteUserTags();
+  
+  const [emailError, setEmailError] = useState<string>("");
+  const [usernameError, setUsernameError] = useState<string>("");
+  const [interests, setInterests] = useState<Tag[]>(userTags || []);
+
   const [formData, setFormData] = useState<FormData>({
     id: user.id!,
     firstName: user.firstName!,
@@ -68,11 +58,25 @@ export const EditProfile = ({
     preferences: user.preferences || "bisexual",
     bio: user.bio || "",
     location: user.location,
+    location_postal: user.location_postal || "",
     fameRate: user.fameRate || 0,
     lastSeen: user.lastSeen || new Date(),
     dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null,
     interests: [],
   });
+
+  const validateForm = () => {
+    return !!(
+      formData.firstName &&
+      formData.lastName &&
+      formData.username &&
+      formData.email &&
+      formData.gender &&
+      formData.preferences &&
+      formData.location &&
+      formData.location_postal
+    );
+  };
 
   const handleChange =
     (field: keyof FormData) =>
@@ -81,6 +85,26 @@ export const EditProfile = ({
         | React.ChangeEvent<HTMLInputElement | { value: unknown }>
         | SelectChangeEvent
     ) => {
+      if (field === "email") {
+        const email = event.target.value as string;
+        if (!isValidEmail(email)) {
+          setEmailError("Please enter a valid email address");
+        } else {
+          setEmailError("");
+        }
+      }
+      if (field === "username") {
+        const username = event.target.value as string;
+        if (!username) {
+          setUsernameError("This field is required");
+        } else if (!isValidUsername(username)) {
+          setUsernameError(
+            "Username can only contain letters, numbers, and underscores"
+          );
+        } else {
+          setUsernameError("");
+        }
+      }
       setFormData({ ...formData, [field]: event.target.value });
     };
 
@@ -94,8 +118,6 @@ export const EditProfile = ({
     });
   };
 
-  const [interests, setInterests] = useState<Tag[]>(userTags || []);
-
   const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
     const {
       target: { value },
@@ -104,11 +126,10 @@ export const EditProfile = ({
     setFormData({ ...formData, interests: interests });
   };
 
-  const updateUser = useUpdateUserProfile();
-  const updateUserTags = useAddUserTags();
-  const deleteUserTags = useDeleteUserTags();
-
   const handleSubmit = async () => {
+    if (!validateForm()) {
+      return;
+    }
     const updatedUser = {
       ...formData,
       bio: formData.bio || "",
@@ -118,8 +139,13 @@ export const EditProfile = ({
       gender: formData.gender,
       preferences: formData.preferences,
       username: formData.username,
+      location: formData.location,
+      location_postal: formData.location_postal,
       dateOfBirth: formData.dateOfBirth
-        ? formData.dateOfBirth.toDate()
+        ? formData.dateOfBirth
+            .startOf("day")
+            .add(formData.dateOfBirth.utcOffset(), "minutes")
+            .toDate()
         : undefined,
     };
     console.log(updatedUser);
@@ -139,30 +165,34 @@ export const EditProfile = ({
     setEditMode();
   };
 
-  // TODO: geolocation
-
-  // if ("geolocation" in navigator) {
-  //   // Prompt user for permission to access their location
-  //   navigator.geolocation.getCurrentPosition(
-  //     // Success callback function
-  //     (position) => {
-  //       // Get the user's latitude and longitude coordinates
-  //       const lat = position.coords.latitude;
-  //       const lng = position.coords.longitude;
-
-  //       // Do something with the location data, e.g. display on a map
-  //       console.log(`Latitude: ${lat}, longitude: ${lng}`);
-  //     },
-  //     // Error callback function
-  //     (error) => {
-  //       // Handle errors, e.g. user denied location sharing permissions
-  //       console.error("Error getting user location:", error);
-  //     }
-  //   );
-  // } else {
-  //   // Geolocation is not supported by the browser
-  //   console.error("Geolocation is not supported by this browser.");
-  // }
+  const handleLocationUpdate = async () => {
+    // if ("geolocation" in navigator) {
+    //   navigator.geolocation.getCurrentPosition(
+    //     (position) => {
+    //       setFormData({
+    //         ...formData,
+    //         location: {
+    //           x: position.coords.latitude,
+    //           y: position.coords.longitude,
+    //         },
+    //       });
+    //     },
+    //     (error) => {
+    //       console.error("Error getting user location:", error);
+    //     }
+    //   );
+    // }
+    try {
+      const data = await getIpData();
+      setFormData({
+        ...formData,
+        location: { x: data.latitude, y: data.longitude },
+        location_postal: data.postal,
+      });
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
@@ -205,11 +235,15 @@ export const EditProfile = ({
             label="Username"
             value={formData.username}
             onChange={handleChange("username")}
+            error={!!usernameError}
+            helperText={usernameError}
             fullWidth
             required
           />
 
           <TextField
+            error={!!emailError}
+            helperText={emailError}
             label="Email"
             type="email"
             value={formData.email}
@@ -284,14 +318,16 @@ export const EditProfile = ({
               format="DD/MM/YYYY"
               slotProps={{
                 textField: {
-                  fullWidth: true
+                  fullWidth: true,
                 },
               }}
             />
           </LocalizationProvider>
 
-          {/* TODO: add proper location logic with parsing and setting coordinates */}
-          <TextField label="Location" fullWidth />
+          <Typography>Location:</Typography>
+          <Button variant="contained" onClick={() => handleLocationUpdate()}>
+            Locate Me!
+          </Button>
 
           <FormControl fullWidth>
             <InputLabel id="tags">Interests</InputLabel>
@@ -307,7 +343,11 @@ export const EditProfile = ({
         <Button variant="outlined" onClick={setEditMode}>
           Cancel
         </Button>
-        <Button variant="contained" onClick={handleSubmit}>
+        <Button
+          variant="contained"
+          disabled={!validateForm()}
+          onClick={handleSubmit}
+        >
           Save Changes
         </Button>
       </CardActions>

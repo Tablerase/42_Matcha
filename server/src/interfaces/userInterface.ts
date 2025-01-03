@@ -15,6 +15,7 @@ export interface User {
   dateOfBirth?: Date;
   bio?: string;
   location?: { x: number; y: number };
+  location_postal?: string,
   fameRate?: number;
   lastSeen?: Date;
   created?: Date;
