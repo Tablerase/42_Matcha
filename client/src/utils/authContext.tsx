@@ -6,12 +6,39 @@ interface AuthContextType {
   isAuthenticated: boolean;
   login: () => void;
   logout: () => void;
+  isLoading: boolean;
 }
 
 const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
+  const checkAuthStatus = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch("/auth/check", {
+        method: "GET",
+        credentials: "include",
+      });
+
+      if (response.ok) {
+        setIsAuthenticated(true);
+      } else {
+        setIsAuthenticated(false);
+      }
+    } catch (error) {
+      console.error("Error checking auth status:", error);
+      setIsAuthenticated(false);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    checkAuthStatus();
+  }, []);
 
   const login = () => {
     setIsAuthenticated(true);
@@ -21,15 +48,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setIsAuthenticated(false);
   };
 
+  if (isLoading) {
+    // TODO: Add a loading spinner or component
+    return <div>Loading...</div>;
+  }
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );
 };
 
 export const useAuth = () => {
-  console.error("useAuth: " + useContext(AuthContext));
   return useContext(AuthContext);
 };
 
@@ -39,7 +70,6 @@ export const useAuth = () => {
 
 export const ProtectedRoute = () => {
   const { isAuthenticated } = useAuth();
-  console.error("ProtectedRoute: " + isAuthenticated);
 
   if (!isAuthenticated) {
     return <Navigate to={routes.LOGIN} replace />;

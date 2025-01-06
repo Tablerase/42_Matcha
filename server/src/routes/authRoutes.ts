@@ -14,6 +14,10 @@ router.post("/signup", validateUserCreation, createUser);
 
 router.post("/logout", authenticateToken, logoutUser);
 
+router.get("/check", authenticateToken, (req, res) => {
+  res.status(200).json({ status: 200, message: "Authenticated" });
+});
+
 // TODO: Implement these routes
 // router.post('/forgot-password', validateEmail, forgotPassword);
 // router.post('/refresh-token', validateRefreshToken, refreshToken);
