@@ -15,6 +15,7 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
 import { ViewProfileProps } from "@/app/interfaces";
+import { AvatarGroup } from "@mui/material";
 
 export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
   console.log(user.location_postal);
@@ -38,6 +39,15 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
               sx={{ width: 100, height: 100 }}
               src={images ? images[0]?.url : " "}
             />
+            <AvatarGroup>
+              {images && images?.length > 1 &&
+                images.slice(1, 4).map((image) => (
+                  <Avatar
+                    sx={{ width: 80, height: 80 }}
+                    src={image.url}
+                  />
+                ))}
+            </AvatarGroup>
             <Stack>
               <Typography variant="h5">
                 {user.firstName} {user.lastName}

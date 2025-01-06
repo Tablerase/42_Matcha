@@ -20,8 +20,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import InputLabel from "@mui/material/InputLabel";
 import { SelectChangeEvent } from "@mui/material/Select";
-import { Tag, User } from "@/app/interfaces";
-import EditRoundedIcon from "@mui/icons-material/EditRounded";
+import { Tag } from "@/app/interfaces";
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
 import {
   useUpdateUserProfile,
@@ -51,7 +50,6 @@ export const EditProfile = ({
   const [usernameError, setUsernameError] = useState<string>("");
   const [bioError, setBioError] = useState<string>("");
   const [interests, setInterests] = useState<Tag[]>(userTags || []);
-
   const [formData, setFormData] = useState<FormData>({
     id: user.id!,
     firstName: user.firstName!,
@@ -210,37 +208,53 @@ export const EditProfile = ({
     }
   };
 
-  const [file, setFile] = useState<File | null>(null)
+  const [files, setFiles] = useState<File[]>([]);
 
-  const handleFileUpload = (newFile: File | null) => {
-    setFile(newFile);
-    
-    if (!newFile) {
+  const handleFileUpload = (newFiles: File[]) => {
+    if (!newFiles || !newFiles.length) {
+      setFiles([]);
       return;
     }
   
-    // Validate file size (max 5MB)
-    if (newFile.size > 5 * 1024 * 1024) {
-      console.error('File too large');
-      return;
-    }
+    // Validate files
+    const validFiles = newFiles.filter(file => {
+      // Validate file size (max 5MB)
+      if (file.size > 5 * 1024 * 1024) {
+        console.error(`File ${file.name} is too large`);
+        return false;
+      }
+      // Validate file type
+      if (!file.type.startsWith('image/')) {
+        console.error(`File ${file.name} is not an image`);
+        return false;
+      }
+      return true;
+    });
   
-    const reader = new FileReader();
-    
-    reader.onload = () => {
-      const result = reader.result as string;
-      uploadImage({ userId: formData.id, url: result });
-    };
+    setFiles(validFiles);
   
-    reader.onerror = () => {
-      console.error('Error reading file');
-    };
+    // Process each valid file
+    validFiles.forEach(file => {
+      const reader = new FileReader();
+      
+      reader.onload = () => {
+        const result = reader.result as string;
+        uploadImage({ 
+          userId: formData.id, 
+          url: result 
+        });
+      };
   
-    try {
-      reader.readAsDataURL(newFile);
-    } catch (error) {
-      console.error('Failed to read file:', error);
-    }
+      reader.onerror = () => {
+        console.error(`Error reading file ${file.name}`);
+      };
+  
+      try {
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error(`Failed to read file ${file.name}:`, error);
+      }
+    });
   };
 
   return (
@@ -253,12 +267,24 @@ export const EditProfile = ({
               // src={user.profilePicture}
             />
              <MuiFileInput 
-             value={file} 
+             value={files} 
              onChange={handleFileUpload}
+             multiple
+             slotProps={{
+              htmlInput: {
+                accept: 'image/*'
+              },
+              
+            }}
+            inputProps={
+              {
+                text: 'Click here to upload photos',
+              }
+            }
               />
-            <Button variant="outlined" startIcon={<EditRoundedIcon />}>
+            {/* <Button variant="outlined" startIcon={<EditRoundedIcon />}>
               Change Photo
-            </Button>
+            </Button> */}
           </Box>
           <TextField
             label="Bio"

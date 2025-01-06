@@ -15,16 +15,18 @@ export const loginUser = async (data: UserLogin) => {
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { mutate: login } = useMutation({
+  const { login } = useAuth();
+  const { mutate: loginMutation } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: loginUser,
     onSuccess: () => {
       console.log("Login successful");
+      login();
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       navigate(routes.BROWSE, { replace: true });
     },
   });
-  return login;
+  return loginMutation;
 };
 
 /**
