@@ -33,6 +33,7 @@ import { useAddUserTags } from "@pages/browse/usersActions";
 import { getIpData, isValidUsername } from "@/utils/helpers";
 import { EditProfileProps, FormData } from "@/app/interfaces";
 import { isValidEmail } from "@/utils/helpers";
+import { set } from "date-fns";
 
 export const EditProfile = ({
   user,
@@ -46,6 +47,7 @@ export const EditProfile = ({
   
   const [emailError, setEmailError] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string>("");
+  const [bioError, setBioError] = useState<string>("");
   const [interests, setInterests] = useState<Tag[]>(userTags || []);
 
   const [formData, setFormData] = useState<FormData>({
@@ -74,7 +76,10 @@ export const EditProfile = ({
       formData.gender &&
       formData.preferences &&
       formData.location &&
-      formData.location_postal
+      formData.location_postal &&
+      emailError === "" &&
+      usernameError === "" &&
+      bioError === ""
     );
   };
 
@@ -103,6 +108,14 @@ export const EditProfile = ({
           );
         } else {
           setUsernameError("");
+        }
+      }
+      if (field === "bio") {
+        const bio = event.target.value as string;
+        if (bio.length > 500) {
+          setBioError("Bio cannot exceed 500 characters");
+        } else {
+          setBioError("");
         }
       }
       setFormData({ ...formData, [field]: event.target.value });
@@ -212,6 +225,8 @@ export const EditProfile = ({
             value={formData.bio}
             onChange={handleChange("bio")}
             multiline
+            error={!!bioError}
+            helperText={bioError}
             rows={4}
             fullWidth
           />
