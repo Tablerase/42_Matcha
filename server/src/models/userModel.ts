@@ -3,6 +3,7 @@ import { pool } from "../settings";
 import { User, SortParams } from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
+import { on } from "events";
 
 class UserModel {
   async getUsers(params: SortParams | undefined): Promise<User[]> {
@@ -159,18 +160,18 @@ class UserModel {
       let parameterIndex = 1;
 
       // Base query with age calculation
-      // TODO: Add age field to user table to avoid calculating age on every query
+      // TODO: Replace age calculation by date comparison for better performance
       let query = `
-        SELECT DISTINCT u.id, u.username, u.date_of_birth, u.fame_rate,
+        SELECT DISTINCT u.id, u.username,
         EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) as age
       `;
 
       // Add distance calculation if coordinates provided
       if (params.latitude && params.longitude) {
         query += `
-          point(u.longitude, u.latitude) <@> point($${parameterIndex}, $${
+          , u.location <@> point($${parameterIndex}, $${
           parameterIndex + 1
-        }) as distance,
+        }) as distance
         `;
         values.push(params.longitude, params.latitude);
         parameterIndex += 2;
@@ -218,11 +219,15 @@ class UserModel {
       }
 
       // Add distance condition if specified
+      /**
+       * Earth distance calculation formula
+       * @see https://www.geeksforgeeks.org/program-distance-two-points-earth/
+       */
       if (params.distance && params.latitude && params.longitude) {
-        conditions.push(
-          `point(u.longitude, u.latitude) <@> point($1, $2) <= $${parameterIndex}`
-        );
-        values.push(params.distance);
+        const oneKmInMiles = 0.621371;
+        const distanceInMiles = params.distance * oneKmInMiles;
+        conditions.push(`u.location <@> point($1, $2) <= $${parameterIndex}`);
+        values.push(distanceInMiles);
         parameterIndex++;
       }
 

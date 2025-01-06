@@ -16,3 +16,8 @@ Cookie: authToken={{authToken}}
 
 GET http://localhost:8000/users/search?maxFameRating=0&&minFameRating=10
 Cookie: authToken={{authToken}}
+
+### Search by distance
+
+GET http://localhost:8000/users/search?distance=20000&latitude=34.5074&longitude=-110.1278
+Cookie: authToken={{authToken}}

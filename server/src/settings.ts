@@ -288,5 +288,25 @@ async function seed() {
   }
 }
 
+/**
+ * Postgres extensions
+ *
+ * Enable the cube and earthdistance extensions
+ * @see https://www.postgresql.org/docs/17/contrib-cube.html
+ * @see https://www.postgresql.org/docs/17/earthdistance.html
+ */
+async function enableExtensions() {
+  try {
+    await pool.query("CREATE EXTENSION IF NOT EXISTS cube;");
+    await pool.query("CREATE EXTENSION IF NOT EXISTS earthdistance;");
+    console.log("Postgresql Extensions enabled successfully.");
+  } catch (error) {
+    console.error("Error enabling extensions:", error);
+  }
+}
+
+// Enable the extensions
+enableExtensions();
+
 // Run the seed function
 seed();
