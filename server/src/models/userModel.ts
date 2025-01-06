@@ -153,14 +153,16 @@ class UserModel {
 
   async searchUsers(params: UserSearchQuery): Promise<any[]> {
     try {
+      console.log(params);
       const conditions: string[] = [];
       const values: any[] = [];
       let parameterIndex = 1;
 
       // Base query with age calculation
+      // TODO: Add age field to user table to avoid calculating age on every query
       let query = `
-        SELECT DISTINCT u.*,
-        EXTRACT(YEAR FROM AGE(NOW(), u.birth_date)) as age,
+        SELECT DISTINCT u.id, u.username, u.date_of_birth, u.fame_rate,
+        EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) as age
       `;
 
       // Add distance calculation if coordinates provided
@@ -174,7 +176,7 @@ class UserModel {
         parameterIndex += 2;
       }
 
-      query += ` FROM users u`;
+      query += `  FROM users u`;
 
       // Join with tags if tag filtering is needed
       if (params.tags && params.tags.length > 0) {
@@ -188,29 +190,29 @@ class UserModel {
       }
 
       // Add age range conditions
-      if (params.minAge) {
+      if (params.minAge !== undefined && !isNaN(params.minAge)) {
         conditions.push(
-          `EXTRACT(YEAR FROM AGE(NOW(), u.birth_date)) >= $${parameterIndex}`
+          `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) >= $${parameterIndex}`
         );
         values.push(params.minAge);
         parameterIndex++;
       }
-      if (params.maxAge) {
+      if (params.maxAge !== undefined && !isNaN(params.maxAge)) {
         conditions.push(
-          `EXTRACT(YEAR FROM AGE(NOW(), u.birth_date)) <= $${parameterIndex}`
+          `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) <= $${parameterIndex}`
         );
         values.push(params.maxAge);
         parameterIndex++;
       }
 
       // Add fame rating range conditions
-      if (params.minFameRating) {
-        conditions.push(`u.fame_rating >= $${parameterIndex}`);
+      if (params.minFameRating !== undefined && !isNaN(params.minFameRating)) {
+        conditions.push(`u.fame_rate >= $${parameterIndex}`);
         values.push(params.minFameRating);
         parameterIndex++;
       }
-      if (params.maxFameRating) {
-        conditions.push(`u.fame_rating <= $${parameterIndex}`);
+      if (params.maxFameRating !== undefined && !isNaN(params.maxFameRating)) {
+        conditions.push(`u.fame_rate <= $${parameterIndex}`);
         values.push(params.maxFameRating);
         parameterIndex++;
       }
@@ -258,6 +260,8 @@ class UserModel {
         values.push(params.offset);
       }
 
+      console.log(query);
+      console.log(values);
       const result: QueryResult = await pool.query({
         text: query,
         values: values,

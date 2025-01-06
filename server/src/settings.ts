@@ -1,5 +1,6 @@
 import { Pool, QueryResult } from "pg";
 import dotenv from "dotenv";
+import { truncate } from "fs";
 
 dotenv.config();
 
@@ -119,23 +120,21 @@ async function seed() {
     /*USERS TABLE*/
     const setupEnumTypes = `
       -- Handle gender type
-      DO $$
+      DO $$ 
       BEGIN
-        DROP TYPE IF EXISTS gender CASCADE;
         CREATE TYPE gender AS ENUM ('male', 'female', 'other');
-      EXCEPTION 
-        WHEN others THEN
-          RAISE NOTICE 'Error handling gender type: %', SQLERRM;
+      EXCEPTION
+        WHEN duplicate_object THEN
+          NULL;
       END $$;
 
       -- Handle preferences type
       DO $$
       BEGIN
-        DROP TYPE IF EXISTS preferences CASCADE;
         CREATE TYPE preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
       EXCEPTION
-        WHEN others THEN
-          RAISE NOTICE 'Error handling preferences type: %', SQLERRM;
+        WHEN duplicate_object THEN
+          NULL;
       END $$;
     `;
     await pool.query(setupEnumTypes);
