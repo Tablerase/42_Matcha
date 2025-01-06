@@ -14,7 +14,7 @@ router.post("/signup", validateUserCreation, createUser);
 
 router.post("/logout", authenticateToken, logoutUser);
 
-router.get("/check", authenticateToken, checkUser);
+router.get("/check", checkUser);
 
 // TODO: Implement these routes
 // router.post('/forgot-password', validateEmail, forgotPassword);

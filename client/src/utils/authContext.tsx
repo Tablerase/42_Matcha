@@ -5,8 +5,8 @@ import { client } from "./axios";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  // login: () => void;
-  // logout: () => void;
+  login: () => void;
+  logout: () => void;
   isLoading: boolean;
 }
 
@@ -24,11 +24,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       });
 
       if (response.status === 200) {
-        console.log("User is authenticated");
-        setIsAuthenticated(true);
-      } else {
-        console.log("User is not authenticated");
-        setIsAuthenticated(false);
+        if (response.data.isAuthenticated === true) {
+          console.log("User is authenticated");
+          setIsAuthenticated(true);
+        } else {
+          console.log("User not authenticated: " + response.data.message);
+          setIsAuthenticated(false);
+        }
       }
     } catch (error) {
       console.error("Error checking auth status:", error);
@@ -36,6 +38,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const login = async () => {
+    setIsAuthenticated(true);
+  };
+
+  const logout = async () => {
+    setIsAuthenticated(false);
   };
 
   useEffect(() => {
@@ -48,7 +58,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

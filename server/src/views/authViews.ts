@@ -4,7 +4,8 @@ import { user as userModel } from "@models/userModel";
 import { auth, auth as authModel } from "@models/authModel";
 import { createAccessToken, createRefreshToken } from "@utils/jwt";
 import { validatePassword } from "@utils/bcrypt";
-import { NODE_ENV } from "@settings";
+import { NODE_ENV, JWT_SECRET_KEY } from "@settings";
+import jwt from "jsonwebtoken";
 
 const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
   const refreshToken = createRefreshToken(user);
@@ -99,17 +100,40 @@ export const logoutUser = async (
 };
 
 export const checkUser = async (req: Request, res: Response): Promise<void> => {
-  try {
-    const user = req.user as User;
+  const authToken = req.cookies?.authToken;
 
+  if (!authToken) {
     res.status(200).json({
-      status: 200,
-      data: user,
+      isAuthenticated: false,
+      message: "No auth token found",
     });
-  } catch (error: any) {
-    res.status(400).json({
-      status: 400,
-      message: error.message.toString(),
+    return;
+  }
+
+  try {
+    const decoded = jwt.verify(
+      authToken,
+      JWT_SECRET_KEY as string
+    ) as unknown as { id: number };
+
+    if (!decoded.id) {
+      res.status(200).json({
+        isAuthenticated: false,
+        message: "Invalid token payload",
+      });
+      return;
+    }
+
+    req.user = decoded;
+    res.status(200).json({
+      isAuthenticated: true,
+      message: "User is authenticated",
     });
+  } catch (err) {
+    res.status(200).json({
+      isAuthenticated: false,
+      message: "Invalid token",
+    });
+    return;
   }
 };
