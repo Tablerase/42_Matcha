@@ -1,0 +1,18 @@
+### Auth token
+
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM2MTY4MTY2LCJleHAiOjE3MzY3NzI5NjZ9.lJO9SUMaJoqgOlHBGpowB0hPDIUVo_iyScms_kBmVtA
+
+### 
+
+GET http://localhost:8000/users
+Cookie: authToken={{authToken}}
+
+### Search by age
+
+GET http://localhost:8000/users/search?maxAge=30&minAge=20
+Cookie: authToken={{authToken}}
+
+### Search by fame rating
+
+GET http://localhost:8000/users/search?maxFameRating=0&&minFameRating=10
+Cookie: authToken={{authToken}}

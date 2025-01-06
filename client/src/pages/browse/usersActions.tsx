@@ -63,7 +63,7 @@ export const useFetchUserById = (
       const userData = response.data;
       return userData as User;
     },
-    queryKey: ["user", id],
+    queryKey: ["currentUser", id],
   });
 };
 
@@ -94,7 +94,7 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
 
 export const useUpdateUserProfile = () => {
   const { mutate: update } = useMutation({
-    mutationKey: ["user"],
+    mutationKey: ["currentUser"],
     mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });

@@ -1,4 +1,5 @@
 import express, { Router } from "express";
+import * as UserSearchView from "@views/userSearchViews";
 import * as UserViews from "@views/userViews";
 import * as TagViews from "@views/tagViews";
 import * as LikeViews from "@views/likeViews";
@@ -12,9 +13,12 @@ import {
 import {
   validateUserUpdate,
   validateUserBlocked,
-} from "../middleware/validateUser";
+} from "../middlewares/validateUser";
 
 const router: Router = express.Router();
+
+// Search routes
+router.get("/search", UserSearchView.searchUsers);
 
 // TODO: add validators everywhere where needed
 router.get("/", UserViews.getUsers);

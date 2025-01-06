@@ -1,16 +1,20 @@
 import { Pool, QueryResult } from "pg";
 import dotenv from "dotenv";
+import { truncate } from "fs";
 
 dotenv.config();
+
+export const NODE_ENV = process.env.NODE_ENV || "development";
 
 export const SERVER_PORT = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
 // TODO: Change the default value of token expiration time
 export const ACCESSTOKEN_EXPIRES_IN =
-  process.env.ACCESSTOKEN_EXPIRES_IN || "15min";
+  process.env.ACCESS_TOKEN_EXPIRES_IN || "15min";
 export const REFRESHTOKEN_EXPIRES_IN =
-  process.env.REFRESHTOKEN_EXPIRES_IN || "7d";
-export const FRONTEND_ORIGIN = process.env.FRONTEND_ORIGIN || "http://localhost:3000";
+  process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
+export const FRONTEND_ORIGIN =
+  process.env.FRONTEND_URL || "http://localhost:3000";
 
 const db_config = {
   user: process.env.POSTGRES_USER as string,
@@ -116,23 +120,21 @@ async function seed() {
     /*USERS TABLE*/
     const setupEnumTypes = `
       -- Handle gender type
-      DO $$
+      DO $$ 
       BEGIN
-        DROP TYPE IF EXISTS gender CASCADE;
         CREATE TYPE gender AS ENUM ('male', 'female', 'other');
-      EXCEPTION 
-        WHEN others THEN
-          RAISE NOTICE 'Error handling gender type: %', SQLERRM;
+      EXCEPTION
+        WHEN duplicate_object THEN
+          NULL;
       END $$;
 
       -- Handle preferences type
       DO $$
       BEGIN
-        DROP TYPE IF EXISTS preferences CASCADE;
         CREATE TYPE preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
       EXCEPTION
-        WHEN others THEN
-          RAISE NOTICE 'Error handling preferences type: %', SQLERRM;
+        WHEN duplicate_object THEN
+          NULL;
       END $$;
     `;
     await pool.query(setupEnumTypes);

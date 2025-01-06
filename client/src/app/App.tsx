@@ -12,31 +12,35 @@ import { CssBaseline } from "@mui/material";
 import { theme } from "@components/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-// import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { AuthProvider, ProtectedRoute } from "@utils/authContext";
 
 export const queryClient = new QueryClient();
 
 export const App = () => {
   return (
-    <>
+    <AuthProvider>
       <QueryClientProvider client={queryClient}>
         <BrowserRouter>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <Routes>
+              {/* Public routes */}
               <Route path="/" element={<Home />} />
               <Route path={routes.REGISTER} element={<Signup />} />
               <Route path={routes.LOGIN} element={<Login />} />
 
-              <Route path={routes.MATCHES} element={<Matches />} />
-              <Route path={routes.BROWSE} element={<Browse />} />
-              <Route path={routes.ME} element={<Profile />} />
-              <Route path={routes.CHAT} element={<Chat />} />
+              {/* Protected routes */}
+              {/* <Route element={<ProtectedRoute />}> */}
+                <Route path={routes.MATCHES} element={<Matches />} />
+                <Route path={routes.BROWSE} element={<Browse />} />
+                <Route path={routes.ME} element={<Profile />} />
+                <Route path={routes.CHAT} element={<Chat />} />
+              {/* </Route> */}
             </Routes>
           </ThemeProvider>
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen />
       </QueryClientProvider>
-    </>
+    </AuthProvider>
   );
 };

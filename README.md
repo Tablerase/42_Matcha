@@ -17,3 +17,7 @@ https://randomuser.me/api/
 #### Parameters
 
 [API Documentation - How to use](https://randomuser.me/documentation#howto)
+
+## Design
+
+Browse profiles/users with tea bags opening and closing, and a cup of tea that fills up as you scroll down the page.

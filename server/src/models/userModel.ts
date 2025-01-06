@@ -2,65 +2,14 @@ import { QueryResult } from "pg";
 import { pool } from "../settings";
 import { User, SortParams } from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
+import { UserSearchQuery } from "@interfaces/userSearchQuery";
 
 class UserModel {
-  // async getUsers(params: SortParams | undefined): Promise<User[]> {
-  //   let query = {
-  //     text: "SELECT * FROM users",
-  //   };
-  //   if (params) {
-  //     query.text = "";
-  //   }
-  //   try {
-  //     const results: QueryResult<User> = await pool.query(query);
-  //     return results.rows;
-  //   } catch (error) {
-  //     throw new Error((error as Error).message);
-  //   }
-  // }
-
   async getUsers(params: SortParams | undefined): Promise<User[]> {
     let query = {
       text: "SELECT * FROM users",
-      values: [] as any[],
     };
-  
-    const conditions: string[] = [];
-  
-    if (params) {
-      let counter = 1; // Parameter placeholder counter
-  
-      if (params.age) {
-        // console.log(params.age.max);
-        conditions.push(`age BETWEEN $${counter} AND $${counter + 1}`);
-        query.values.push(params.age.min, params.age.max);
-        counter += 2;
-      }
-  
-      // if (params.location) {
-      //   conditions.push(`location_x = $${counter} AND location_y = $${counter + 1}`);
-      //   query.values.push(params.location.x, params.location.y);
-      //   counter += 2;
-      // }
-  
-      if (params.fameRate !== undefined) {
-        conditions.push(`fame_rate >= $${counter}`);
-        query.values.push(params.fameRate);
-        counter += 1;
-      }
-  
-      if (params.tags && params.tags.length > 0) {
-        const tagPlaceholders = params.tags.map((_, i) => `$${counter + i}`).join(", ");
-        conditions.push(`tags && ARRAY[${tagPlaceholders}]::text[]`);
-        query.values.push(...params.tags);
-        counter += params.tags.length;
-      }
-  
-      if (conditions.length > 0) {
-        query.text += ` WHERE ${conditions.join(" AND ")}`;
-      }
-    }
-  
+
     try {
       const results: QueryResult<User> = await pool.query(query);
       return results.rows;
@@ -200,6 +149,128 @@ class UserModel {
     };
     const result: QueryResult = await pool.query(query);
     return result.rows;
+  }
+
+  async searchUsers(params: UserSearchQuery): Promise<any[]> {
+    try {
+      console.log(params);
+      const conditions: string[] = [];
+      const values: any[] = [];
+      let parameterIndex = 1;
+
+      // Base query with age calculation
+      // TODO: Add age field to user table to avoid calculating age on every query
+      let query = `
+        SELECT DISTINCT u.id, u.username, u.date_of_birth, u.fame_rate,
+        EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) as age
+      `;
+
+      // Add distance calculation if coordinates provided
+      if (params.latitude && params.longitude) {
+        query += `
+          point(u.longitude, u.latitude) <@> point($${parameterIndex}, $${
+          parameterIndex + 1
+        }) as distance,
+        `;
+        values.push(params.longitude, params.latitude);
+        parameterIndex += 2;
+      }
+
+      query += `  FROM users u`;
+
+      // Join with tags if tag filtering is needed
+      if (params.tags && params.tags.length > 0) {
+        query += `
+          INNER JOIN user_tags ut ON u.id = ut.user_id
+          INNER JOIN tags t ON ut.tag_id = t.id
+        `;
+        conditions.push(`t.name = ANY($${parameterIndex})`);
+        values.push(params.tags);
+        parameterIndex++;
+      }
+
+      // Add age range conditions
+      if (params.minAge !== undefined && !isNaN(params.minAge)) {
+        conditions.push(
+          `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) >= $${parameterIndex}`
+        );
+        values.push(params.minAge);
+        parameterIndex++;
+      }
+      if (params.maxAge !== undefined && !isNaN(params.maxAge)) {
+        conditions.push(
+          `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) <= $${parameterIndex}`
+        );
+        values.push(params.maxAge);
+        parameterIndex++;
+      }
+
+      // Add fame rating range conditions
+      if (params.minFameRating !== undefined && !isNaN(params.minFameRating)) {
+        conditions.push(`u.fame_rate >= $${parameterIndex}`);
+        values.push(params.minFameRating);
+        parameterIndex++;
+      }
+      if (params.maxFameRating !== undefined && !isNaN(params.maxFameRating)) {
+        conditions.push(`u.fame_rate <= $${parameterIndex}`);
+        values.push(params.maxFameRating);
+        parameterIndex++;
+      }
+
+      // Add distance condition if specified
+      if (params.distance && params.latitude && params.longitude) {
+        conditions.push(
+          `point(u.longitude, u.latitude) <@> point($1, $2) <= $${parameterIndex}`
+        );
+        values.push(params.distance);
+        parameterIndex++;
+      }
+
+      // Combine conditions
+      if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(" AND ")}`;
+      }
+
+      // Add sorting
+      if (params.sortBy) {
+        const order = params.order || "asc";
+        switch (params.sortBy) {
+          case "distance":
+            if (params.latitude && params.longitude) {
+              query += ` ORDER BY distance ${order}`;
+            }
+            break;
+          case "age":
+            query += ` ORDER BY age ${order}`;
+            break;
+          case "fameRating":
+            query += ` ORDER BY fame_rating ${order}`;
+            break;
+        }
+      }
+
+      // Add pagination
+      if (params.limit) {
+        query += ` LIMIT $${parameterIndex}`;
+        values.push(params.limit);
+        parameterIndex++;
+      }
+      if (params.offset) {
+        query += ` OFFSET $${parameterIndex}`;
+        values.push(params.offset);
+      }
+
+      console.log(query);
+      console.log(values);
+      const result: QueryResult = await pool.query({
+        text: query,
+        values: values,
+      });
+
+      return result.rows;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
   }
 }
 

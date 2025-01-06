@@ -13,11 +13,18 @@ import Box from "@mui/material/Box";
 import { useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/utils/routes";
+import { useLogout } from "@/pages/auth/authActions";
 
 export const Sidebar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
+  const logout = useLogout();
+
+  const handleLogout = () => {
+    logout();
+  };
+
   return (
     <MatchaNavBar
       sx={{
@@ -45,25 +52,41 @@ export const Sidebar = () => {
           width: "100%",
         }}
       >
-        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.BROWSE)}>
+        <ListItemButton
+          disableRipple
+          disableTouchRipple
+          onClick={() => navigate(routes.BROWSE)}
+        >
           <ListItemIcon>
             <SearchIcon fontSize="small" />
           </ListItemIcon>
           {!isMobile && <ListItemText>Browse</ListItemText>}
         </ListItemButton>
-        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.MATCHES)}>
+        <ListItemButton
+          disableRipple
+          disableTouchRipple
+          onClick={() => navigate(routes.MATCHES)}
+        >
           <ListItemIcon>
             <FavoriteIcon fontSize="small" />
           </ListItemIcon>
           {!isMobile && <ListItemText>Matches</ListItemText>}
         </ListItemButton>
-        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.ME)}>
+        <ListItemButton
+          disableRipple
+          disableTouchRipple
+          onClick={() => navigate(routes.ME)}
+        >
           <ListItemIcon>
             <AccountCircleIcon fontSize="small" />
           </ListItemIcon>
           {!isMobile && <ListItemText>Profile</ListItemText>}
         </ListItemButton>
-        <ListItemButton disableRipple disableTouchRipple onClick={()=>navigate(routes.CHAT)}>
+        <ListItemButton
+          disableRipple
+          disableTouchRipple
+          onClick={() => navigate(routes.CHAT)}
+        >
           <ListItemIcon>
             <ChatIcon fontSize="small" />
           </ListItemIcon>
@@ -84,7 +107,8 @@ export const Sidebar = () => {
         }}
       >
         {!isMobile && <Divider />}
-        <ListItemButton disableRipple disableTouchRipple>
+        {/* Logout */}
+        <ListItemButton disableRipple disableTouchRipple onClick={handleLogout}>
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>

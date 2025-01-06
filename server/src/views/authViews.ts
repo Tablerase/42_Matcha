@@ -4,6 +4,7 @@ import { user as userModel } from "@models/userModel";
 import { auth, auth as authModel } from "@models/authModel";
 import { createAccessToken, createRefreshToken } from "@utils/jwt";
 import { validatePassword } from "@utils/bcrypt";
+import { NODE_ENV } from "@settings";
 
 const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
   const refreshToken = createRefreshToken(user);
@@ -47,10 +48,6 @@ export const authenticateUser = async (
       return;
     }
 
-    const token = createAccessToken({
-      id: isUserExist.id,
-      email: isUserExist.email,
-    });
     await setRefreshTokenCookie(
       { id: isUserExist.id, email: isUserExist.email },
       req
@@ -58,7 +55,40 @@ export const authenticateUser = async (
     res.status(200).json({
       status: 200,
       message: "Login success",
-      token: token,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      status: 400,
+      message: error.message.toString(),
+    });
+  }
+};
+
+export const logoutUser = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const token = req.cookies.authToken;
+
+    if (!token) {
+      res.status(401).json({
+        status: 401,
+        message: "Unauthorized",
+      });
+      return;
+    }
+
+    res.clearCookie("authToken", {
+      httpOnly: true,
+      secure: NODE_ENV === "production",
+      sameSite: "strict",
+      path: "/",
+    });
+
+    res.status(200).json({
+      status: 200,
+      message: "Logout success",
     });
   } catch (error: any) {
     res.status(400).json({

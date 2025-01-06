@@ -6,6 +6,8 @@
   "scripts": {
     "build": "tsc",
     "start": "node -r module-alias/register dist/src/server.js",
+    "re": "rm -rf ./dist && tsc && npm run start",
+    "seed": "ts-node src/seed.ts",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts"
   },
   "keywords": [],
@@ -13,7 +15,9 @@
   "license": "ISC",
   "dependencies": {
     "@types/bcrypt": "^5.0.2",
+    "@types/cookie-parser": "^1.4.8",
     "bcrypt": "^5.1.1",
+    "cookie-parser": "^1.4.7",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
@@ -41,6 +45,8 @@
     "@models": "dist/src/models",
     "@views": "dist/src/views",
     "@interfaces": "dist/src/interfaces",
-    "@utils": "dist/src/utils"
+    "@middlewares": "dist/src/middlewares",
+    "@utils": "dist/src/utils",
+    "@settings": "dist/src/settings.js"
   }
 }
