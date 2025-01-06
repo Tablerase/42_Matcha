@@ -3,7 +3,7 @@ import {
   validateUserLogin,
   validateUserCreation,
 } from "@middlewares/validateUser";
-import { authenticateUser, logoutUser } from "@views/authViews";
+import { authenticateUser, logoutUser, checkUser } from "@views/authViews";
 import { createUser } from "@views/userViews";
 import { authenticateToken } from "@middlewares/auth";
 
@@ -14,9 +14,7 @@ router.post("/signup", validateUserCreation, createUser);
 
 router.post("/logout", authenticateToken, logoutUser);
 
-router.get("/check", authenticateToken, (req, res) => {
-  res.status(200).json({ status: 200, message: "Authenticated" });
-});
+router.get("/check", authenticateToken, checkUser);
 
 // TODO: Implement these routes
 // router.post('/forgot-password', validateEmail, forgotPassword);

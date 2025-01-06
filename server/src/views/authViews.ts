@@ -97,3 +97,19 @@ export const logoutUser = async (
     });
   }
 };
+
+export const checkUser = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const user = req.user as User;
+
+    res.status(200).json({
+      status: 200,
+      data: user,
+    });
+  } catch (error: any) {
+    res.status(400).json({
+      status: 400,
+      message: error.message.toString(),
+    });
+  }
+};

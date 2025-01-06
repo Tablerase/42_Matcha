@@ -1,11 +1,12 @@
 import { createContext, useState, useContext, useEffect } from "react";
 import { routes } from "../utils/routes";
 import { Navigate, Outlet } from "react-router-dom";
+import { client } from "./axios";
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  login: () => void;
-  logout: () => void;
+  // login: () => void;
+  // logout: () => void;
   isLoading: boolean;
 }
 
@@ -18,14 +19,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const checkAuthStatus = async () => {
     setIsLoading(true);
     try {
-      const response = await fetch("/auth/check", {
-        method: "GET",
-        credentials: "include",
+      const response = await client.get("/auth/check", {
+        withCredentials: true,
       });
 
-      if (response.ok) {
+      if (response.status === 200) {
+        console.log("User is authenticated");
         setIsAuthenticated(true);
       } else {
+        console.log("User is not authenticated");
         setIsAuthenticated(false);
       }
     } catch (error) {
@@ -40,21 +42,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     checkAuthStatus();
   }, []);
 
-  const login = () => {
-    setIsAuthenticated(true);
-  };
-
-  const logout = () => {
-    setIsAuthenticated(false);
-  };
-
   if (isLoading) {
     // TODO: Add a loading spinner or component
     return <div>Loading...</div>;
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated, login, logout, isLoading }}>
+    <AuthContext.Provider value={{ isAuthenticated, isLoading }}>
       {children}
     </AuthContext.Provider>
   );

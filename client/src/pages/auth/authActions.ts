@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../app/App";
 import { User, UserLogin } from "@app/interfaces";
 import { routes } from "@utils/routes";
-import { useAuth } from "@/utils/authContext";
 
 export const loginUser = async (data: UserLogin) => {
   const user = await client.post<User>("/auth/login", data, {
@@ -15,13 +14,11 @@ export const loginUser = async (data: UserLogin) => {
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { login: setAuth } = useAuth();
   const { mutate: login } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: loginUser,
     onSuccess: () => {
       console.log("Login successful");
-      setAuth(); // Update auth context state
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
       navigate(routes.BROWSE, { replace: true });
     },
