@@ -3,6 +3,7 @@ import * as UserViews from "@views/userViews";
 import * as TagViews from "@views/tagViews";
 import * as LikeViews from "@views/likeViews";
 import * as MatchViews from "@views/matchViews";
+import * as ImageViews from "@views/imageViews";
 import {
   getUserBlockedUsers,
   blockUser,
@@ -35,5 +36,8 @@ router.delete("/:id/likes", LikeViews.deleteUserLike);
 
 router.get("/:id/matches", MatchViews.getUserMatches);
 router.delete("/:id/matches", MatchViews.deleteUserMatch);
+
+router.get("/:id/images", ImageViews.getUserImages);
+router.post("/:id/images", ImageViews.createUserImage);
 
 export default router;

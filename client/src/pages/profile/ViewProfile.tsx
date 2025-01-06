@@ -16,8 +16,9 @@ import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
 import { ViewProfileProps } from "@/app/interfaces";
 
-export const ViewProfile = ({ user, tags }: ViewProfileProps) => {
+export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
   console.log(user.location_postal);
+  console.log(images);
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
     return (
@@ -35,7 +36,7 @@ export const ViewProfile = ({ user, tags }: ViewProfileProps) => {
           <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
             <Avatar
               sx={{ width: 100, height: 100 }}
-              // src={user.profilePicture}
+              src={images ? images[0]?.url : " "}
             />
             <Stack>
               <Typography variant="h5">

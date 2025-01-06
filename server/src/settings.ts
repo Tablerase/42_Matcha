@@ -257,6 +257,18 @@ async function seed() {
     `;
     await pool.query(createReportedUsersQuery);
 
+    /* IMAGES TABLE */
+    const createImagesQuery = `
+        CREATE TABLE IF NOT EXISTS images (
+            id SERIAL PRIMARY KEY,
+            user_id INT REFERENCES users(id) ON DELETE CASCADE,
+            image_url bpchar NOT NULL,
+            is_profile BOOLEAN DEFAULT FALSE
+        );
+    `;
+
+    await pool.query(createImagesQuery);
+
     /* REFRESH TOKENS TABLE */
     const createRefreshTokensQuery = `
         CREATE TABLE IF NOT EXISTS refresh_tokens (

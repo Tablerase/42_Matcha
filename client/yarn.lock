@@ -1262,7 +1262,7 @@
   "resolved" "https://registry.npmjs.org/@emotion/memoize/-/memoize-0.9.0.tgz"
   "version" "0.9.0"
 
-"@emotion/react@^11.0.0-rc.0", "@emotion/react@^11.14.0", "@emotion/react@^11.4.1", "@emotion/react@^11.5.0", "@emotion/react@^11.9.0":
+"@emotion/react@^11.0.0-rc.0", "@emotion/react@^11.13.3", "@emotion/react@^11.14.0", "@emotion/react@^11.4.1", "@emotion/react@^11.5.0", "@emotion/react@^11.9.0":
   "integrity" "sha512-O000MLDBDdk/EohJPFUqvnp4qnHeYkVP5B0xEG0D/L7cOKP9kefu2DXn8dj74cQfsEzUqh+sr1RzFqiL1o+PpA=="
   "resolved" "https://registry.npmjs.org/@emotion/react/-/react-11.14.0.tgz"
   "version" "11.14.0"
@@ -1292,7 +1292,7 @@
   "resolved" "https://registry.npmjs.org/@emotion/sheet/-/sheet-1.4.0.tgz"
   "version" "1.4.0"
 
-"@emotion/styled@^11.14.0", "@emotion/styled@^11.3.0", "@emotion/styled@^11.8.1":
+"@emotion/styled@^11.13.0", "@emotion/styled@^11.14.0", "@emotion/styled@^11.3.0", "@emotion/styled@^11.8.1":
   "integrity" "sha512-XxfOnXFffatap2IyCeJyNov3kiDQWoR08gPUQxvbL7fxKryGBKUZUkG6Hz48DZwVrJSVh9sJboyV1Ds4OW6SgA=="
   "resolved" "https://registry.npmjs.org/@emotion/styled/-/styled-11.14.0.tgz"
   "version" "11.14.0"
@@ -1737,7 +1737,7 @@
     "clsx" "^2.1.0"
     "prop-types" "^15.8.1"
 
-"@mui/material@^5.15.14 || ^6.0.0", "@mui/material@^6.1.10":
+"@mui/material@^5.0.0 || ^6.0.0", "@mui/material@^5.15.14 || ^6.0.0", "@mui/material@^6.1.10":
   "integrity" "sha512-txnwYObY4N9ugv5T2n5h1KcbISegZ6l65w1/7tpSU5OB6MQCU94YkP8n/3slDw2KcEfRk4+4D8EUGfhSPMODEQ=="
   "resolved" "https://registry.npmjs.org/@mui/material/-/material-6.1.10.tgz"
   "version" "6.1.10"
@@ -7151,6 +7151,13 @@
   "resolved" "https://registry.npmjs.org/ms/-/ms-2.0.0.tgz"
   "version" "2.0.0"
 
+"mui-file-input@^6.0.0":
+  "integrity" "sha512-obxuGvY2+SuafXUdKOq06jw/Ams3xPsYafkSb71wmnC2jz6k+DHeKomXlawqAUM7w6WbRy2J3mQ4yoRLZYMx3A=="
+  "resolved" "https://registry.npmjs.org/mui-file-input/-/mui-file-input-6.0.0.tgz"
+  "version" "6.0.0"
+  dependencies:
+    "pretty-bytes" "^6.1.1"
+
 "multicast-dns@^7.2.5":
   "integrity" "sha512-2eznPJP8z2BFLX50tf0LuODrpINqP1RVIm/CObbTcBRITQgmC/TjcREF1NeTBzIcR5XO/ukWo+YHOjBbFwIupg=="
   "resolved" "https://registry.npmjs.org/multicast-dns/-/multicast-dns-7.2.5.tgz"
@@ -8176,6 +8183,11 @@
   "integrity" "sha512-FFw039TmrBqFK8ma/7OL3sDz/VytdtJr044/QUJtH0wK9lb9jLq9tJyIxUwtQJHwar2BqtiA4iCWSwo9JLkzFg=="
   "resolved" "https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-5.6.0.tgz"
   "version" "5.6.0"
+
+"pretty-bytes@^6.1.1":
+  "integrity" "sha512-mQUvGU6aUFQ+rNvTIAcZuWGRT9a6f6Yrg9bHs4ImKF+HZCEK+plBvnAZYSIQztknZF2qnzNtr6F8s0+IuptdlQ=="
+  "resolved" "https://registry.npmjs.org/pretty-bytes/-/pretty-bytes-6.1.1.tgz"
+  "version" "6.1.1"
 
 "pretty-error@^4.0.0":
   "integrity" "sha512-AoJ5YMAcXKYxKhuJGdcvse+Voc6v1RgnsR3nWcYU7q4t6z0Q6T86sv5Zq8VIRbOWWFpvdGE83LtdSMNd+6Y0xw=="

@@ -1,6 +1,6 @@
 ### Protected routes
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM1MjI4Mzc1LCJleHAiOjE3MzUyMjkyNzV9.EwMOrfN2HNm4L8P9YQWj5Co7u1thUXRUzg55f_9Vj6w
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0MUBleGFtcGxlLmNvbSIsImlhdCI6MTczNjE2NTI2NiwiZXhwIjoxNzM2MTY2MTY2fQ.eheq1TNNLKJ_xv_OMT2DhGgydyBx4OWOJ8rZknY3sC8
 
 GET http://localhost:8000/tags
 Set-Cookie: authToken={{authToken}}
@@ -70,11 +70,27 @@ Content-Type: application/json
     "firstName": "testname",
     "lastName": "tester", 
     "username": "test",
-    "email": "test@example.com",
+    "email": "test1@example.com",
     "password": "password"
 
 }
 
 ###
 
+GET http://localhost:8000/users/1/images
+Content-Type: application/json
 
+{
+    "userId": 1
+}
+
+###
+
+POST http://localhost:8000/users/1/images
+Content-Type: application/json
+
+{
+    "user_id": 1,
+    "image_url": "https://www.google.com",
+    "is_profile_picture": true
+}

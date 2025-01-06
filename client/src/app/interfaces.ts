@@ -39,6 +39,7 @@ export interface Tag {
 export interface ViewProfileProps {
   user: Partial<User>;
   tags: Tag[] | undefined;
+  images: Image[] | undefined;
 }
 
 export interface FormData extends Omit<User, "dateOfBirth"> {
@@ -62,4 +63,10 @@ export interface EditProfileProps {
   user: Partial<User>;
   userTags?: Tag[];
   setEditMode: () => void;
+}
+
+export interface Image {
+  userId: number;
+  url: string;
+  isProfilePic?: boolean;
 }

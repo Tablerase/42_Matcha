@@ -5,6 +5,7 @@ import { User, UserResponse, Tag } from "@app/interfaces";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
+import { Image } from "@/app/interfaces";
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
   return await client.get<User[]>("/users");
@@ -18,14 +19,6 @@ const fetchCurrentUser = async (): Promise<
   AxiosResponse<UserResponse, any>
 > => {
   return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
-};
-
-const fetchAllTags = async (): Promise<AxiosResponse> => {
-  return await client.get(`/tags`, { withCredentials: true });
-};
-
-export const fetchUserTags = async (userId?: number): Promise<AxiosResponse> => {
-  return await client.get(`/users/${userId}/tags`, { withCredentials: true });
 };
 
 const updateUser = async (data: Partial<User>) => {
@@ -46,40 +39,6 @@ const updateUser = async (data: Partial<User>) => {
     withCredentials: true,
   });
   return user.data as User;
-};
-
-const updateUserTags = async ({
-  userId,
-  tagId,
-}: {
-  userId: number;
-  tagId: number;
-}) => {
-  const response = await client.post(`/users/${userId}/tags`, { tagId });
-  return response.data;
-};
-
-const deleteUserTags = async ({
-  userId,
-  tagId,
-}: {
-  userId: number;
-  tagId: number;
-}) => {
-  const response = await client.delete(`/users/${userId}/tags`, {
-    data: { tagId: tagId },
-  });
-  return response.data;
-};
-
-export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
-  return useQuery<Tag[], any>({
-    queryFn: async () => {
-      const { data } = await fetchAllTags();
-      return data;
-    },
-    queryKey: ["tags"],
-  });
 };
 
 export const useFetchUsers = (): QueryObserverResult<User[], any> => {
@@ -133,6 +92,61 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
   });
 };
 
+export const useUpdateUserProfile = () => {
+  const { mutate: update } = useMutation({
+    mutationKey: ["user"],
+    mutationFn: updateUser,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+    },
+  });
+  return update;
+};
+
+/*TAGS*/
+
+const fetchAllTags = async (): Promise<AxiosResponse> => {
+  return await client.get(`/tags`, { withCredentials: true });
+};
+
+export const fetchUserTags = async (userId?: number): Promise<AxiosResponse> => {
+  return await client.get(`/users/${userId}/tags`, { withCredentials: true });
+};
+
+const updateUserTags = async ({
+  userId,
+  tagId,
+}: {
+  userId: number;
+  tagId: number;
+}) => {
+  const response = await client.post(`/users/${userId}/tags`, { tagId });
+  return response.data;
+};
+
+const deleteUserTags = async ({
+  userId,
+  tagId,
+}: {
+  userId: number;
+  tagId: number;
+}) => {
+  const response = await client.delete(`/users/${userId}/tags`, {
+    data: { tagId: tagId },
+  });
+  return response.data;
+};
+
+export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
+  return useQuery<Tag[], any>({
+    queryFn: async () => {
+      const { data } = await fetchAllTags();
+      return data;
+    },
+    queryKey: ["tags"],
+  });
+};
+
 export const useAddUserTags = () => {
   const { mutate: update } = useMutation({
     mutationKey: ["userTags"],
@@ -157,17 +171,6 @@ export const useDeleteUserTags = () => {
   return update;
 };
 
-export const useUpdateUserProfile = () => {
-  const { mutate: update } = useMutation({
-    mutationKey: ["user"],
-    mutationFn: updateUser,
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-    },
-  });
-  return update;
-};
-
 export const useFetchUserTags = (userId?: number) => {
   return useQuery<Tag[], any>({
     queryFn: async () => {
@@ -178,3 +181,48 @@ export const useFetchUserTags = (userId?: number) => {
     enabled: !!userId,
   });
 };
+
+/*IMAGES*/
+
+const fetchImages = async (userId?: number) => {
+  if (!userId) return [];
+  const response = await client.get(`/users/${userId}/images`, {
+    params: { userId },
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+const uploadeImage = async (data: Image) => {
+  const response = await client.post(`/users/${data.userId}/images`, {userId: data.userId, url: data.url}, {
+    withCredentials: true,
+  });
+  return response.data;
+}
+
+export const useFetchUserImages = (userId?: number) => {
+  return useQuery<Image[], any>({
+    queryFn: async () => {
+      const { data } = await fetchImages(userId);
+      return data.map((image: any) => ({
+        userId: image.user_id,
+        url: image.image_url,
+        isProfilePic: image.is_profile,
+        }));
+    },
+    queryKey: ["currentUserImages", userId],
+    enabled: !!userId,
+    initialData: [],
+  });
+};
+
+export const useUploadImage = () => {
+  const { mutate: upload } = useMutation({
+    mutationKey: ["images"],
+    mutationFn: uploadeImage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+    },
+  });
+  return upload;
+}

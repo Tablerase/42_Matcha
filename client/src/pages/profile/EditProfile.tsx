@@ -33,7 +33,8 @@ import { useAddUserTags } from "@pages/browse/usersActions";
 import { getIpData, isValidUsername } from "@/utils/helpers";
 import { EditProfileProps, FormData } from "@/app/interfaces";
 import { isValidEmail } from "@/utils/helpers";
-import { set } from "date-fns";
+import { MuiFileInput } from 'mui-file-input'
+import { useUploadImage } from "@pages/browse/usersActions";
 
 export const EditProfile = ({
   user,
@@ -44,6 +45,7 @@ export const EditProfile = ({
   const updateUser = useUpdateUserProfile();
   const updateUserTags = useAddUserTags();
   const deleteUserTags = useDeleteUserTags();
+  const uploadImage = useUploadImage();
   
   const [emailError, setEmailError] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string>("");
@@ -175,6 +177,7 @@ export const EditProfile = ({
         }
       }
     }
+    // submitPictures()
     setEditMode();
   };
 
@@ -207,6 +210,39 @@ export const EditProfile = ({
     }
   };
 
+  const [file, setFile] = useState<File | null>(null)
+
+  const handleFileUpload = (newFile: File | null) => {
+    setFile(newFile);
+    
+    if (!newFile) {
+      return;
+    }
+  
+    // Validate file size (max 5MB)
+    if (newFile.size > 5 * 1024 * 1024) {
+      console.error('File too large');
+      return;
+    }
+  
+    const reader = new FileReader();
+    
+    reader.onload = () => {
+      const result = reader.result as string;
+      uploadImage({ userId: formData.id, url: result });
+    };
+  
+    reader.onerror = () => {
+      console.error('Error reading file');
+    };
+  
+    try {
+      reader.readAsDataURL(newFile);
+    } catch (error) {
+      console.error('Failed to read file:', error);
+    }
+  };
+
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
@@ -216,6 +252,10 @@ export const EditProfile = ({
               sx={{ width: 100, height: 100 }}
               // src={user.profilePicture}
             />
+             <MuiFileInput 
+             value={file} 
+             onChange={handleFileUpload}
+              />
             <Button variant="outlined" startIcon={<EditRoundedIcon />}>
               Change Photo
             </Button>
