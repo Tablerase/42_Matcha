@@ -19,5 +19,5 @@ Cookie: authToken={{authToken}}
 
 ### Search by distance
 
-GET http://localhost:8000/users/search?distance=20000&latitude=34.5074&longitude=-110.1278
+GET http://localhost:8000/users/search?distance=10&latitude=48.853119&longitude=2.349494
 Cookie: authToken={{authToken}}

@@ -1,7 +1,7 @@
 import { Pool, QueryResult } from "pg";
 import dotenv from "dotenv";
 import { truncate } from "fs";
-import { validTags } from "@interfaces/tagInterface";
+import { validTags } from "./interfaces/tagInterface";
 
 dotenv.config();
 

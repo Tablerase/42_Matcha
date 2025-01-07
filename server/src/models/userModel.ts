@@ -166,14 +166,15 @@ class UserModel {
         EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) as age
       `;
 
-      // Add distance calculation if coordinates provided
-      if (params.latitude && params.longitude) {
+      // Add distance calculation if coordinates provided (here metric system is used)
+      if (params.distance && params.latitude && params.longitude) {
         query += `
-          , u.location <@> point($${parameterIndex}, $${
-          parameterIndex + 1
-        }) as distance
+          , earth_distance(
+            ll_to_earth(u.location[0], u.location[1]),
+            ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
+            ) AS distance
         `;
-        values.push(params.longitude, params.latitude);
+        values.push(params.latitude, params.longitude);
         parameterIndex += 2;
       }
 
@@ -221,14 +222,23 @@ class UserModel {
       // Add distance condition if specified
       /**
        * Earth distance calculation formula
+       * @see https://docs.vultr.com/how-to-calculate-distances-with-postgresql
        * @see https://www.geeksforgeeks.org/program-distance-two-points-earth/
        */
-      if (params.distance && params.latitude && params.longitude) {
-        const oneKmInMiles = 0.621371;
-        const distanceInMiles = params.distance * oneKmInMiles;
-        conditions.push(`u.location <@> point($1, $2) <= $${parameterIndex}`);
-        values.push(distanceInMiles);
-        parameterIndex++;
+      if (
+        params.distance &&
+        !isNaN(params.distance) &&
+        params.distance !== undefined &&
+        params.latitude &&
+        params.longitude
+      ) {
+        conditions.push(`
+          earth_distance(
+            ll_to_earth(u.location[0], u.location[1]),
+            ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
+            ) <= $${parameterIndex + 2} * 1000`);
+        values.push(params.latitude, params.longitude, params.distance);
+        parameterIndex += 3;
       }
 
       // Combine conditions

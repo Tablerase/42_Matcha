@@ -17,8 +17,8 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     const insertUsersQuery = `
       INSERT INTO users (first_name, last_name, username, email, password, gender, preferences, date_of_birth, bio, location, fame_rate, last_seen)
       VALUES
-        ('John', 'Doe', 'johndoe', 'john@example.com', 'hashedpassword', 'male', 'heterosexual', '1990-01-01', 'Bio of John', POINT(40.7128, -74.0060), 10, NOW()),
-        ('Jane', 'Doe', 'janedoe', 'jane@example.com', 'hashedpassword', 'female', 'homosexual', '1992-02-02', 'Bio of Jane', POINT(34.0522, -118.2437), 20, NOW()),
+        ('John', 'Doe', 'johndoe', 'john@example.com', 'hashedpassword', 'male', 'heterosexual', '1990-01-01', 'Bio of John', POINT(48.862842, 2.342815), 10, NOW()),
+        ('Jane', 'Doe', 'janedoe', 'jane@example.com', 'hashedpassword', 'female', 'homosexual', '1992-02-02', 'Bio of Jane', POINT(48.853119, 2.349494), 20, NOW()),
         ('Alice', 'Smith', 'alicesmith', 'alice@example.com', 'hashedpassword', 'female', 'bisexual', '1995-05-05', 'Bio of Alice', POINT(37.7749, -122.4194), 30, NOW()),
         ('Bob', 'Smith', 'bobsmith', 'bobsmith@example.com', 'hashedpassword', 'other', 'bisexual', '1998-08-08', 'Bio of Bob', POINT(41.8781, -87.6298), 40, NOW()),
         ('Charlie', 'Brown', 'charliebrown', 'charliebrown@example.com', 'hashedpassword', 'male', 'heterosexual', '2000-10-10', 'Bio of Charlie', POINT(29.7604, -95.3698), 50, NOW())
