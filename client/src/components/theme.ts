@@ -3,6 +3,36 @@ import { deepPurple, lightGreen } from "@mui/material/colors";
 
 // const lightGreen = '#d6e2a4';
 // const lightPurple = '#b0a4e2'
+export const tagChipColors = [
+  '#FFDDE1', // pale pink
+  '#DFF5E1', // soft pale green
+  '#D0F0FD', // light sky blue
+  '#E9D8F3', // soft plum
+  '#FDF6D8', // pale khaki
+  '#F8F8FF', // pale lavender
+  '#FFE3D9', // soft salmon
+  '#E6FBE9', // very light green
+  '#E6F7E1', // pale lime green
+  '#D6F0D8', // soft medium sea green
+  '#CFECE3', // pale sea green
+  '#E0F5F0', // pale aquamarine
+  '#E8F5E8', // very pale dark sea green
+  '#DFF6F3', // light seafoam green
+  '#DAF2E0', // very soft forest green
+  '#F0FFDD', // pale chartreuse
+  '#E2F9EB', // soft spring green
+  '#E3FEEA', // very pale spring green
+  '#F3FFDE', // pale green yellow
+  '#E9EDE5', // soft dark olive green
+  '#EFF6DA', // pale yellow green
+  '#E6EDD8', // soft olive drab
+  '#F2F9E8', // soft and muted green
+  '#EAF4F8', // pale blue
+  '#FFF6DB', // pale gold
+  '#F6EBF6', // soft thistle
+  '#FFD9E6', // soft hot pink
+  '#FDF2E5', // pale wheat
+];
 
 const palette = {
   primary: {

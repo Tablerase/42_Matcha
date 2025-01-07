@@ -8,6 +8,7 @@ import Select from "@mui/material/Select";
 import Chip from "@mui/material/Chip";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Tag } from "@/app/interfaces";
+import { tagChipColors } from "@/components/theme";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -28,19 +29,19 @@ interface MultipleSelectChipProps {
 
 function isTagInBothArrays(tag: string, array1?: Tag[], array2?: Tag[]) {
   // Check if the tag exists in both arrays
-  if (!array1 || !array2) return ;
-  const isInArray1 = array1.some(item => item.tag === tag);
-  const isInArray2 = array2.some(item => item.tag === tag);
+  if (!array1 || !array2) return;
+  const isInArray1 = array1.some((item) => item.tag === tag);
+  const isInArray2 = array2.some((item) => item.tag === tag);
 
   return isInArray1 && isInArray2;
 }
 
-export const MultipleSelectChip = ({items, userTags, handleChange}: MultipleSelectChipProps) => {
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-
+export const MultipleSelectChip = ({
+  items,
+  userTags,
+  handleChange,
+}: MultipleSelectChipProps) => {
   const onSelectChange = (event: SelectChangeEvent<string[]>) => {
-    const newSelected = event.target.value as string[];
-    setSelectedItems(newSelected);
     handleChange(event);
   };
   const tagsArr = userTags?.map((tag) => tag.tag) || [];
@@ -55,8 +56,14 @@ export const MultipleSelectChip = ({items, userTags, handleChange}: MultipleSele
         input={<OutlinedInput id="select-multiple-chip" label="Interests" />}
         renderValue={(selected) => (
           <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-            {selected.map((value) => (
-              <Chip key={value} label={`#${value}`} />
+            {selected.map((value, id) => (
+              <Chip
+                key={value}
+                label={`#${value}`}
+                sx={{
+                  bgcolor: tagChipColors[id % tagChipColors.length],
+                }}
+              />
             ))}
           </Box>
         )}

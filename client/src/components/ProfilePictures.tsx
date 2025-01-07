@@ -3,7 +3,6 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Checkbox,
   Divider,
   Radio,
   RadioGroup,
@@ -20,6 +19,7 @@ import {
   useUpdateImageStatus,
   useDeleteImage,
 } from "@/pages/browse/usersActions";
+import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface ProfilePicturesProps {
   images?: Image[];
@@ -54,17 +54,24 @@ export const ProfilePictures = ({
     }
     const validFiles = newFiles.filter((file) => {
       if (file.size > MAX_FILE_SIZE) {
-        const oversizedFiles = newFiles.filter(file => file.size > MAX_FILE_SIZE);
-        setFilesError(`Files must be less than 1MB. These files exceed the limit: ${
-          oversizedFiles.map(f => f.name).join(', ')
-        }`);
+        const oversizedFiles = newFiles.filter(
+          (file) => file.size > MAX_FILE_SIZE
+        );
+        setFilesError(
+          `Files must be less than 1MB. These files exceed the limit: ${oversizedFiles
+            .map((f) => f.name)
+            .join(", ")}`
+        );
         return false;
-      }
-      else if (!file.type.startsWith("image/")) {
-        const nonImageFiles = newFiles.filter(file => !file.type.startsWith("image/"));
-        setFilesError(`Only images are allowed. These files have the wrong format: ${
-          nonImageFiles.map(f => f.name).join(', ')
-          }`);
+      } else if (!file.type.startsWith("image/")) {
+        const nonImageFiles = newFiles.filter(
+          (file) => !file.type.startsWith("image/")
+        );
+        setFilesError(
+          `Only images are allowed. These files have the wrong format: ${nonImageFiles
+            .map((f) => f.name)
+            .join(", ")}`
+        );
         return false;
       } else {
         setFilesError("");
@@ -75,7 +82,6 @@ export const ProfilePictures = ({
 
     setFiles(validFiles);
 
-    // Process each valid file
     validFiles.forEach((file) => {
       const reader = new FileReader();
 
@@ -99,19 +105,15 @@ export const ProfilePictures = ({
     });
   };
 
-  const handleProfilePicChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-    currentImageId?: number
-  ) => {
+  const handleProfilePicChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newSelectedId = Number(e.target.value);
     setSelectedProfilePic(newSelectedId);
-    
-    // Update all images
+
     images?.forEach((image) => {
       updateImageStatus({
         userId: userData!.id,
         id: image.id,
-        isProfilePic: image.id === newSelectedId
+        isProfilePic: image.id === newSelectedId,
       });
     });
   };
@@ -122,7 +124,11 @@ export const ProfilePictures = ({
         <>
           <Avatar
             sx={{ width: 100, height: 100 }}
-            src={images && images.filter(image => image.isProfilePic)[0]?.url || ""}
+            src={
+              (images &&
+                images.filter((image) => image.isProfilePic)[0]?.url) ||
+              ""
+            }
           />
           <AvatarGroup spacing={1}>
             {images &&
@@ -132,7 +138,7 @@ export const ProfilePictures = ({
                 .map((image) => (
                   <Avatar
                     key={image.id}
-                    sx={{ width: 80, height: 80 }}
+                    sx={{ width: 65, height: 65 }}
                     src={image.url}
                   />
                 ))}
@@ -154,56 +160,85 @@ export const ProfilePictures = ({
               placeholder="Click here to upload pictures"
               error={!!filesError}
               helperText={filesError}
+              InputProps={{
+                endAdornment: <AttachFileIcon />,
+              }}
             />
           )}
 
           {images && images.length > 0 && (
-            <Box sx={{ border: "1px solid #ccc", borderRadius: 1, p: 2 }}>
-              <Typography>Select profile picture</Typography>
-              <Divider />
-              <Box sx={{ alignItems: "center" }}>
-                <Box sx={{ display: "flex", gap: 2 }}>
-                  {images.map((image) => (
-                    <>
-                      <Stack>
-                        <FormControl>
-                          <RadioGroup
-                            value={selectedProfilePic}
-                            onChange={(e) => handleProfilePicChange(e, image!.id)}
+            <>
+              <Typography variant="h6">Select profile picture</Typography>
+              <Box
+                sx={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fill, minmax(150px, 1fr))",
+                  gap: 1,
+                  width: "100%",
+                  "& .MuiFormControl-root": {
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: 1,
+                  },
+                }}
+              >
+                {images.map((image) => (
+                  <>
+                    <Stack>
+                      <FormControl>
+                        <RadioGroup
+                          value={selectedProfilePic}
+                          onChange={(event) => handleProfilePicChange(event)}
+                        >
+                          <Badge
+                            anchorOrigin={{
+                              vertical: "top",
+                              horizontal: "right",
+                            }}
+                            badgeContent={
+                              <Box
+                                sx={{
+                                  bgcolor: "primary.main",
+                                  borderRadius: "50%",
+                                  p: 0.5,
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  cursor: "pointer",
+                                }}
+                              >
+                                <DeleteForeverIcon
+                                  fontSize="small"
+                                  onClick={() => {
+                                    deleteImage({
+                                      userId: userData!.id,
+                                      id: image.id,
+                                    });
+                                  }}
+                                />
+                              </Box>
+                            }
                           >
-                            <Badge
-                              overlap="circular"
-                              anchorOrigin={{
-                                vertical: "top",
-                                horizontal: "right",
-                              }}
-                              badgeContent={<DeleteForeverIcon />}
-                              onClick={() => {
-                                deleteImage({
-                                  userId: userData!.id,
-                                  id: image.id,
-                                });
-                              }}
-                            >
-                              <Avatar
-                                key={image.id}
-                                sx={{ width: 80, height: 80 }}
-                                src={image.url}
-                              />
-                            </Badge>
-                            <Radio
-                              disableRipple
-                              value={image.id}
-                              checked={selectedProfilePic === image.id}
+                            <Avatar
+                              key={image.id}
+                              sx={{ width: 100, height: 100 }}
+                              src={image.url}
                             />
-                          </RadioGroup>
-                        </FormControl>
-                      </Stack>
-                    </>
-                  ))}
-                </Box>
+                          </Badge>
+                          <Radio
+                            disableRipple
+                            disableTouchRipple
+                            value={image.id}
+                            checked={selectedProfilePic === image.id}
+                          />
+                        </RadioGroup>
+                      </FormControl>
+                    </Stack>
+                  </>
+                ))}
               </Box>
-            </Box>
+            </>
           )}
         </Stack>
       )}
