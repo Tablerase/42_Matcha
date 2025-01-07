@@ -1,6 +1,7 @@
 import { Pool, QueryResult } from "pg";
 import dotenv from "dotenv";
 import { truncate } from "fs";
+import { validTags } from "@interfaces/tagInterface";
 
 dotenv.config();
 
@@ -70,52 +71,20 @@ async function seed() {
     /*INTERESTS TAGS TABLE*/
     const createInterestsTagTableQuery = `
         CREATE TABLE IF NOT EXISTS tags (
-          id SERIAL PRIMARY KEY,
+          id INTEGER PRIMARY KEY,
           tag VARCHAR(100) UNIQUE NOT NULL
         );
       `;
     await pool.query(createInterestsTagTableQuery);
 
-    const checkTagsTableQuery = `
-        SELECT count(*) FROM tags;
-      `;
-    const res = await pool.query(checkTagsTableQuery);
     const insertTagsQuery = `
-        INSERT INTO tags (tag)
+        INSERT INTO tags (id, tag)
         VALUES
-          ('art'),
-          ('photography'),
-          ('fashion'),
-          ('technology'),
-          ('science'),
-          ('cooking'),
-          ('food'),
-          ('fitness'),
-          ('gaming'),
-          ('sports'),
-          ('music'),
-          ('movies'),
-          ('books'),
-          ('travel'),
-          ('outdoors'),
-          ('animals'),
-          ('politics'),
-          ('history'),
-          ('wine'),
-          ('beer'),
-          ('coffee'),
-          ('tea'),
-          ('matcha'),
-          ('yoga'),
-          ('meditation'),
-          ('spirituality'),
-          ('astrology'),
-          ('tarot')
-        ON CONFLICT (tag) DO NOTHING;
+          ${validTags.map((tag) => `(${tag.id}, '${tag.tag}')`).join(",")}
+        ON CONFLICT (id) DO UPDATE 
+        SET tag = EXCLUDED.tag;
       `;
-    if (parseInt(res.rows[0].count) === 0) {
-      await pool.query(insertTagsQuery);
-    }
+    await pool.query(insertTagsQuery);
 
     /*USERS TABLE*/
     const setupEnumTypes = `

@@ -1,6 +1,7 @@
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
 import { Request, Response } from "express";
 import { user as userModel } from "@models/userModel";
+import { validTags } from "@interfaces/tagInterface";
 
 export const searchUsers = async (
   req: Request,
@@ -13,7 +14,11 @@ export const searchUsers = async (
       distance: parseInt(req.query.distance as string),
       latitude: parseFloat(req.query.latitude as string),
       longitude: parseFloat(req.query.longitude as string),
-      tags: req.query.tags ? (req.query.tags as string).split(",") : [],
+      tags: req.query.tags
+        ? (req.query.tags as string)
+            .split(",")
+            .filter((tag) => validTags.map((t) => t.tag).includes(tag))
+        : [],
       minFameRating: parseInt(req.query.minFameRating as string),
       maxFameRating: parseInt(req.query.maxFameRating as string),
       sortBy: (req.query.sortBy as UserSearchQuery["sortBy"]) || "distance",

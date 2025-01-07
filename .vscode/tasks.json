@@ -1,0 +1,39 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "type": "npm",
+      "script": "re",
+      "path": "server",
+      "problemMatcher": [],
+      "label": "npm: re - server",
+      "detail": "rm -rf ./dist && tsc && npm run start"
+    },
+    {
+      "type": "npm",
+      "script": "seed",
+      "path": "server",
+      "problemMatcher": [],
+      "label": "npm: seed - server",
+      "detail": "ts-node src/seed.ts"
+    },
+    {
+      "type": "shell",
+      "command": "docker-compose up",
+      "options": {
+        "cwd": "${workspaceFolder}/server"
+      },
+      "problemMatcher": [],
+      "label": "docker-compose: up",
+      "detail": "Start docker containers from server folder"
+    },
+    {
+      "type": "npm",
+      "script": "start",
+      "path": "client",
+      "problemMatcher": [],
+      "label": "npm: start - client",
+      "detail": "craco start"
+    }
+  ]
+}
