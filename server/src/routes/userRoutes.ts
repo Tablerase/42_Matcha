@@ -14,11 +14,12 @@ import {
   validateUserUpdate,
   validateUserBlocked,
 } from "../middlewares/validateUser";
+import { validateUserSearchQuery } from "@middlewares/validateSearchQuery";
 
 const router: Router = express.Router();
 
 // Search routes
-router.get("/search", UserSearchView.searchUsers);
+router.get("/search", validateUserSearchQuery, UserSearchView.searchUsers);
 
 // TODO: add validators everywhere where needed
 router.get("/", UserViews.getUsers);

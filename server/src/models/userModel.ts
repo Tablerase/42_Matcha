@@ -167,12 +167,19 @@ class UserModel {
       `;
 
       // Add distance calculation if coordinates provided (here metric system is used)
-      if (params.distance && params.latitude && params.longitude) {
+      if (
+        params.distance !== undefined &&
+        !isNaN(params.distance) &&
+        params.latitude !== undefined &&
+        !isNaN(params.latitude) &&
+        params.longitude !== undefined &&
+        !isNaN(params.longitude)
+      ) {
         query += `
           , earth_distance(
             ll_to_earth(u.location[0], u.location[1]),
             ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
-            ) AS distance
+            ) / 1000 AS distance
         `;
         values.push(params.latitude, params.longitude);
         parameterIndex += 2;
@@ -226,17 +233,18 @@ class UserModel {
        * @see https://www.geeksforgeeks.org/program-distance-two-points-earth/
        */
       if (
-        params.distance &&
-        !isNaN(params.distance) &&
         params.distance !== undefined &&
-        params.latitude &&
-        params.longitude
+        !isNaN(params.distance) &&
+        params.latitude !== undefined &&
+        !isNaN(params.latitude) &&
+        params.longitude !== undefined &&
+        !isNaN(params.longitude)
       ) {
         conditions.push(`
           earth_distance(
             ll_to_earth(u.location[0], u.location[1]),
             ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
-            ) <= $${parameterIndex + 2} * 1000`);
+            ) / 1000 <= $${parameterIndex + 2}`);
         values.push(params.latitude, params.longitude, params.distance);
         parameterIndex += 3;
       }
