@@ -33,7 +33,7 @@ const updateUser = async (data: Partial<User>) => {
     preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
     location: coordinates,
-    location_postal: data.location_postal
+    location_postal: data.location_postal,
   };
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
@@ -88,7 +88,7 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         lastSeen: userData.last_seen,
       } as User;
     },
-    queryKey: ["currentUser"]
+    queryKey: ["currentUser"],
   });
 };
 
@@ -109,7 +109,9 @@ const fetchAllTags = async (): Promise<AxiosResponse> => {
   return await client.get(`/tags`, { withCredentials: true });
 };
 
-export const fetchUserTags = async (userId?: number): Promise<AxiosResponse> => {
+export const fetchUserTags = async (
+  userId?: number
+): Promise<AxiosResponse> => {
   return await client.get(`/users/${userId}/tags`, { withCredentials: true });
 };
 
@@ -191,24 +193,48 @@ const fetchImages = async (userId?: number) => {
     withCredentials: true,
   });
   return response.data;
-}
+};
 
-const uploadeImage = async (data: Image) => {
-  const response = await client.post(`/users/${data.userId}/images`, {userId: data.userId, url: data.url}, {
+const uploadImage = async (data: Image) => {
+  const response = await client.post(
+    `/users/${data.userId}/images`,
+    { userId: data.userId, url: data.url },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+
+const deleteImage = async (data: Partial<Image>) => {
+  const response = await client.delete(`/users/${data.userId}/images`, {
+    params: { user_id: data.userId, imageId: data.id },
     withCredentials: true,
   });
   return response.data;
-}
+};
+
+const updateImageStatus = async (data: Partial<Image>) => {
+  const response = await client.put(
+    `/users/${data.userId}/images`,
+    { isProfile: data.isProfilePic, imageId: data.id },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
 
 export const useFetchUserImages = (userId?: number) => {
   return useQuery<Image[], any>({
     queryFn: async () => {
       const { data } = await fetchImages(userId);
       return data.map((image: any) => ({
+        id: image.id,
         userId: image.user_id,
         url: image.image_url,
         isProfilePic: image.is_profile,
-        }));
+      }));
     },
     queryKey: ["currentUserImages", userId],
     enabled: !!userId,
@@ -218,11 +244,33 @@ export const useFetchUserImages = (userId?: number) => {
 
 export const useUploadImage = () => {
   const { mutate: upload } = useMutation({
-    mutationKey: ["images"],
-    mutationFn: uploadeImage,
+    mutationKey: ["currentUserImages"],
+    mutationFn: uploadImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
     },
   });
   return upload;
-}
+};
+
+export const useDeleteImage = () => {
+  const { mutate: deleteImageMutation } = useMutation({
+    mutationKey: ["currentUserImages"],
+    mutationFn: deleteImage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+    },
+  });
+  return deleteImageMutation;
+};
+
+export const useUpdateImageStatus = () => {
+  const { mutate: updateImage } = useMutation({
+    mutationKey: ["currentUserImages"],
+    mutationFn: updateImageStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+    },
+  });
+  return updateImage;
+};

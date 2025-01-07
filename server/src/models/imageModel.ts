@@ -30,6 +30,34 @@ class ImageModel {
             throw new Error((error as Error).message);
         }
     }
+
+    async deleteImageById(imageId: number): Promise<Image> {
+        const query = {
+            text: "DELETE FROM images WHERE id = $1 RETURNING *",
+            values: [imageId],
+        };
+
+        try {
+            const result: QueryResult<Image> = await pool.query(query);
+            return result.rows[0];
+        } catch (error) {
+            throw new Error((error as Error).message);
+        }
+    }
+
+    async updateImageStatus(imageId: number, isProfilePic: boolean): Promise<Image> {
+        const query = {
+            text: "UPDATE images SET is_profile = $1 WHERE id = $2 RETURNING *",
+            values: [isProfilePic, imageId],
+        };
+
+        try {
+            const result: QueryResult<Image> = await pool.query(query);
+            return result.rows[0];
+        } catch (error) {
+            throw new Error((error as Error).message);
+        }
+    }
 }
 
 export const image = new ImageModel();
