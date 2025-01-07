@@ -6,17 +6,22 @@ import { useFetchUserTags } from "../browse/usersActions";
 import { useFetchUserImages } from "../browse/usersActions";
 
 export const Profile = () => {
-  const { data: user, isLoading, error, isSuccess } = useFetchCurrentUser();
+  const { data: user, isLoading: userIsLoading, isError: userIsError, isSuccess: userIsSuccess, error } = useFetchCurrentUser();
   const { data: tags } = useFetchUserTags(user?.id);
-  const { data: images } = useFetchUserImages(user?.id);
+  const {
+    data: images,
+    isLoading: imagesIsLoading,
+    isError: imagesIsError,
+    isSuccess: imagesIsSuccess,
+  } = useFetchUserImages(user?.id);
   let content;
-  if (isLoading) {
+  if (userIsLoading || imagesIsLoading) {
     content = <LinearProgress />;
   }
-  if (isSuccess && user) {
-    content = <ViewProfile tags={tags} user={user} images={images}/>;
+  if (userIsSuccess && user && images && imagesIsSuccess) {
+    content = <ViewProfile tags={tags} user={user} images={images} />;
   }
-  if (error) {
+  if (userIsError || imagesIsError) {
     content = <>{error.toString()}</>;
   }
   return (

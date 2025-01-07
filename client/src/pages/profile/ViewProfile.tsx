@@ -15,11 +15,9 @@ import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
 import { ViewProfileProps } from "@/app/interfaces";
-import { AvatarGroup } from "@mui/material";
+import { ProfilePictures } from "@/components/ProfilePictures";
 
 export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
-  console.log(user.location_postal);
-  console.log(images);
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
     return (
@@ -34,28 +32,13 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
         <Stack spacing={3}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar
-              sx={{ width: 100, height: 100 }}
-              src={images ? images[0]?.url : " "}
-            />
-            <AvatarGroup>
-              {images && images?.length > 1 &&
-                images.slice(1, 4).map((image) => (
-                  <Avatar
-                    sx={{ width: 80, height: 80 }}
-                    src={image.url}
-                  />
-                ))}
-            </AvatarGroup>
-            <Stack>
-              <Typography variant="h5">
+          <Box sx={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 1 }}>
+            <ProfilePictures images={images} editMode={false} />
+              <Typography variant="h3">
                 {user.firstName} {user.lastName}
               </Typography>
-              <Typography color="text.secondary">@{user.username}</Typography>
-            </Stack>
+              <Typography>@{user.username}</Typography>
           </Box>
-
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
               Bio

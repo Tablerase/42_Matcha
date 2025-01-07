@@ -32,8 +32,8 @@ import { useAddUserTags } from "@pages/browse/usersActions";
 import { getIpData, isValidUsername } from "@/utils/helpers";
 import { EditProfileProps, FormData } from "@/app/interfaces";
 import { isValidEmail } from "@/utils/helpers";
-import { MuiFileInput } from 'mui-file-input'
-import { useUploadImage } from "@pages/browse/usersActions";
+import { ProfilePictures } from "@/components/ProfilePictures";
+import { useFetchUserImages } from "@pages/browse/usersActions";
 
 export const EditProfile = ({
   user,
@@ -41,11 +41,11 @@ export const EditProfile = ({
   setEditMode,
 }: EditProfileProps) => {
   const { data: tags } = useFetchAllTags();
+  const { data: images } = useFetchUserImages(user.id);
   const updateUser = useUpdateUserProfile();
   const updateUserTags = useAddUserTags();
   const deleteUserTags = useDeleteUserTags();
-  const uploadImage = useUploadImage();
-  
+
   const [emailError, setEmailError] = useState<string>("");
   const [usernameError, setUsernameError] = useState<string>("");
   const [bioError, setBioError] = useState<string>("");
@@ -208,84 +208,11 @@ export const EditProfile = ({
     }
   };
 
-  const [files, setFiles] = useState<File[]>([]);
-
-  const handleFileUpload = (newFiles: File[]) => {
-    if (!newFiles || !newFiles.length) {
-      setFiles([]);
-      return;
-    }
-  
-    // Validate files
-    const validFiles = newFiles.filter(file => {
-      // Validate file size (max 5MB)
-      if (file.size > 5 * 1024 * 1024) {
-        console.error(`File ${file.name} is too large`);
-        return false;
-      }
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
-        console.error(`File ${file.name} is not an image`);
-        return false;
-      }
-      return true;
-    });
-  
-    setFiles(validFiles);
-  
-    // Process each valid file
-    validFiles.forEach(file => {
-      const reader = new FileReader();
-      
-      reader.onload = () => {
-        const result = reader.result as string;
-        uploadImage({ 
-          userId: formData.id, 
-          url: result 
-        });
-      };
-  
-      reader.onerror = () => {
-        console.error(`Error reading file ${file.name}`);
-      };
-  
-      try {
-        reader.readAsDataURL(file);
-      } catch (error) {
-        console.error(`Failed to read file ${file.name}:`, error);
-      }
-    });
-  };
-
   return (
     <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
       <CardContent>
         <Stack spacing={3}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar
-              sx={{ width: 100, height: 100 }}
-              // src={user.profilePicture}
-            />
-             <MuiFileInput 
-             value={files} 
-             onChange={handleFileUpload}
-             multiple
-             slotProps={{
-              htmlInput: {
-                accept: 'image/*'
-              },
-              
-            }}
-            inputProps={
-              {
-                text: 'Click here to upload photos',
-              }
-            }
-              />
-            {/* <Button variant="outlined" startIcon={<EditRoundedIcon />}>
-              Change Photo
-            </Button> */}
-          </Box>
+            <ProfilePictures images={images} userData={formData} />
           <TextField
             label="Bio"
             value={formData.bio}

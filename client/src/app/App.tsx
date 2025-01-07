@@ -30,12 +30,12 @@ export const App = () => {
               <Route path={routes.LOGIN} element={<Login />} />
 
               {/* Protected routes */}
-              <Route element={<ProtectedRoute />}>
+              {/* <Route element={<ProtectedRoute />}> */}
                 <Route path={routes.MATCHES} element={<Matches />} />
                 <Route path={routes.BROWSE} element={<Browse />} />
                 <Route path={routes.ME} element={<Profile />} />
                 <Route path={routes.CHAT} element={<Chat />} />
-              </Route>
+              {/* </Route> */}
             </Routes>
           </ThemeProvider>
         </BrowserRouter>

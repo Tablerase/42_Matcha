@@ -40,6 +40,7 @@ export interface ViewProfileProps {
   user: Partial<User>;
   tags: Tag[] | undefined;
   images: Image[] | undefined;
+  // editMode?: boolean;
 }
 
 export interface FormData extends Omit<User, "dateOfBirth"> {
@@ -62,6 +63,7 @@ export interface FormData extends Omit<User, "dateOfBirth"> {
 export interface EditProfileProps {
   user: Partial<User>;
   userTags?: Tag[];
+  images?: Image[];
   setEditMode: () => void;
 }
 
