@@ -1,9 +1,12 @@
 import { z } from "zod";
 import { validTags } from "./tagInterface";
+import { Gender } from "./userInterface";
 
 export interface UserSearchQuery {
   minAge?: number;
   maxAge?: number;
+  gender?: Gender;
+  sexualPreferences?: Gender[];
   distance?: number;
   latitude?: number;
   longitude?: number;
@@ -19,14 +22,40 @@ export interface UserSearchQuery {
 export const userSearchQuerySchema = z.object({
   minAge: z.coerce.number().int().positive().optional(),
   maxAge: z.coerce.number().int().positive().optional(),
-  distance: z.coerce.number().int().positive().optional(),
-  latitude: z.coerce.number().optional(),
-  longitude: z.coerce.number().optional(),
-  tags: z
-    .array(
-      z.string().refine((tag) => validTags.map((t) => t.tag).includes(tag), {
-        message: "Invalid tag provided",
+  gender: z
+    .enum([Gender.Male, Gender.Female, Gender.Other], {
+      message: "Invalid gender provided",
+    })
+    .optional(),
+  sexualPreferences: z
+    .preprocess(
+      (preferences) => {
+        if (typeof preferences === "string") {
+          return preferences.split(",");
+        }
+        return preferences;
+      },
+      z.array(z.enum([Gender.Male, Gender.Female, Gender.Other]), {
+        message: "Invalid sexual preference provided",
       })
+    )
+    .optional(),
+  distance: z.coerce.number().int().positive().optional(),
+  latitude: z.coerce.number().min(-90).max(90).optional(),
+  longitude: z.coerce.number().min(-180).max(180).optional(),
+  tags: z
+    .preprocess(
+      (tags) => {
+        if (typeof tags === "string") {
+          return tags.split(",");
+        }
+        return tags;
+      },
+      z.array(
+        z.string().refine((tag) => validTags.map((t) => t.tag).includes(tag), {
+          message: "Invalid tag provided",
+        })
+      )
     )
     .optional(),
   minFameRating: z.coerce.number().positive().optional(),

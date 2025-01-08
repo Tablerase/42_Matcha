@@ -193,9 +193,32 @@ class UserModel {
           INNER JOIN user_tags ut ON u.id = ut.user_id
           INNER JOIN tags t ON ut.tag_id = t.id
         `;
-        conditions.push(`t.name = ANY($${parameterIndex})`);
-        values.push(params.tags);
+        conditions.push(
+          `t.tag IN (${params.tags
+            .map((_, i) => `$${parameterIndex + i}`)
+            .join(", ")})`
+        );
+        values.push(...params.tags);
+        parameterIndex += params.tags.length;
+      }
+
+      // Add gender and sexual preference conditions
+      if (params.gender !== undefined) {
+        conditions.push(`u.gender = $${parameterIndex}`);
+        values.push(params.gender);
         parameterIndex++;
+      }
+      if (
+        params.sexualPreferences !== undefined &&
+        params.sexualPreferences.length > 0
+      ) {
+        conditions.push(
+          `u.preferences @> ARRAY[${params.sexualPreferences
+            .map((_, i) => `$${parameterIndex + i}`)
+            .join(", ")}]::gender[]`
+        );
+        values.push(...params.sexualPreferences);
+        parameterIndex += params.sexualPreferences.length;
       }
 
       // Add age range conditions
@@ -254,6 +277,14 @@ class UserModel {
         query += ` WHERE ${conditions.join(" AND ")}`;
       }
 
+      // Add group by
+      query += ` GROUP BY u.id`;
+
+      // Tag count condition
+      if (params.tags && params.tags.length > 0) {
+        query += ` HAVING COUNT(DISTINCT t.tag) = ${params.tags.length}`;
+      }
+
       // Add sorting
       if (params.sortBy) {
         const order = params.order || "asc";
@@ -290,6 +321,7 @@ class UserModel {
         values: values,
       });
 
+      // TODO: Should return user data with tags
       return result.rows;
     } catch (error) {
       throw new Error((error as Error).message);

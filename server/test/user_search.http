@@ -19,5 +19,30 @@ Cookie: authToken={{authToken}}
 
 ### Search by distance
 
-GET http://localhost:8000/users/search?distance=100000&latitude=0&longitude=0
+GET http://localhost:8000/users/search?distance=1000&latitude=42&longitude=2
+Cookie: authToken={{authToken}}
+
+### Search by tags
+
+GET http://localhost:8000/users/search?tags=science
+Cookie: authToken={{authToken}}
+
+### Search by gender
+
+GET http://localhost:8000/users/search?gender=other
+Cookie: authToken={{authToken}}
+
+### Search by preferences
+
+GET http://localhost:8000/users/search?sexualPreferences=male
+Cookie: authToken={{authToken}}
+
+### Search by gender and preferences
+
+GET http://localhost:8000/users/search?sexualPreferences=other&gender=male
+Cookie: authToken={{authToken}}
+
+### Search with all filters
+
+GET http://localhost:8000/users/search?maxAge=40&minAge=30&maxFameRating=200&minFameRating=10&distance=20000&latitude=42&longitude=2&gender=female&sexualPreferences=male
 Cookie: authToken={{authToken}}

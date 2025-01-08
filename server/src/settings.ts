@@ -96,15 +96,6 @@ async function seed() {
         WHEN duplicate_object THEN
           NULL;
       END $$;
-
-      -- Handle preferences type
-      DO $$
-      BEGIN
-        CREATE TYPE preferences AS ENUM ('heterosexual', 'homosexual', 'bisexual');
-      EXCEPTION
-        WHEN duplicate_object THEN
-          NULL;
-      END $$;
     `;
     await pool.query(setupEnumTypes);
 
@@ -117,7 +108,7 @@ async function seed() {
         email VARCHAR(255) UNIQUE NOT NULL,
         password VARCHAR(255) NOT NULL,
         gender gender DEFAULT 'other',
-        preferences preferences DEFAULT 'bisexual',
+        preferences gender[] DEFAULT ARRAY['other']::gender[],
         date_of_birth DATE,
         bio VARCHAR(500),
         location POINT,
