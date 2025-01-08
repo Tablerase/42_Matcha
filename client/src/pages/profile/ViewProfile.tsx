@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Tag, User } from "@/app/interfaces";
+import { Tag, ViewProfileProps } from "@/app/interfaces";
 import {
   Card,
   CardContent,
-  Avatar,
   Typography,
   Stack,
   Box,
@@ -14,11 +13,11 @@ import {
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
-import { ViewProfileProps } from "@/app/interfaces";
+import { ProfilePictures } from "@/components/ProfilePictures";
+import { capitalize } from "@/utils/helpers";
+import { tagChipColors } from "@/components/theme";
 
 export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
-  console.log(user.location_postal);
-  console.log(images);
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
     return (
@@ -30,34 +29,51 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
     );
   }
   return (
-    <Card sx={{ maxWidth: 600, margin: "auto", mt: 4 }}>
+    <Card sx={{ m: 4}}>
       <CardContent>
         <Stack spacing={3}>
-          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
-            <Avatar
-              sx={{ width: 100, height: 100 }}
-              src={images ? images[0]?.url : " "}
-            />
-            <Stack>
-              <Typography variant="h5">
-                {user.firstName} {user.lastName}
-              </Typography>
-              <Typography color="text.secondary">@{user.username}</Typography>
-            </Stack>
-          </Box>
-
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary">
-              Bio
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            <ProfilePictures images={images} editMode={false} />
+            <Typography variant="h3">
+              {capitalize(user.firstName)} {capitalize(user.lastName)}
             </Typography>
+            <Typography>@{user.username?.toLowerCase()}</Typography>
             <Typography>{user.bio || "No bio provided"}</Typography>
+            <Stack
+              direction="row"
+              spacing={1.5}
+              flexWrap="wrap"
+              sx={{
+                rowGap: 0.5,
+              }}
+            >
+              {tags && tags?.length > 0 ? (
+                tags?.map((tag: Tag) => (
+                  <Chip key={tag.id} label={`#${tag.tag}`}
+                  sx={{
+                    bgcolor: tagChipColors[tag.id % tagChipColors.length],
+                  }} />
+                ))
+              ) : (
+                <Typography variant="body2" color="text.secondary">
+                  No interests added yet
+                </Typography>
+              )}
+            </Stack>
           </Box>
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
               Email
             </Typography>
-            <Typography>{user.email}</Typography>
+            <Typography>{user.email?.toLowerCase()}</Typography>
           </Box>
 
           <Box>
@@ -96,21 +112,6 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
             <Typography>
               {user.location_postal ? user.location_postal : "Not specified"}
             </Typography>
-          </Box>
-
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary" gutterBottom>
-              Interests
-            </Typography>
-            <Stack direction="row" spacing={1} flexWrap="wrap">
-              {tags && tags?.length > 0 ? (
-                tags?.map((tag: Tag) => <Chip key={tag.id} label={`#${tag.tag}`} />)
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  No interests added yet
-                </Typography>
-              )}
-            </Stack>
           </Box>
         </Stack>
       </CardContent>

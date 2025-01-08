@@ -13,7 +13,7 @@ import { theme } from "@components/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AuthProvider, ProtectedRoute } from "@utils/authContext";
-
+import { SnackbarProvider } from 'notistack'
 export const queryClient = new QueryClient();
 
 export const App = () => {
@@ -23,6 +23,7 @@ export const App = () => {
         <BrowserRouter>
           <ThemeProvider theme={theme}>
             <CssBaseline />
+            <SnackbarProvider>
             <Routes>
               {/* Public routes */}
               <Route path="/" element={<Home />} />
@@ -37,6 +38,7 @@ export const App = () => {
                 <Route path={routes.CHAT} element={<Chat />} />
               </Route>
             </Routes>
+            </SnackbarProvider>
           </ThemeProvider>
         </BrowserRouter>
         <ReactQueryDevtools initialIsOpen />

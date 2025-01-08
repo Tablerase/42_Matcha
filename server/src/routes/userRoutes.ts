@@ -44,5 +44,7 @@ router.delete("/:id/matches", MatchViews.deleteUserMatch);
 
 router.get("/:id/images", ImageViews.getUserImages);
 router.post("/:id/images", ImageViews.createUserImage);
+router.delete("/:id/images", ImageViews.deleteUserImage);
+router.put("/:id/images", ImageViews.updateUserImageStatus);
 
 export default router;

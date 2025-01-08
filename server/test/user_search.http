@@ -1,7 +1,6 @@
 ### Auth token
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM2MTY4MTY2LCJleHAiOjE3MzY3NzI5NjZ9.lJO9SUMaJoqgOlHBGpowB0hPDIUVo_iyScms_kBmVtA
-
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNjM1Mzc1MSwiZXhwIjoxNzM2OTU4NTUxfQ.dcGHxjzUraoeiJ8gfUZW0vDLZ61xCzLVRd60-WxjdZQ
 ### 
 
 GET http://localhost:8000/users
@@ -44,5 +43,5 @@ Cookie: authToken={{authToken}}
 
 ### Search with all filters
 
-GET http://localhost:8000/users/search?maxAge=40&minAge=30&maxFameRating=200&minFameRating=10&distance=20000&latitude=42&longitude=2&gender=female&sexualPreferences=male
+GET http://localhost:8000/users/search
 Cookie: authToken={{authToken}}

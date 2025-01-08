@@ -29,3 +29,8 @@ export async function getIpData() {
     throw error;
   }
 }
+
+export const capitalize = (str?: string): string => {
+  if (!str) return "";
+  return str.charAt(0).toUpperCase() + str.slice(1);
+}

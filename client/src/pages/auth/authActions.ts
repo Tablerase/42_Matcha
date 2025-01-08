@@ -15,8 +15,7 @@ export const loginUser = async (data: UserLogin) => {
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { login: setAuth } = useAuth();
-
+  const { login: setAuth } = useAuth(); 
   const { mutate: login } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: loginUser,

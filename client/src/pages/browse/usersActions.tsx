@@ -1,14 +1,44 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
-import { User, UserResponse, Tag } from "@app/interfaces";
+import { User, UserResponse, Tag, UserSearchQuery, PublicUser } from "@app/interfaces";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
 import { Image } from "@/app/interfaces";
+import { capitalize } from "@/utils/helpers";
+import { enqueueSnackbar } from 'notistack'
 
-const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
-  return await client.get<User[]>("/users");
+interface ValidationError {
+  code: string;
+  message: string;
+  path: string[];
+  validation: string;
+}
+
+interface ErrorResponse {
+  error?: ValidationError[];
+  message?: string;
+  status: number;
+}
+
+const fetchUsers = async (params?: UserSearchQuery) => {
+  return await client.get("/users/search", {params: {...params}, withCredentials: true});
+};
+
+export const useFetchUsers = (params?: UserSearchQuery) => {
+  return useQuery<PublicUser[], any>({
+    queryFn: async () => {
+      const response = await fetchUsers(params);
+      const data = response.data.data;
+      return data.map((user: any) => ({
+        id: user.id,
+        username: user.username,
+        age: user.age
+      })) as PublicUser[]
+    },
+    queryKey: ["users", "searchParams"],
+  });
 };
 
 const fetchUserById = async (id: number): Promise<AxiosResponse<User, any>> => {
@@ -33,22 +63,12 @@ const updateUser = async (data: Partial<User>) => {
     preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
     location: coordinates,
-    location_postal: data.location_postal
+    location_postal: data.location_postal,
   };
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
   });
   return user.data as User;
-};
-
-export const useFetchUsers = (): QueryObserverResult<User[], any> => {
-  return useQuery<User[], any>({
-    queryFn: async () => {
-      const { data } = await fetchUsers();
-      return data;
-    },
-    queryKey: ["users"],
-  });
 };
 
 // TODO: not for current user
@@ -88,19 +108,39 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         lastSeen: userData.last_seen,
       } as User;
     },
-    queryKey: ["currentUser"]
+    queryKey: ["currentUser"],
   });
 };
 
 export const useUpdateUserProfile = () => {
-  const { mutate: update } = useMutation({
+  const { mutate: updateUserData, error: updateUserError } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      if (error.response?.data?.status === 500) {
+        if (error.response.data?.message?.includes("duplicate key")) {
+          const duplicateField = error.response.data.message.match(/"([^"]+)"/);
+          if (duplicateField) {
+            const fieldName = capitalize(
+              duplicateField[0]
+                .replace("users_", "")
+                .replace("_key", "")
+                .replace(/"/g, '')
+            );
+            enqueueSnackbar(`${fieldName} is already in use, try again`);
+            return;
+          }
+        }
+        enqueueSnackbar(`Internal server error, changes not saved`);
+        return;
+      }
+    }
   });
-  return update;
+  
+  return { updateUserData, updateUserError };
 };
 
 /*TAGS*/
@@ -109,7 +149,9 @@ const fetchAllTags = async (): Promise<AxiosResponse> => {
   return await client.get(`/tags`, { withCredentials: true });
 };
 
-export const fetchUserTags = async (userId?: number): Promise<AxiosResponse> => {
+export const fetchUserTags = async (
+  userId?: number
+): Promise<AxiosResponse> => {
   return await client.get(`/users/${userId}/tags`, { withCredentials: true });
 };
 
@@ -191,24 +233,48 @@ const fetchImages = async (userId?: number) => {
     withCredentials: true,
   });
   return response.data;
-}
+};
 
-const uploadeImage = async (data: Image) => {
-  const response = await client.post(`/users/${data.userId}/images`, {userId: data.userId, url: data.url}, {
+const uploadImage = async (data: Image) => {
+  const response = await client.post(
+    `/users/${data.userId}/images`,
+    { userId: data.userId, url: data.url },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
+
+const deleteImage = async (data: Partial<Image>) => {
+  const response = await client.delete(`/users/${data.userId}/images`, {
+    params: { user_id: data.userId, imageId: data.id },
     withCredentials: true,
   });
   return response.data;
-}
+};
+
+const updateImageStatus = async (data: Partial<Image>) => {
+  const response = await client.put(
+    `/users/${data.userId}/images`,
+    { isProfile: data.isProfilePic, imageId: data.id },
+    {
+      withCredentials: true,
+    }
+  );
+  return response.data;
+};
 
 export const useFetchUserImages = (userId?: number) => {
   return useQuery<Image[], any>({
     queryFn: async () => {
       const { data } = await fetchImages(userId);
       return data.map((image: any) => ({
+        id: image.id,
         userId: image.user_id,
         url: image.image_url,
         isProfilePic: image.is_profile,
-        }));
+      }));
     },
     queryKey: ["currentUserImages", userId],
     enabled: !!userId,
@@ -218,11 +284,33 @@ export const useFetchUserImages = (userId?: number) => {
 
 export const useUploadImage = () => {
   const { mutate: upload } = useMutation({
-    mutationKey: ["images"],
-    mutationFn: uploadeImage,
+    mutationKey: ["currentUserImages"],
+    mutationFn: uploadImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
     },
   });
   return upload;
-}
+};
+
+export const useDeleteImage = () => {
+  const { mutate: deleteImageMutation } = useMutation({
+    mutationKey: ["currentUserImages"],
+    mutationFn: deleteImage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+    },
+  });
+  return deleteImageMutation;
+};
+
+export const useUpdateImageStatus = () => {
+  const { mutate: updateImage } = useMutation({
+    mutationKey: ["currentUserImages"],
+    mutationFn: updateImageStatus,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+    },
+  });
+  return updateImage;
+};

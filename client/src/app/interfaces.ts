@@ -40,6 +40,7 @@ export interface ViewProfileProps {
   user: Partial<User>;
   tags: Tag[] | undefined;
   images: Image[] | undefined;
+  // editMode?: boolean;
 }
 
 export interface FormData extends Omit<User, "dateOfBirth"> {
@@ -62,11 +63,45 @@ export interface FormData extends Omit<User, "dateOfBirth"> {
 export interface EditProfileProps {
   user: Partial<User>;
   userTags?: Tag[];
+  images?: Image[];
   setEditMode: () => void;
 }
 
 export interface Image {
+  id?: number;
   userId: number;
   url: string;
   isProfilePic?: boolean;
+}
+
+export enum Gender {
+  Male = "male",
+  Female = "female",
+  Other = "other",
+}
+
+export interface UserSearchQuery {
+  minAge?: number;
+  maxAge?: number;
+  gender?: Gender;
+  sexualPreferences?: Gender[];
+  distance?: number;
+  latitude?: number;
+  longitude?: number;
+  tags?: string[];
+  minFameRating?: number;
+  maxFameRating?: number;
+  sortBy?: "distance" | "age" | "fameRating";
+  order?: "asc" | "desc";
+  limit?: number;
+  offset?: number;
+}
+
+export interface PublicUser{
+  id: number;
+  username: string;
+  age: number;
+}
+export interface UserListProps {
+  users: PublicUser[];
 }
