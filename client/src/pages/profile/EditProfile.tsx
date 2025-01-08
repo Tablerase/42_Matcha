@@ -44,7 +44,7 @@ export const EditProfile = ({
 }: EditProfileProps) => {
   const { data: tags } = useFetchAllTags();
   const { data: images } = useFetchUserImages(user.id);
-  const updateUser = useUpdateUserProfile();
+  const { updateUserData } = useUpdateUserProfile();
   const updateUserTags = useAddUserTags();
   const deleteUserTags = useDeleteUserTags();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
@@ -164,7 +164,7 @@ export const EditProfile = ({
             .toDate()
         : undefined,
     };
-    updateUser(updatedUser);
+    updateUserData(updatedUser);
     for (const tag of interests) {
       if (userTags?.includes(tag)) continue;
       else if (!userTags?.includes(tag))

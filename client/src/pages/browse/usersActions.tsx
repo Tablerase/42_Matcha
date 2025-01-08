@@ -7,6 +7,7 @@ import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
 import { Image } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
+import { enqueueSnackbar } from 'notistack'
 
 interface ValidationError {
   code: string;
@@ -107,37 +108,34 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
 };
 
 export const useUpdateUserProfile = () => {
-  const { mutate: update } = useMutation({
+  const { mutate: updateUserData, error: updateUserError } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
     onError: (error: AxiosError<ErrorResponse>) => {
-      if (error.response?.data?.error) {
-        const validationErrors = error.response.data.error;
-        const errorMessages = validationErrors
-          .map(err => err.message)
-          .join(', ');
-        console.error(`Validation errors: ${errorMessages}`);
-        return;
-      }
-      
-      if (error.response?.data?.status === 500 && 
-        error.response.data?.message?.includes("duplicate key")) {
-        const duplicateField = (error.response.data.message.match(/"([^"]+)"/));
+      if (error.response?.data?.status === 500) {
+        if (error.response.data?.message?.includes("duplicate key")) {
+          const duplicateField = error.response.data.message.match(/"([^"]+)"/);
           if (duplicateField) {
-            const fieldName = capitalize(duplicateField[0].replace("users_", "").replace("_key", "").replace(/"/g, ''));
-            console.error(`Duplicate fields: ${fieldName} already in use`);
+            const fieldName = capitalize(
+              duplicateField[0]
+                .replace("users_", "")
+                .replace("_key", "")
+                .replace(/"/g, '')
+            );
+            enqueueSnackbar(`${fieldName} is already in use, try again`);
             return;
           }
-      
-      return;
-    }
-      console.error(`Request failed: ${error.message}`);
+        }
+        enqueueSnackbar(`Internal server error, changes not saved`);
+        return;
+      }
     }
   });
-  return update;
+  
+  return { updateUserData, updateUserError };
 };
 
 /*TAGS*/
