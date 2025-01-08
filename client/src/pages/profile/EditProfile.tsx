@@ -5,6 +5,7 @@ import Stack from "@mui/material/Stack";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import { useState } from "react";
+import { EditProfile2 } from "./EditProfile2";
 import {
   CardContent,
   TextField,
@@ -225,7 +226,8 @@ export const EditProfile = ({
             },
           }}
         >
-          <Stack spacing={3}>
+          <EditProfile2 tags={tags} userTags={interests} onTagsChange={handleChangeTags} />  
+          {/* <Stack spacing={3}>
             <Typography variant="h4">Personal Info</Typography>
             <TextField
               label="First Name"
@@ -348,7 +350,7 @@ export const EditProfile = ({
                 handleChange={handleChangeTags}
               />
             </FormControl>
-          </Stack>
+          </Stack> */}
           <Stack spacing={3}>
             <Typography variant="h4">Additional Info</Typography>
             <TextField
