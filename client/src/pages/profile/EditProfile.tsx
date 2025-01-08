@@ -177,7 +177,6 @@ export const EditProfile = ({
         }
       }
     }
-    // submitPictures()
     setEditMode();
   };
 
@@ -217,7 +216,7 @@ export const EditProfile = ({
           sx={{
             display: "flex",
             flexDirection: isMobile ? "column" : "row",
-            alignItems: "center",
+            alignItems: "flex-start",
             justifyContent: "space-evenly",
             gap: 3,
             "& > *": {

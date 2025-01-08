@@ -1,4 +1,4 @@
-import { AxiosResponse } from "axios";
+import { AxiosError, AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
 import { User, UserResponse, Tag } from "@app/interfaces";
@@ -6,6 +6,20 @@ import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
 import { Image } from "@/app/interfaces";
+import { capitalize } from "@/utils/helpers";
+
+interface ValidationError {
+  code: string;
+  message: string;
+  path: string[];
+  validation: string;
+}
+
+interface ErrorResponse {
+  error?: ValidationError[];
+  message?: string;
+  status: number;
+}
 
 const fetchUsers = async (): Promise<AxiosResponse<User[], any>> => {
   return await client.get<User[]>("/users");
@@ -99,6 +113,29 @@ export const useUpdateUserProfile = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      if (error.response?.data?.error) {
+        const validationErrors = error.response.data.error;
+        const errorMessages = validationErrors
+          .map(err => err.message)
+          .join(', ');
+        console.error(`Validation errors: ${errorMessages}`);
+        return;
+      }
+      
+      if (error.response?.data?.status === 500 && 
+        error.response.data?.message?.includes("duplicate key")) {
+        const duplicateField = (error.response.data.message.match(/"([^"]+)"/));
+          if (duplicateField) {
+            const fieldName = capitalize(duplicateField[0].replace("users_", "").replace("_key", "").replace(/"/g, ''));
+            console.error(`Duplicate fields: ${fieldName} already in use`);
+            return;
+          }
+      
+      return;
+    }
+      console.error(`Request failed: ${error.message}`);
+    }
   });
   return update;
 };
