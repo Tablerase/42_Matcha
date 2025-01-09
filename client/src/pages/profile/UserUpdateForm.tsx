@@ -5,13 +5,13 @@ import validator from '@rjsf/validator-ajv8';
 import { Tag } from '@app/interfaces';
 import { SelectChangeEvent } from '@mui/material';
 
-interface MultipleSelectChipProps extends WidgetProps {
-    options: {
-      items: Tag[];
-      userTags: Tag[];
-      handleChange: (event: SelectChangeEvent<string[]>) => void;
-    };
-  }
+
+
+export interface UserUpdateFormProps {
+  tags?: Tag[],
+  userTags: Tag[], 
+  onTagsChange: (event: SelectChangeEvent<string[]>) => void
+}
 
 const schema: RJSFSchema = {
     title: "Personal Info",
@@ -56,8 +56,8 @@ const schema: RJSFSchema = {
 
   
 
-export const EditProfile2 = ({tags, userTags, onTagsChange}: {tags?: Tag[], userTags?: Tag[], onTagsChange: (event: SelectChangeEvent<string[]>) => void}) => {
-    const uiSchema: UiSchema = {
+export const UserUpdateForm = ({tags, userTags, onTagsChange}: UserUpdateFormProps) => { 
+  const uiSchema: UiSchema = {
     Email: {
         "ui:widget": "email",
         "ui:options": {
@@ -85,9 +85,9 @@ export const EditProfile2 = ({tags, userTags, onTagsChange}: {tags?: Tag[], user
     Interests: {
         "ui:widget": MultipleSelectChip,
         "ui:options": {
-        items: tags,
-        userTags: userTags,
-        handleChange: onTagsChange
+          items: tags,
+          userTags: userTags,
+          handleChange: onTagsChange
       }
       },
   };

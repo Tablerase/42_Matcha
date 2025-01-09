@@ -1,14 +1,7 @@
-import { useState } from "react";
-import Box from "@mui/material/Box";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
-import ListItemText from "@mui/material/ListItemText";
-import CheckBox from "@mui/material/Checkbox";
-import Select from "@mui/material/Select";
-import Chip from "@mui/material/Chip";
-import { SelectChangeEvent } from "@mui/material/Select";
 import { Tag } from "@/app/interfaces";
 import { tagChipColors } from "@/components/theme";
+import { WidgetProps } from "@rjsf/utils";
+import { InputLabel, Box, OutlinedInput, MenuItem, ListItemText,SelectChangeEvent, Select, Chip, Checkbox } from "@mui/material";
 
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -21,10 +14,12 @@ const MenuProps = {
   },
 };
 
-interface MultipleSelectChipProps {
-  items?: Tag[];
-  userTags?: Tag[];
-  handleChange: (event: SelectChangeEvent<string[]>) => void;
+interface MultipleSelectChipProps extends WidgetProps {
+  options: {
+    items: Tag[];
+    userTags: Tag[];
+    handleChange: (event: SelectChangeEvent<string[]>) => void;
+  };
 }
 
 function isTagInBothArrays(tag: string, array1?: Tag[], array2?: Tag[]) {
@@ -37,16 +32,15 @@ function isTagInBothArrays(tag: string, array1?: Tag[], array2?: Tag[]) {
 }
 
 export const MultipleSelectChip = ({
-  items,
-  userTags,
-  handleChange,
+  options
 }: MultipleSelectChipProps) => {
   const onSelectChange = (event: SelectChangeEvent<string[]>) => {
-    handleChange(event);
+    options.handleChange(event);
   };
-  const tagsArr = userTags?.map((tag) => tag.tag) || [];
+  const tagsArr = options.userTags?.map((tag: Tag) => tag.tag) || [];
   return (
     <>
+    <InputLabel id="interests-label">Interests</InputLabel>
       <Select
         labelId="Interests"
         id="Interests"
@@ -69,9 +63,9 @@ export const MultipleSelectChip = ({
         )}
         MenuProps={MenuProps}
       >
-        {items?.map((item) => (
+        {options.items?.map((item: any) => (
           <MenuItem key={item.id} value={item.tag}>
-            <CheckBox checked={isTagInBothArrays(item.tag, items, userTags)} />
+            <Checkbox checked={isTagInBothArrays(item.tag, options.items, options.userTags)} />
             <ListItemText primary={item.tag} />
           </MenuItem>
         ))}
