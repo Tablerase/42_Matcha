@@ -5,7 +5,7 @@ import { User, UserResponse, Tag, UserSearchQuery, PublicUser } from "@app/inter
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
-import { Image } from "@/app/interfaces";
+import { Image, FormData } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
 import { enqueueSnackbar } from 'notistack';
 import { formatPreferences } from "@/utils/helpers";
@@ -52,7 +52,7 @@ const fetchCurrentUser = async (): Promise<
   return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
 };
 
-const updateUser = async (data: Partial<User>) => {
+const updateUser = async (data: FormData) => {
   const coordinates = formatCoordinates(data.location);
   const updates = {
     bio: data.bio,

@@ -1,5 +1,4 @@
 import { ReactNode } from "react";
-import { Dayjs } from "dayjs";
 
 export interface UserLogin {
   username: string;
@@ -20,6 +19,21 @@ export interface User {
   city: string;
   fameRate: number;
   lastSeen: Date;
+}
+
+export interface FormData {
+  id?: number;
+  firstName?: string;
+  lastName?: string;
+  email?: string;
+  username?: string;
+  gender?: string;
+  preferences?: string[];
+  dateOfBirth?: Date;
+  bio?: string;
+  location?: { x: number; y: number };
+  city?: string;
+  interests?: Tag[];
 }
 
 export interface UserResponse {

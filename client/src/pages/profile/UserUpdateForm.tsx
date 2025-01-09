@@ -1,6 +1,6 @@
 import { MultipleSelectChip } from '@/components/MultipleSelectChip';
 import Form from '@rjsf/mui';
-import { RJSFSchema, UiSchema, WidgetProps, ErrorTransformer, RJSFValidationError, SubmitButtonProps, getSubmitButtonOptions } from '@rjsf/utils';
+import { RJSFSchema, UiSchema, FieldProps, ErrorTransformer, RJSFValidationError, SubmitButtonProps, getSubmitButtonOptions, RegistryWidgetsType, RegistryFieldsType } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
 import { Gender, Tag, User } from '@/app/interfaces';
 import { SelectChangeEvent } from '@mui/material';
@@ -9,6 +9,8 @@ import { Button } from '@mui/material';
 import { useUpdateUserProfile } from "@pages/browse/usersActions";
 import { IChangeEvent } from '@rjsf/core';
 import { FormEvent } from 'react';
+import { getIpData } from '@/utils/helpers';
+import { FormData } from '@/app/interfaces';
 
 export interface UserUpdateFormProps {
   user?: Partial<User>,
@@ -18,18 +20,20 @@ export interface UserUpdateFormProps {
 }
 
 const schema: RJSFSchema = {
-    required: ["First name", "Last name", "Username", "Email", "Date of birth", "Gender", "Preferences"],
+    required: ["firstName", "lastName", "username", "email", "dateOfBirth", "gender", "preferences", "location"],
     properties: {
-        "First name": { type: "string", "minLength": 3, "maxLength": 100 },
-        "Last name": { type: "string", "minLength": 3, "maxLength": 100 },
-        "Username": { type: "string", "minLength": 3, "maxLength": 100 },
-        Email: { type: "string", maxLength: 255,},
-        "Date of birth": { type: "string" },
-        Gender: { 
+        firstName: { title: "First name", type: "string", "minLength": 3, "maxLength": 100 },
+        lastName: { title: "Last name", type: "string", "minLength": 3, "maxLength": 100 },
+        username: { title: "Username", type: "string", "minLength": 3, "maxLength": 100 },
+        email: { title: "Email", type: "string", maxLength: 255,},
+        dateOfBirth: { title: "Date of birth", type: "string" },
+        gender: { 
+          title: "Gender",
             type: "string",
             enum: [Gender.Male, Gender.Female, Gender.Other],
           },
-        Preferences: { 
+        preferences: { 
+          title: "Preferences",
             type: "array",
             uniqueItems: true,
             items: {
@@ -38,9 +42,17 @@ const schema: RJSFSchema = {
             }, 
             minItems: 1,
           },
-        Bio: { type: "string", maxLength: 500 },
-        City: { type: "string", maxLength: 150 },
-        Interests: {
+        bio: { title: "Bio", type: "string", maxLength: 500 },
+        location: {
+          title: "Location",
+          type: "object",
+          properties: {
+            x: { type: "number" },
+            y: { type: "number" },
+          },
+        },
+        city: { title: "City", type: "string", maxLength: 150 },
+        interests: {
             type: "array",
             items: {
               type: "object",
@@ -69,33 +81,53 @@ const schema: RJSFSchema = {
     );
   }
 
+  export const LocationButton = (props: FieldProps) => {
+    const { onChange } = props;
+    const handleLocationUpdate = async () => {
+      try {
+        const data = await getIpData();
+        onChange({ x: data.latitude, y: data.longitude });
+      } catch (e) {
+        console.error(e);
+      }
+    };
+    return (
+      <Button variant="contained" onClick={() => handleLocationUpdate()}>
+        Locate Me!
+      </Button>
+    );
+  }
+
 export const UserUpdateForm = ({user, tags, userTags, onTagsChange}: UserUpdateFormProps) => { 
   const uiSchema: UiSchema = {
-    Email: {
+    email: {
         "ui:widget": "email",
         "ui:options": {
           inputType: "email",
         },
     },
-    "Date of birth": {
-        "ui:widget": "date"
+    dateOfBirth: {
+        "ui:widget": "date",
+        // TODO: fix options: warning, min and max year, etc
+        "ui:options": {
+    }
     },
-    Gender: {
+    gender: {
       "ui:widget": "radio",
       "ui:options": {
         inline: true
       }
     },
-    Preferences: {
+    preferences: {
         "ui:widget": "checkboxes",
         "ui:options": {
           inline: true
         }
       },
-    Bio: {
+    bio: {
         "ui:widget": "textarea"
       },
-    Interests: {
+    interests: {
         "ui:widget": MultipleSelectChip,
         "ui:options": {
           items: tags,
@@ -103,28 +135,38 @@ export const UserUpdateForm = ({user, tags, userTags, onTagsChange}: UserUpdateF
           handleChange: onTagsChange
       }
       },
+    location: {
+      "ui:field": 'location',
+      "ui:options": {
+      },
+    }
   };
-  const formData = {
-    userId: user?.id,
-    "First name": user?.firstName,
-    "Last name": user?.lastName,
-    "Username": user?.username,
-    Email: user?.email,
-    "Date of birth": user?.dateOfBirth,
-    Gender: user?.gender,
-    Preferences: user?.preferences,
-    Bio: user?.bio || "",
-    City: user?.city,
-    Interests: userTags
+  
+  const fields: RegistryFieldsType = {
+    location: LocationButton
+  };
+
+  const formData: FormData = {
+    id: user?.id,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    username: user?.username,
+    email: user?.email,
+    dateOfBirth: user?.dateOfBirth,
+    gender: user?.gender,
+    preferences: user?.preferences,
+    bio: user?.bio || "",
+    city: user?.city,
+    interests: userTags,
+    location: user?.location
   }
 
   const customValidate = (formData: any, errors: any) => {
-    console.log("formData: ", formData);
-  if (!isValidEmail(formData.Email)) {
-    errors.Email.addError("Invalid email address");
+  if (!isValidEmail(formData.email)) {
+    errors.email.addError("Invalid email address");
   }
-  if (!isValidUsername(formData.Username)) {
-    errors.Username.addError("Username can only contain letters, numbers, and underscores");
+  if (!isValidUsername(formData.username)) {
+    errors.username.addError("Username can only contain letters, numbers, and underscores");
   }
   return errors;
 }
@@ -135,7 +177,7 @@ const transformErrors = (
 ): RJSFValidationError[] => {
   console.log("errors: ", errors);
   return errors.map((error: any) => {
-    if (error.name === "type") {
+    if (error.name === "type" || error.name === "required") {
       error.message = "This field is required";
     }
     if (error.name === 'minLength') {
@@ -166,8 +208,10 @@ const { updateUserData } = useUpdateUserProfile();
       updateUserData(data.formData);
     }
   };
+  // const [formData, setFormData] = React.useState(formData);
   return (
     <Form
+    // onChange={}
 schema={schema} 
 uiSchema={uiSchema} 
 validator={validator} 
@@ -178,6 +222,7 @@ customValidate={customValidate}
 liveValidate
 showErrorList={false}
 templates={{ ButtonTemplates: { SubmitButton } }}
+fields={fields}
 />
   )
 

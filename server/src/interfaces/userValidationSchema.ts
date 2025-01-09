@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Gender } from "./userInterface";
 
 export const userCreationSchema = z
   .object({
@@ -76,7 +77,7 @@ export const userUpdateSchema = z
       .min(3, "Username must be at least 3 characters"),
     email: z.string().trim().email("Invalid email format"),
     gender: z.enum(["male", "female", "other"]),
-    preferences: z.enum(["heterosexual", "homosexual", "bisexual"]),
+    preferences: z.array(z.enum([Gender.Male, Gender.Female, Gender.Other])),
     dateOfBirth: z.date(),
     bio: z.string().max(500, "Bio must be at most 500 characters"),
     // TODO: set up proper validation for location, min/max don't work with this setup

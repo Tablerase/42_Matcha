@@ -1,4 +1,5 @@
 export function formatCoordinates(obj: any) {
+  console.log(obj);
   if (typeof obj !== 'object' || obj === null || !('x' in obj) || !('y' in obj)) {
     return "";
   }
