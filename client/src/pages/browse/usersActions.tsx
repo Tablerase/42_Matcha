@@ -1,13 +1,20 @@
 import { AxiosError, AxiosResponse } from "axios";
 import { client } from "@utils/axios";
 import { useQuery, QueryObserverResult } from "@tanstack/react-query";
-import { User, UserResponse, Tag, UserSearchQuery, PublicUser } from "@app/interfaces";
+import {
+  User,
+  Gender,
+  UserResponse,
+  Tag,
+  UserSearchQuery,
+  PublicUser,
+} from "@app/interfaces";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
 import { Image, FormData } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
-import { enqueueSnackbar } from 'notistack';
+import { enqueueSnackbar } from "notistack";
 import { formatPreferences } from "@/utils/helpers";
 
 interface ValidationError {
@@ -24,7 +31,10 @@ interface ErrorResponse {
 }
 
 const fetchUsers = async (params?: UserSearchQuery) => {
-  return await client.get("/users/search", {params: {...params}, withCredentials: true});
+  return await client.get("/users/search", {
+    params: { ...params },
+    withCredentials: true,
+  });
 };
 
 export const useFetchUsers = (params?: UserSearchQuery) => {
@@ -34,9 +44,20 @@ export const useFetchUsers = (params?: UserSearchQuery) => {
       const data = response.data.data;
       return data.map((user: any) => ({
         id: user.id,
+        firstName: user.firstName,
+        lastName: user.lastName,
         username: user.username,
-        age: user.age
-      })) as PublicUser[]
+        gender: user.gender as Gender,
+        preferences: user.preferences as Gender[],
+        dateOfBirth: user.dateOfBirth,
+        bio: user.bio,
+        city: user.city,
+        fameRate: user.fameRate,
+        lastSeen: user.lastSeen,
+        tags: user.tags,
+        age: user.age,
+        distance: user.distance,
+      })) as PublicUser[];
     },
     queryKey: ["users", "searchParams"],
   });
@@ -52,19 +73,19 @@ const fetchCurrentUser = async (): Promise<
   return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
 };
 
-const updateUser = async (data: FormData) => {
+const updateUser = async (data: Partial<FormData>) => {
   const coordinates = formatCoordinates(data.location);
   const updates = {
     bio: data.bio,
-    first_name: capitalize(data.firstName),
-    last_name: capitalize(data.lastName),
-    username: data.username?.toLowerCase(),
-    email: data.email?.toLowerCase(),
+    first_name: data.firstName,
+    last_name: data.lastName,
+    username: data.username,
+    email: data.email,
     gender: data.gender,
     preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
     location: coordinates,
-    // city: capitalize(data.city),
+    city: data.city,
   };
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
@@ -129,7 +150,7 @@ export const useUpdateUserProfile = () => {
               duplicateField[0]
                 .replace("users_", "")
                 .replace("_key", "")
-                .replace(/"/g, '')
+                .replace(/"/g, "")
             );
             enqueueSnackbar(`${fieldName} is already in use, try again`);
             return;
@@ -138,9 +159,9 @@ export const useUpdateUserProfile = () => {
         enqueueSnackbar(`Internal server error, changes not saved`);
         return;
       }
-    }
+    },
   });
-  
+
   return { updateUserData, updateUserError };
 };
 
@@ -235,7 +256,6 @@ const fetchImages = async (userId?: number) => {
   });
   return response.data;
 };
-
 const uploadImage = async (data: Image) => {
   const response = await client.post(
     `/users/${data.userId}/images`,
@@ -264,6 +284,33 @@ const updateImageStatus = async (data: Partial<Image>) => {
     }
   );
   return response.data;
+};
+
+const fetchProfilePic = async (userId?: number) => {
+  const response = await client.get(`/users/${userId}/images/profile`, {
+    params: { userId },
+    withCredentials: true,
+  });
+  if (response.status !== 200) {
+    throw new Error("Failed to fetch profile picture");
+  }
+  return response.data;
+};
+
+export const useFetchUserProfilePic = (userId?: number) => {
+  return useQuery<Image, any>({
+    queryFn: async () => {
+      const { data } = await fetchProfilePic(userId);
+      return {
+        id: data.id,
+        userId: data.user_id,
+        url: data.image_url,
+        isProfilePic: data.is_profile,
+      };
+    },
+    queryKey: ["userProfilePic", userId],
+    enabled: !!userId,
+  });
 };
 
 export const useFetchUserImages = (userId?: number) => {

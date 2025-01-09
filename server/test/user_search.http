@@ -1,6 +1,6 @@
 ### Auth token
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNjM1Mzc1MSwiZXhwIjoxNzM2OTU4NTUxfQ.dcGHxjzUraoeiJ8gfUZW0vDLZ61xCzLVRd60-WxjdZQ
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM2NDI2NTM2LCJleHAiOjE3MzcwMzEzMzZ9.tTxUZSWLIqCwpY_DSFovvqFKh2ZWSshz4lqpcLAvKS0
 ### 
 
 GET http://localhost:8000/users
@@ -11,9 +11,19 @@ Cookie: authToken={{authToken}}
 GET http://localhost:8000/users/search?maxAge=30&minAge=20
 Cookie: authToken={{authToken}}
 
+###
+
+GET http://localhost:8000/users/search?maxAge=30&minAge=50
+Cookie: authToken={{authToken}}
+
 ### Search by fame rating
 
-GET http://localhost:8000/users/search?maxFameRating=0&&minFameRating=10
+GET http://localhost:8000/users/search?maxFameRating=10&&minFameRating=10
+Cookie: authToken={{authToken}}
+
+### 
+
+GET http://localhost:8000/users/search?maxFameRating=0&&minFameRating=20
 Cookie: authToken={{authToken}}
 
 ### Search by distance
@@ -38,10 +48,15 @@ Cookie: authToken={{authToken}}
 
 ### Search by gender and preferences
 
-GET http://localhost:8000/users/search?sexualPreferences=other&gender=male
+GET http://localhost:8000/users/search?sexualPreferences=male&gender=male
 Cookie: authToken={{authToken}}
 
 ### Search with all filters
+
+GET http://localhost:8000/users/search/?maxAge=60&minAge=20&maxFameRating=150&minFameRating=0&distance=1000&latitude=42&longitude=2&tags=food&gender=male&sexualPreferences=female
+Cookie: authToken={{authToken}}
+
+### Search without filters
 
 GET http://localhost:8000/users/search
 Cookie: authToken={{authToken}}

@@ -13,7 +13,7 @@ import { theme } from "@components/theme";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AuthProvider, ProtectedRoute } from "@utils/authContext";
-import { SnackbarProvider } from 'notistack'
+import { SnackbarProvider } from "notistack";
 export const queryClient = new QueryClient();
 
 export const App = () => {
@@ -24,20 +24,20 @@ export const App = () => {
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <SnackbarProvider>
-            <Routes>
-              {/* Public routes */}
-              <Route path="/" element={<Home />} />
-              <Route path={routes.REGISTER} element={<Signup />} />
-              <Route path={routes.LOGIN} element={<Login />} />
+              <Routes>
+                {/* Public routes */}
+                <Route path="/" element={<Home />} />
+                <Route path={routes.REGISTER} element={<Signup />} />
+                <Route path={routes.LOGIN} element={<Login />} />
 
-              {/* Protected routes */}
-              <Route element={<ProtectedRoute />}>
-                <Route path={routes.MATCHES} element={<Matches />} />
-                <Route path={routes.BROWSE} element={<Browse />} />
-                <Route path={routes.ME} element={<Profile />} />
-                <Route path={routes.CHAT} element={<Chat />} />
-              </Route>
-            </Routes>
+                {/* Protected routes */}
+                <Route element={<ProtectedRoute />}>
+                  <Route path={routes.MATCHES} element={<Matches />} />
+                  <Route path={routes.BROWSE} element={<Browse />} />
+                  <Route path={routes.ME} element={<Profile />} />
+                  <Route path={routes.CHAT} element={<Chat />} />
+                </Route>
+              </Routes>
             </SnackbarProvider>
           </ThemeProvider>
         </BrowserRouter>

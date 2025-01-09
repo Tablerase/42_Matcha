@@ -3,6 +3,8 @@
 //   y: number; // latitude
 // }
 
+import { Tag } from "./tagInterface";
+
 export enum Gender {
   Male = "male",
   Female = "female",
@@ -21,11 +23,30 @@ export interface User {
   dateOfBirth?: Date;
   bio?: string;
   location?: { x: number; y: number };
-  location_postal?: string;
+  city?: string;
   fameRate?: number;
   lastSeen?: Date;
   created?: Date;
   updated?: Date;
+}
+
+export interface PublicUser {
+  id: number;
+  firstName: string;
+  lastName: string;
+  username: string;
+  gender?: Gender;
+  preferences?: Gender[];
+  dateOfBirth?: Date;
+  bio?: string;
+  city?: string;
+  fameRate: number;
+  lastSeen?: Date;
+  // Details
+  tags?: Tag[];
+  age?: number;
+  // Distance from search location to searched user in km
+  distance?: number;
 }
 
 export interface SortParams {

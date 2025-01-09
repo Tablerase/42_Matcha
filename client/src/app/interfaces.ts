@@ -12,8 +12,8 @@ export interface User {
   lastName: string;
   email: string;
   username: string;
-  gender: string;
-  preferences: string[];
+  gender: Gender;
+  preferences: Gender[];
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
@@ -23,18 +23,18 @@ export interface User {
 }
 
 export interface FormData {
-  id?: number;
-  firstName?: string;
-  lastName?: string;
-  email?: string;
-  username?: string;
-  gender?: string;
-  preferences?: string[];
-  dateOfBirth?: Date;
-  bio?: string;
+  id: number;
+  firstName: string;
+  lastName: string;
+  email: string;
+  username: string;
+  gender: Gender;
+  preferences: Gender[];
+  dateOfBirth: Date;
+  bio: string;
   location?: { x: number; y: number };
-  city?: string;
-  interests?: Tag[];
+  city: string;
+  interests: Tag[];
 }
 
 export interface UserResponse {
@@ -47,8 +47,8 @@ export interface Props {
 }
 
 export interface Tag {
-    id: number,
-    tag: string
+  id: number;
+  tag: string;
 }
 
 export interface ViewProfileProps {
@@ -95,11 +95,25 @@ export interface UserSearchQuery {
   offset?: number;
 }
 
-export interface PublicUser{
+export interface PublicUser {
   id: number;
+  firstName: string;
+  lastName: string;
   username: string;
-  age: number;
+  gender?: Gender;
+  preferences?: Gender[];
+  dateOfBirth?: Date;
+  bio?: string;
+  city?: string;
+  fameRate: number;
+  lastSeen?: Date;
+  // Details
+  tags?: Tag[];
+  age?: number;
+  // Distance from search location to searched user in km
+  distance?: number;
 }
+
 export interface UserListProps {
   users: PublicUser[];
 }
