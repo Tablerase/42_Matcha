@@ -317,7 +317,6 @@ class UserModel {
         preferences: row.preferences,
         dateOfBirth: row.date_of_birth,
         bio: row.bio,
-        location: row.location,
         city: row.city,
         fameRate: row.fame_rate,
         lastSeen: row.last_seen,

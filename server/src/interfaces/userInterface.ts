@@ -39,7 +39,6 @@ export interface PublicUser {
   preferences?: Gender[];
   dateOfBirth?: Date;
   bio?: string;
-  location?: { x: number; y: number };
   city?: string;
   fameRate: number;
   lastSeen?: Date;

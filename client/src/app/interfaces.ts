@@ -32,8 +32,8 @@ export interface Props {
 }
 
 export interface Tag {
-    id: number,
-    tag: string
+  id: number;
+  tag: string;
 }
 
 export interface ViewProfileProps {
@@ -54,7 +54,7 @@ export interface FormData extends Omit<User, "dateOfBirth"> {
   preferences: string;
   bio: string;
   location?: { x: number; y: number };
-  location_postal: string,
+  location_postal: string;
   fameRate: number;
   lastSeen: Date;
   interests: Tag[];
@@ -97,11 +97,25 @@ export interface UserSearchQuery {
   offset?: number;
 }
 
-export interface PublicUser{
+export interface PublicUser {
   id: number;
+  firstName: string;
+  lastName: string;
   username: string;
-  age: number;
+  gender?: Gender;
+  preferences?: Gender[];
+  dateOfBirth?: Date;
+  bio?: string;
+  city?: string;
+  fameRate: number;
+  lastSeen?: Date;
+  // Details
+  tags?: Tag[];
+  age?: number;
+  // Distance from search location to searched user in km
+  distance?: number;
 }
+
 export interface UserListProps {
   users: PublicUser[];
 }

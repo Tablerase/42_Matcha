@@ -1,7 +1,6 @@
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
 import { Request, Response } from "express";
 import { user as userModel } from "@models/userModel";
-import { validTags } from "@interfaces/tagInterface";
 
 export const searchUsers = async (
   req: Request,
