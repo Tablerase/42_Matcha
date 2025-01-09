@@ -48,10 +48,15 @@ Cookie: authToken={{authToken}}
 
 ### Search by gender and preferences
 
-GET http://localhost:8000/users/search?sexualPreferences=other&gender=male
+GET http://localhost:8000/users/search?sexualPreferences=male&gender=male
 Cookie: authToken={{authToken}}
 
 ### Search with all filters
 
 GET http://localhost:8000/users/search/?maxAge=60&minAge=20&maxFameRating=150&minFameRating=0&distance=1000&latitude=42&longitude=2&tags=food&gender=male&sexualPreferences=female
+Cookie: authToken={{authToken}}
+
+### Search without filters
+
+GET http://localhost:8000/users/search
 Cookie: authToken={{authToken}}

@@ -9,6 +9,7 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     await pool.query("TRUNCATE TABLE chats RESTART IDENTITY CASCADE;");
     await pool.query("TRUNCATE TABLE msgs RESTART IDENTITY CASCADE;");
     await pool.query("TRUNCATE TABLE users RESTART IDENTITY CASCADE;");
+    await pool.query("TRUNCATE TABLE images RESTART IDENTITY CASCADE;");
     await pool.query("TRUNCATE TABLE likes RESTART IDENTITY CASCADE;");
     await pool.query("TRUNCATE TABLE blocked RESTART IDENTITY CASCADE;");
     await pool.query("TRUNCATE TABLE matches RESTART IDENTITY CASCADE;");
@@ -39,6 +40,19 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
         ;
     `;
     await pool.query(insertUsersQuery);
+
+    // Insert data into the `images` table
+    console.log("Inserting images...");
+    const insertImagesQuery = `
+      INSERT INTO images (user_id, image_url, is_profile)
+      VALUES
+      (1, 'https://randomuser.me/api/portraits/men/1.jpg', TRUE),
+      (2, 'https://randomuser.me/api/portraits/women/1.jpg', TRUE),
+      (3, 'https://randomuser.me/api/portraits/women/2.jpg', TRUE),
+      (4, 'https://randomuser.me/api/portraits/men/2.jpg', TRUE),
+      (5, 'https://randomuser.me/api/portraits/men/3.jpg', TRUE);
+    `;
+    await pool.query(insertImagesQuery);
 
     // Insert data into the `user_tags` table
     console.log("Inserting user tags...");

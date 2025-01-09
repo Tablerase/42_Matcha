@@ -61,10 +61,10 @@ export const EditProfile = ({
     email: user.email!,
     username: user.username!,
     gender: user.gender!,
-    preferences: user.preferences || "bisexual",
+    preferences: user.preferences!,
     bio: user.bio || "",
     location: user.location,
-    location_postal: user.location_postal || "",
+    city: user.city || "",
     fameRate: user.fameRate || 0,
     lastSeen: user.lastSeen || new Date(),
     dateOfBirth: user.dateOfBirth ? dayjs(user.dateOfBirth) : null,
@@ -80,7 +80,7 @@ export const EditProfile = ({
       formData.gender &&
       formData.preferences &&
       formData.location &&
-      formData.location_postal &&
+      formData.city &&
       emailError === "" &&
       usernameError === "" &&
       bioError === ""
@@ -157,7 +157,7 @@ export const EditProfile = ({
       preferences: formData.preferences,
       username: formData.username.toLowerCase(),
       location: formData.location,
-      location_postal: formData.location_postal,
+      city: formData.city,
       dateOfBirth: formData.dateOfBirth
         ? formData.dateOfBirth
             .startOf("day")
@@ -203,7 +203,7 @@ export const EditProfile = ({
       setFormData({
         ...formData,
         location: { x: data.latitude, y: data.longitude },
-        location_postal: data.postal,
+        city: data.postal,
       });
     } catch (e) {
       console.error(e);
@@ -226,7 +226,11 @@ export const EditProfile = ({
             },
           }}
         >
-          <EditProfile2 tags={tags} userTags={interests} onTagsChange={handleChangeTags} />  
+          <EditProfile2
+            tags={tags}
+            userTags={interests}
+            onTagsChange={handleChangeTags}
+          />
           {/* <Stack spacing={3}>
             <Typography variant="h4">Personal Info</Typography>
             <TextField

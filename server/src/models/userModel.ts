@@ -1,6 +1,11 @@
 import { QueryResult } from "pg";
 import { pool } from "../settings";
-import { User, PublicUser, SortParams } from "@interfaces/userInterface";
+import {
+  User,
+  PublicUser,
+  SortParams,
+  Gender,
+} from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
 import { on } from "events";
@@ -313,8 +318,8 @@ class UserModel {
         firstName: row.first_name,
         lastName: row.last_name,
         username: row.username,
-        gender: row.gender,
-        preferences: row.preferences,
+        gender: row.gender as Gender,
+        preferences: row.preferences as Gender[],
         dateOfBirth: row.date_of_birth,
         bio: row.bio,
         city: row.city,

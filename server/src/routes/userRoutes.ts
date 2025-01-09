@@ -46,5 +46,6 @@ router.get("/:id/images", ImageViews.getUserImages);
 router.post("/:id/images", ImageViews.createUserImage);
 router.delete("/:id/images", ImageViews.deleteUserImage);
 router.put("/:id/images", ImageViews.updateUserImageStatus);
+router.get("/:id/images/profile", ImageViews.getUserProfileImage);
 
 export default router;

@@ -29,7 +29,7 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
     );
   }
   return (
-    <Card sx={{ m: 4}}>
+    <Card sx={{ m: 4 }}>
       <CardContent>
         <Stack spacing={3}>
           <Box
@@ -56,10 +56,13 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
             >
               {tags && tags?.length > 0 ? (
                 tags?.map((tag: Tag) => (
-                  <Chip key={tag.id} label={`#${tag.tag}`}
-                  sx={{
-                    bgcolor: tagChipColors[tag.id % tagChipColors.length],
-                  }} />
+                  <Chip
+                    key={tag.id}
+                    label={`#${tag.tag}`}
+                    sx={{
+                      bgcolor: tagChipColors[tag.id % tagChipColors.length],
+                    }}
+                  />
                 ))
               ) : (
                 <Typography variant="body2" color="text.secondary">
@@ -109,9 +112,7 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
             <Typography variant="subtitle2" color="text.secondary">
               Location
             </Typography>
-            <Typography>
-              {user.location_postal ? user.location_postal : "Not specified"}
-            </Typography>
+            <Typography>{user.city ? user.city : "Not specified"}</Typography>
           </Box>
         </Stack>
       </CardContent>
