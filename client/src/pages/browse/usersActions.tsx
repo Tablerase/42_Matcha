@@ -56,15 +56,15 @@ const updateUser = async (data: FormData) => {
   const coordinates = formatCoordinates(data.location);
   const updates = {
     bio: data.bio,
-    first_name: data.firstName,
-    last_name: data.lastName,
-    username: data.username,
-    email: data.email,
+    first_name: capitalize(data.firstName),
+    last_name: capitalize(data.lastName),
+    username: data.username?.toLowerCase(),
+    email: data.email?.toLowerCase(),
     gender: data.gender,
     preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
     location: coordinates,
-    city: data.city,
+    // city: capitalize(data.city),
   };
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,

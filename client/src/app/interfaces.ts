@@ -1,3 +1,4 @@
+import { SelectChangeEvent } from "@mui/material";
 import { ReactNode } from "react";
 
 export interface UserLogin {
@@ -101,4 +102,11 @@ export interface PublicUser{
 }
 export interface UserListProps {
   users: PublicUser[];
+}
+
+export interface UserUpdateFormProps {
+  user?: Partial<User>,
+  tags?: Tag[],
+  userTags: Tag[], 
+  onTagsChange: (event: SelectChangeEvent<string[]>) => void
 }

@@ -2,22 +2,18 @@ import { MultipleSelectChip } from '@/components/MultipleSelectChip';
 import Form from '@rjsf/mui';
 import { RJSFSchema, UiSchema, FieldProps, ErrorTransformer, RJSFValidationError, SubmitButtonProps, getSubmitButtonOptions, RegistryWidgetsType, RegistryFieldsType } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
-import { Gender, Tag, User } from '@/app/interfaces';
+import { Gender, Tag, User, UserUpdateFormProps } from '@/app/interfaces';
 import { SelectChangeEvent } from '@mui/material';
 import { isValidUsername, isValidEmail } from '@/utils/helpers';
-import { Button } from '@mui/material';
-import { useUpdateUserProfile } from "@pages/browse/usersActions";
+import { SubmitButton } from '@/components/SubmitButton';
+import { useUpdateUserProfile, useAddUserTags, useDeleteUserTags } from "@pages/browse/usersActions";
 import { IChangeEvent } from '@rjsf/core';
 import { FormEvent } from 'react';
-import { getIpData } from '@/utils/helpers';
+import { LocationButton } from '@/components/LocationButton';
 import { FormData } from '@/app/interfaces';
 
-export interface UserUpdateFormProps {
-  user?: Partial<User>,
-  tags?: Tag[],
-  userTags: Tag[], 
-  onTagsChange: (event: SelectChangeEvent<string[]>) => void
-}
+// TODO: add proper format for dateOfBirth
+// TODO: add proper messages when required fields are not filled
 
 const schema: RJSFSchema = {
     required: ["firstName", "lastName", "username", "email", "dateOfBirth", "gender", "preferences", "location"],
@@ -64,39 +60,6 @@ const schema: RJSFSchema = {
           },
     },
   };
-
-  function SubmitButton(props: SubmitButtonProps) {
-    const { uiSchema } = props;
-    const { norender } = getSubmitButtonOptions(uiSchema);
-    if (norender) {
-      return null;
-    }
-    return (
-      <Button
-          type="submit"
-          variant="contained"
-        >
-          Save Changes
-        </Button>
-    );
-  }
-
-  export const LocationButton = (props: FieldProps) => {
-    const { onChange } = props;
-    const handleLocationUpdate = async () => {
-      try {
-        const data = await getIpData();
-        onChange({ x: data.latitude, y: data.longitude });
-      } catch (e) {
-        console.error(e);
-      }
-    };
-    return (
-      <Button variant="contained" onClick={() => handleLocationUpdate()}>
-        Locate Me!
-      </Button>
-    );
-  }
 
 export const UserUpdateForm = ({user, tags, userTags, onTagsChange}: UserUpdateFormProps) => { 
   const uiSchema: UiSchema = {
@@ -196,14 +159,27 @@ const transformErrors = (
   });
 }
 const { updateUserData } = useUpdateUserProfile();
+const updateUserTags = useAddUserTags();
+const deleteUserTags = useDeleteUserTags();
 
-  // const onSubmit = ({ formData }: any) => {
-  //   console.log("formData: ", formData);
-  //   updateUserData(formData)
-  // };
-  
   const onSubmit = (data: IChangeEvent<any, RJSFSchema, any>, event: FormEvent<any>) => {
     console.log('Data submitted: ', data.formData);
+    console.log(userTags);
+    console.log(data.formData?.interests);
+    for (const tag of data.formData?.interests) {
+      if (userTags?.includes(tag)) continue;
+      else if (!userTags?.includes(tag))
+        updateUserTags({ userId: data.formData.id, tagId: tag.id });
+    }
+    // TODO: properly delete tags
+    // if (userTags) {
+    //   for (const tag of userTags) {
+    //     if (!interests?.some((interest) => tag.id === interest.id)) {
+    //       deleteUserTags({ userId: user.id, tagId: tag.id });
+    //     }
+    //   }
+    // }
+    
     if (data.formData) {
       updateUserData(data.formData);
     }
