@@ -34,3 +34,8 @@ export const capitalize = (str?: string): string => {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
 }
+
+export const formatPreferences = (preferences: string): string[] => {
+  if (!preferences) return [];
+  return preferences.slice(1).slice(0, -1).split(",").map((preference) => preference.trim());
+}

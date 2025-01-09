@@ -13,11 +13,11 @@ export interface User {
   email: string;
   username: string;
   gender: string;
-  preferences: string;
+  preferences: string[];
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
-  location_postal: string;
+  city: string;
   fameRate: number;
   lastSeen: Date;
 }
@@ -41,23 +41,6 @@ export interface ViewProfileProps {
   tags: Tag[] | undefined;
   images: Image[] | undefined;
   // editMode?: boolean;
-}
-
-export interface FormData extends Omit<User, "dateOfBirth"> {
-  dateOfBirth: Dayjs | null;
-  id: number;
-  firstName: string;
-  lastName: string;
-  email: string;
-  username: string;
-  gender: string;
-  preferences: string;
-  bio: string;
-  location?: { x: number; y: number };
-  location_postal: string,
-  fameRate: number;
-  lastSeen: Date;
-  interests: Tag[];
 }
 
 export interface EditProfileProps {

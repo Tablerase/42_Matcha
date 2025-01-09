@@ -110,7 +110,7 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
               Location
             </Typography>
             <Typography>
-              {user.location_postal ? user.location_postal : "Not specified"}
+              {user.city ? user.city : "Not specified"}
             </Typography>
           </Box>
         </Stack>

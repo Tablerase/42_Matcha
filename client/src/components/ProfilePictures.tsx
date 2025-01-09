@@ -1,4 +1,4 @@
-import { Image, FormData } from "@/app/interfaces";
+import { Image } from "@/app/interfaces";
 import {
   Avatar,
   AvatarGroup,
@@ -23,7 +23,7 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface ProfilePicturesProps {
   images?: Image[];
-  userData?: FormData;
+  userData?: any;
   editMode?: boolean;
 }
 const MAX_FILE_SIZE = 1 * 1024 * 1024;

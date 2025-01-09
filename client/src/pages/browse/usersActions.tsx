@@ -7,7 +7,8 @@ import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
 import { Image } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
-import { enqueueSnackbar } from 'notistack'
+import { enqueueSnackbar } from 'notistack';
+import { formatPreferences } from "@/utils/helpers";
 
 interface ValidationError {
   code: string;
@@ -63,7 +64,7 @@ const updateUser = async (data: Partial<User>) => {
     preferences: data.preferences,
     date_of_birth: data.dateOfBirth,
     location: coordinates,
-    location_postal: data.location_postal,
+    city: data.city,
   };
   const user = await client.put<User>(`/users/${data.id}`, updates, {
     withCredentials: true,
@@ -99,11 +100,11 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         email: userData.email,
         username: userData.username,
         gender: userData.gender,
-        preferences: userData.preferences,
+        preferences: formatPreferences(userData.preferences),
         dateOfBirth: userData.date_of_birth,
         bio: userData.bio,
         location: userData.location,
-        location_postal: userData.location_postal,
+        city: userData.city,
         fameRate: userData.fame_rate,
         lastSeen: userData.last_seen,
       } as User;
@@ -159,7 +160,7 @@ const updateUserTags = async ({
   userId,
   tagId,
 }: {
-  userId: number;
+  userId?: number;
   tagId: number;
 }) => {
   const response = await client.post(`/users/${userId}/tags`, { tagId });
@@ -170,7 +171,7 @@ const deleteUserTags = async ({
   userId,
   tagId,
 }: {
-  userId: number;
+  userId?: number;
   tagId: number;
 }) => {
   const response = await client.delete(`/users/${userId}/tags`, {
@@ -192,7 +193,7 @@ export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
 export const useAddUserTags = () => {
   const { mutate: update } = useMutation({
     mutationKey: ["userTags"],
-    mutationFn: (variables: { userId: number; tagId: number }) =>
+    mutationFn: (variables: { userId?: number; tagId: number }) =>
       updateUserTags(variables),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userTags"] });
@@ -204,7 +205,7 @@ export const useAddUserTags = () => {
 export const useDeleteUserTags = () => {
   const { mutate: update } = useMutation({
     mutationKey: ["userTags"],
-    mutationFn: (variables: { userId: number; tagId: number }) =>
+    mutationFn: (variables: { userId?: number; tagId: number }) =>
       deleteUserTags(variables),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userTags"] });

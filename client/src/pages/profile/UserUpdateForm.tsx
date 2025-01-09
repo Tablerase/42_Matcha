@@ -1,38 +1,42 @@
 import { MultipleSelectChip } from '@/components/MultipleSelectChip';
 import Form from '@rjsf/mui';
-import { RJSFSchema, UiSchema, WidgetProps } from '@rjsf/utils';
+import { RJSFSchema, UiSchema, WidgetProps, ErrorTransformer, RJSFValidationError, SubmitButtonProps, getSubmitButtonOptions } from '@rjsf/utils';
 import validator from '@rjsf/validator-ajv8';
-import { Tag } from '@app/interfaces';
+import { Gender, Tag, User } from '@/app/interfaces';
 import { SelectChangeEvent } from '@mui/material';
-
-
+import { isValidUsername, isValidEmail } from '@/utils/helpers';
+import { Button } from '@mui/material';
+import { useUpdateUserProfile } from "@pages/browse/usersActions";
+import { IChangeEvent } from '@rjsf/core';
+import { FormEvent } from 'react';
 
 export interface UserUpdateFormProps {
+  user?: Partial<User>,
   tags?: Tag[],
   userTags: Tag[], 
   onTagsChange: (event: SelectChangeEvent<string[]>) => void
 }
 
 const schema: RJSFSchema = {
-    title: "Personal Info",
     required: ["First name", "Last name", "Username", "Email", "Date of birth", "Gender", "Preferences"],
     properties: {
-        "First name": { type: "string", "minLength": 3, "maxLength": 100 }, required: true,
+        "First name": { type: "string", "minLength": 3, "maxLength": 100 },
         "Last name": { type: "string", "minLength": 3, "maxLength": 100 },
         "Username": { type: "string", "minLength": 3, "maxLength": 100 },
-        Email: { type: "string", format: "email_address", maxLength: 255,},
+        Email: { type: "string", maxLength: 255,},
         "Date of birth": { type: "string" },
         Gender: { 
             type: "string",
-            enum: ["male", "female", "other"],
+            enum: [Gender.Male, Gender.Female, Gender.Other],
           },
         Preferences: { 
             type: "array",
             uniqueItems: true,
             items: {
               type: "string",
-              enum: ["male", "female", "other"],
-            }
+              enum: [Gender.Male, Gender.Female, Gender.Other],
+            }, 
+            minItems: 1,
           },
         Bio: { type: "string", maxLength: 500 },
         City: { type: "string", maxLength: 150 },
@@ -49,14 +53,23 @@ const schema: RJSFSchema = {
     },
   };
 
-  const customFormats = {
-    email_address: /\S+@\S+\.\S+/,
-  };
+  function SubmitButton(props: SubmitButtonProps) {
+    const { uiSchema } = props;
+    const { norender } = getSubmitButtonOptions(uiSchema);
+    if (norender) {
+      return null;
+    }
+    return (
+      <Button
+          type="submit"
+          variant="contained"
+        >
+          Save Changes
+        </Button>
+    );
+  }
 
-
-  
-
-export const UserUpdateForm = ({tags, userTags, onTagsChange}: UserUpdateFormProps) => { 
+export const UserUpdateForm = ({user, tags, userTags, onTagsChange}: UserUpdateFormProps) => { 
   const uiSchema: UiSchema = {
     Email: {
         "ui:widget": "email",
@@ -91,13 +104,82 @@ export const UserUpdateForm = ({tags, userTags, onTagsChange}: UserUpdateFormPro
       }
       },
   };
+  const formData = {
+    userId: user?.id,
+    "First name": user?.firstName,
+    "Last name": user?.lastName,
+    "Username": user?.username,
+    Email: user?.email,
+    "Date of birth": user?.dateOfBirth,
+    Gender: user?.gender,
+    Preferences: user?.preferences,
+    Bio: user?.bio || "",
+    City: user?.city,
+    Interests: userTags
+  }
 
-  //add validation for username!!
-//   move this to edit profile component not to have issue with passing props
-  const onSubmit = ({ formData }: any) => console.log("submit: ", formData);
-    return (
-<Form
-schema={schema} uiSchema={uiSchema} validator={validator} onSubmit={onSubmit}/>
-    )
+  const customValidate = (formData: any, errors: any) => {
+    console.log("formData: ", formData);
+  if (!isValidEmail(formData.Email)) {
+    errors.Email.addError("Invalid email address");
+  }
+  if (!isValidUsername(formData.Username)) {
+    errors.Username.addError("Username can only contain letters, numbers, and underscores");
+  }
+  return errors;
+}
+
+const transformErrors = (
+  errors: RJSFValidationError[], 
+  uiSchema?: UiSchema<any, RJSFSchema, any>
+): RJSFValidationError[] => {
+  console.log("errors: ", errors);
+  return errors.map((error: any) => {
+    if (error.name === "type") {
+      error.message = "This field is required";
+    }
+    if (error.name === 'minLength') {
+      error.message = 'Must be at least 3 characters long';
+    }
+    if (error.name === 'maxLength' && error.params.limit === 100) {
+      error.message = 'Must be at most 100 characters long';
+    }
+    if (error.name === 'maxLength' && error.params.limit === 255) {
+      error.message = 'Must be at most 255 characters long';
+    }
+    if (error.name === 'maxLength' && error.params.limit === 500) {
+      error.message = 'Must be at most 500 characters long';
+    }
+    return error;
+  });
+}
+const { updateUserData } = useUpdateUserProfile();
+
+  // const onSubmit = ({ formData }: any) => {
+  //   console.log("formData: ", formData);
+  //   updateUserData(formData)
+  // };
+  
+  const onSubmit = (data: IChangeEvent<any, RJSFSchema, any>, event: FormEvent<any>) => {
+    console.log('Data submitted: ', data.formData);
+    if (data.formData) {
+      updateUserData(data.formData);
+    }
+  };
+  return (
+    <Form
+schema={schema} 
+uiSchema={uiSchema} 
+validator={validator} 
+formData={formData}
+onSubmit={onSubmit}
+transformErrors={transformErrors}
+customValidate={customValidate}
+liveValidate
+showErrorList={false}
+templates={{ ButtonTemplates: { SubmitButton } }}
+/>
+  )
+
 }
 
