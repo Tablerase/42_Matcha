@@ -12,8 +12,8 @@ export interface User {
   lastName: string;
   email: string;
   username: string;
-  gender: string;
-  preferences: string;
+  gender: Gender;
+  preferences: Gender[];
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
@@ -50,8 +50,8 @@ export interface FormData extends Omit<User, "dateOfBirth"> {
   lastName: string;
   email: string;
   username: string;
-  gender: string;
-  preferences: string;
+  gender: Gender;
+  preferences: Gender[];
   bio: string;
   location?: { x: number; y: number };
   location_postal: string;

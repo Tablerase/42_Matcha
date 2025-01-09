@@ -1,14 +1,29 @@
 import { Layout } from "@components/Layout";
 import { useFetchUsers, useFetchCurrentUser } from "./usersActions";
 import { UserList } from "@components/UserList";
-import { UserSearchQuery } from "@app/interfaces";
-import { useState } from "react";
+import { UserSearchQuery, Gender } from "@app/interfaces";
+import { useState, useEffect } from "react";
 
 export const Browse = () => {
   const { data: user } = useFetchCurrentUser();
-  let [searchQuery, setSearchQuery] = useState<UserSearchQuery>({});
-  // searchQuery.gender = Gender.Female;
-  // searchQuery.sexualPreferences = [Gender.Male]
+  const [searchQuery, setSearchQuery] = useState<UserSearchQuery>({});
+
+  useEffect(() => {
+    if (user) {
+      setSearchQuery({
+        gender: user.gender,
+        sexualPreferences: user.preferences,
+      });
+    }
+  }, [user]);
+
+  const updateSearchQuery = (newQuery: Partial<UserSearchQuery>) => {
+    setSearchQuery((prevQuery) => ({
+      ...prevQuery,
+      ...newQuery,
+    }));
+  };
+
   const {
     data: users,
     isLoading,
@@ -23,7 +38,7 @@ export const Browse = () => {
   if (isSuccess && users) {
     content = (
       <>
-        {/* <SearchBar onSubmit={setSearchQuery}/> */}
+        {/* <SearchBar onSubmit={updateSearchQuery}/> */}
         <UserList users={users} />
       </>
     );
