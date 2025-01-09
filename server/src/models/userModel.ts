@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 import { pool } from "../settings";
-import { User, SortParams } from "@interfaces/userInterface";
+import { User, PublicUser, SortParams } from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
 import { on } from "events";
@@ -152,21 +152,21 @@ class UserModel {
     return result.rows;
   }
 
-  async searchUsers(params: UserSearchQuery): Promise<any[]> {
+  async searchUsers(params: UserSearchQuery): Promise<PublicUser[]> {
     try {
-      console.log(params);
       const conditions: string[] = [];
       const values: any[] = [];
       let parameterIndex = 1;
 
       // Base query with age calculation
-      // TODO: Replace age calculation by date comparison for better performance
       let query = `
-        SELECT DISTINCT u.id, u.username,
+        SELECT DISTINCT u.id, u.first_name, u.last_name, u.username, u.gender, u.preferences,
+        u.date_of_birth, u.bio, u.location::text, u.city, u.fame_rate, u.last_seen,
+        ARRAY_AGG(t.tag) AS tags,
         EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) as age
       `;
 
-      // Add distance calculation if coordinates provided (here metric system is used)
+      // Add distance calculation if coordinates provided
       if (
         params.distance !== undefined &&
         !isNaN(params.distance) &&
@@ -175,24 +175,23 @@ class UserModel {
         params.longitude !== undefined &&
         !isNaN(params.longitude)
       ) {
-        query += `
-          , earth_distance(
+        query += `,
+          earth_distance(
             ll_to_earth(u.location[0], u.location[1]),
             ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
-            ) / 1000 AS distance
+          ) / 1000 AS distance
         `;
         values.push(params.latitude, params.longitude);
         parameterIndex += 2;
       }
 
-      query += `  FROM users u`;
+      query += ` FROM users u
+        LEFT JOIN user_tags ut ON u.id = ut.user_id
+        LEFT JOIN tags t ON ut.tag_id = t.id
+      `;
 
-      // Join with tags if tag filtering is needed
+      // Add conditions
       if (params.tags && params.tags.length > 0) {
-        query += `
-          INNER JOIN user_tags ut ON u.id = ut.user_id
-          INNER JOIN tags t ON ut.tag_id = t.id
-        `;
         conditions.push(
           `t.tag IN (${params.tags
             .map((_, i) => `$${parameterIndex + i}`)
@@ -202,12 +201,12 @@ class UserModel {
         parameterIndex += params.tags.length;
       }
 
-      // Add gender and sexual preference conditions
       if (params.gender !== undefined) {
         conditions.push(`u.gender = $${parameterIndex}`);
         values.push(params.gender);
         parameterIndex++;
       }
+
       if (
         params.sexualPreferences !== undefined &&
         params.sexualPreferences.length > 0
@@ -221,7 +220,6 @@ class UserModel {
         parameterIndex += params.sexualPreferences.length;
       }
 
-      // Add age range conditions
       if (params.minAge !== undefined && !isNaN(params.minAge)) {
         conditions.push(
           `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) >= $${parameterIndex}`
@@ -229,6 +227,7 @@ class UserModel {
         values.push(params.minAge);
         parameterIndex++;
       }
+
       if (params.maxAge !== undefined && !isNaN(params.maxAge)) {
         conditions.push(
           `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) <= $${parameterIndex}`
@@ -237,24 +236,18 @@ class UserModel {
         parameterIndex++;
       }
 
-      // Add fame rating range conditions
       if (params.minFameRating !== undefined && !isNaN(params.minFameRating)) {
         conditions.push(`u.fame_rate >= $${parameterIndex}`);
         values.push(params.minFameRating);
         parameterIndex++;
       }
+
       if (params.maxFameRating !== undefined && !isNaN(params.maxFameRating)) {
         conditions.push(`u.fame_rate <= $${parameterIndex}`);
         values.push(params.maxFameRating);
         parameterIndex++;
       }
 
-      // Add distance condition if specified
-      /**
-       * Earth distance calculation formula
-       * @see https://docs.vultr.com/how-to-calculate-distances-with-postgresql
-       * @see https://www.geeksforgeeks.org/program-distance-two-points-earth/
-       */
       if (
         params.distance !== undefined &&
         !isNaN(params.distance) &&
@@ -267,25 +260,21 @@ class UserModel {
           earth_distance(
             ll_to_earth(u.location[0], u.location[1]),
             ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
-            ) / 1000 <= $${parameterIndex + 2}`);
+          ) / 1000 <= $${parameterIndex + 2}`);
         values.push(params.latitude, params.longitude, params.distance);
         parameterIndex += 3;
       }
 
-      // Combine conditions
       if (conditions.length > 0) {
         query += ` WHERE ${conditions.join(" AND ")}`;
       }
 
-      // Add group by
       query += ` GROUP BY u.id`;
 
-      // Tag count condition
       if (params.tags && params.tags.length > 0) {
         query += ` HAVING COUNT(DISTINCT t.tag) = ${params.tags.length}`;
       }
 
-      // Add sorting
       if (params.sortBy) {
         const order = params.order || "asc";
         switch (params.sortBy) {
@@ -298,31 +287,44 @@ class UserModel {
             query += ` ORDER BY age ${order}`;
             break;
           case "fameRating":
-            query += ` ORDER BY fame_rating ${order}`;
+            query += ` ORDER BY u.fame_rate ${order}`;
             break;
         }
       }
 
-      // Add pagination
       if (params.limit) {
         query += ` LIMIT $${parameterIndex}`;
         values.push(params.limit);
         parameterIndex++;
       }
+
       if (params.offset) {
         query += ` OFFSET $${parameterIndex}`;
         values.push(params.offset);
       }
 
-      console.log(query);
-      console.log(values);
       const result: QueryResult = await pool.query({
         text: query,
         values: values,
       });
 
-      // TODO: Should return user data with tags
-      return result.rows;
+      return result.rows.map((row) => ({
+        id: row.id,
+        firstName: row.first_name,
+        lastName: row.last_name,
+        username: row.username,
+        gender: row.gender,
+        preferences: row.preferences,
+        dateOfBirth: row.date_of_birth,
+        bio: row.bio,
+        location: row.location,
+        city: row.city,
+        fameRate: row.fame_rate,
+        lastSeen: row.last_seen,
+        tags: row.tags,
+        age: row.age,
+        distance: row.distance,
+      })) as PublicUser[];
     } catch (error) {
       throw new Error((error as Error).message);
     }
@@ -330,4 +332,3 @@ class UserModel {
 }
 
 export const user = new UserModel();
-
