@@ -217,6 +217,175 @@ class UserModel {
       }
 
       if (params.gender !== undefined) {
+        conditions.push(`u.gender = ANY($${parameterIndex}::gender[])`);
+        values.push(params.sexualPreferences);
+        parameterIndex++;
+
+        // Add condition to match users whose preferences include the searcher's gender
+        conditions.push(`$${parameterIndex} = ANY(u.preferences)`);
+        values.push(params.gender);
+        parameterIndex++;
+      }
+
+      if (params.minAge !== undefined && !isNaN(params.minAge)) {
+        conditions.push(
+          `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) >= $${parameterIndex}`
+        );
+        values.push(params.minAge);
+        parameterIndex++;
+      }
+
+      if (params.maxAge !== undefined && !isNaN(params.maxAge)) {
+        conditions.push(
+          `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) <= $${parameterIndex}`
+        );
+        values.push(params.maxAge);
+        parameterIndex++;
+      }
+
+      if (params.minFameRating !== undefined && !isNaN(params.minFameRating)) {
+        conditions.push(`u.fame_rate >= $${parameterIndex}`);
+        values.push(params.minFameRating);
+        parameterIndex++;
+      }
+
+      if (params.maxFameRating !== undefined && !isNaN(params.maxFameRating)) {
+        conditions.push(`u.fame_rate <= $${parameterIndex}`);
+        values.push(params.maxFameRating);
+        parameterIndex++;
+      }
+
+      if (
+        params.distance !== undefined &&
+        !isNaN(params.distance) &&
+        params.latitude !== undefined &&
+        !isNaN(params.latitude) &&
+        params.longitude !== undefined &&
+        !isNaN(params.longitude)
+      ) {
+        conditions.push(`
+          earth_distance(
+            ll_to_earth(u.location[0], u.location[1]),
+            ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
+          ) / 1000 <= $${parameterIndex + 2}`);
+        values.push(params.latitude, params.longitude, params.distance);
+        parameterIndex += 3;
+      }
+
+      if (conditions.length > 0) {
+        query += ` WHERE ${conditions.join(" AND ")}`;
+      }
+
+      query += ` GROUP BY u.id`;
+
+      if (params.tags && params.tags.length > 0) {
+        query += ` HAVING COUNT(DISTINCT t.tag) = ${params.tags.length}`;
+      }
+
+      if (params.sortBy) {
+        const order = params.order || "asc";
+        switch (params.sortBy) {
+          case "distance":
+            if (params.latitude && params.longitude) {
+              query += ` ORDER BY distance ${order}`;
+            }
+            break;
+          case "age":
+            query += ` ORDER BY age ${order}`;
+            break;
+          case "fameRating":
+            query += ` ORDER BY u.fame_rate ${order}`;
+            break;
+        }
+      }
+
+      if (params.limit) {
+        query += ` LIMIT $${parameterIndex}`;
+        values.push(params.limit);
+        parameterIndex++;
+      }
+
+      if (params.offset) {
+        query += ` OFFSET $${parameterIndex}`;
+        values.push(params.offset);
+      }
+
+      const result: QueryResult = await pool.query({
+        text: query,
+        values: values,
+      });
+
+      return result.rows.map((row) => ({
+        id: row.id,
+        firstName: row.first_name,
+        lastName: row.last_name,
+        username: row.username,
+        gender: row.gender as Gender,
+        preferences: row.preferences as Gender[],
+        dateOfBirth: row.date_of_birth,
+        bio: row.bio,
+        city: row.city,
+        fameRate: row.fame_rate,
+        lastSeen: row.last_seen,
+        tags: row.tags,
+        age: row.age,
+        distance: row.distance,
+      })) as PublicUser[];
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async omniSearchUsers(params: UserSearchQuery): Promise<PublicUser[]> {
+    try {
+      const conditions: string[] = [];
+      const values: any[] = [];
+      let parameterIndex = 1;
+
+      // Base query with age calculation
+      let query = `
+        SELECT DISTINCT u.id, u.first_name, u.last_name, u.username, u.gender, u.preferences,
+        u.date_of_birth, u.bio, u.location::text, u.city, u.fame_rate, u.last_seen,
+        ARRAY_AGG(t.tag) AS tags,
+        EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) as age
+      `;
+
+      // Add distance calculation if coordinates provided
+      if (
+        params.distance !== undefined &&
+        !isNaN(params.distance) &&
+        params.latitude !== undefined &&
+        !isNaN(params.latitude) &&
+        params.longitude !== undefined &&
+        !isNaN(params.longitude)
+      ) {
+        query += `,
+          earth_distance(
+            ll_to_earth(u.location[0], u.location[1]),
+            ll_to_earth($${parameterIndex}, $${parameterIndex + 1})
+          ) / 1000 AS distance
+        `;
+        values.push(params.latitude, params.longitude);
+        parameterIndex += 2;
+      }
+
+      query += ` FROM users u
+        LEFT JOIN user_tags ut ON u.id = ut.user_id
+        LEFT JOIN tags t ON ut.tag_id = t.id
+      `;
+
+      // Add conditions
+      if (params.tags && params.tags.length > 0) {
+        conditions.push(
+          `t.tag IN (${params.tags
+            .map((_, i) => `$${parameterIndex + i}`)
+            .join(", ")})`
+        );
+        values.push(...params.tags);
+        parameterIndex += params.tags.length;
+      }
+
+      if (params.gender !== undefined) {
         conditions.push(`u.gender = $${parameterIndex}`);
         values.push(params.gender);
         parameterIndex++;

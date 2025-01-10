@@ -38,6 +38,7 @@ const fetchUsers = async (params?: UserSearchQuery) => {
 };
 
 export const useFetchUsers = (params?: UserSearchQuery) => {
+  console.log("useFetchUsers", params);
   return useQuery<PublicUser[], any>({
     queryFn: async () => {
       const response = await fetchUsers(params);

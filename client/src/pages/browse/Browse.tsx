@@ -1,37 +1,46 @@
 import { Layout } from "@components/Layout";
 import { useFetchUsers, useFetchCurrentUser } from "./usersActions";
 import { UserList } from "@components/UserList";
-import { UserSearchQuery, PublicUser } from "@app/interfaces";
+import { UserSearchQuery, PublicUser, User, Gender } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
+
+// TODO: Implement search bar and search functionality for users
+// pb: query not properly initialized
+// state not properly updated
+// user undefined so user search query not properly initialized
+const setupSearchQuery = (
+  user: User,
+  params: UserSearchQuery
+): UserSearchQuery => {
+  let updatedParams = { ...params };
+  updatedParams.gender = user.gender;
+  updatedParams.sexualPreferences = user.preferences;
+  return updatedParams;
+};
 
 export const Browse = () => {
   const { data: user } = useFetchCurrentUser();
   const [page, setPage] = useState(1);
-  const [searchQuery, setSearchQuery] = useState<UserSearchQuery>({});
+  const [searchParams, setSearchParams] = useState<UserSearchQuery>({
+    gender: user?.gender,
+    sexualPreferences: user?.preferences,
+  });
   const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
 
-  // // Search query
-  // useEffect(() => {
-  //   if (user) {
-  //     setSearchQuery({
-  //       gender: user.gender,
-  //       sexualPreferences: user.preferences,
-  //     });
-  //   }
-  // }, [user]);
-  // const updateSearchQuery = (newQuery: Partial<UserSearchQuery>) => {
-  //   setSearchQuery((prevQuery) => ({
-  //     ...prevQuery,
-  //     ...newQuery,
-  //   }));
-  // };
+  // Update search params
+  const updateSearchQuery = (params: UserSearchQuery) => {
+    setSearchParams(params);
+    setPage(1);
+  };
+
+  // Fetch users
   const {
     data: users,
     isLoading: usersIsLoading,
     isSuccess: usersIsSuccess,
     isError: usersIsError,
-  } = useFetchUsers(searchQuery);
+  } = useFetchUsers(searchParams);
 
   // Pagination
   useEffect(() => {
