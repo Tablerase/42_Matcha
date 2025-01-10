@@ -114,13 +114,17 @@ export interface PublicUser {
   distance?: number;
 }
 
+export interface UserCardProps {
+  user: PublicUser;
+}
+
 export interface UserListProps {
   users: PublicUser[];
 }
 
 export interface UserUpdateFormProps {
-  user?: Partial<User>,
-  tags?: Tag[],
-  userTags: Tag[], 
-  onTagsChange: (event: SelectChangeEvent<string[]>) => void
+  user?: Partial<User>;
+  tags?: Tag[];
+  userTags: Tag[];
+  onTagsChange: (event: SelectChangeEvent<string[]>) => void;
 }

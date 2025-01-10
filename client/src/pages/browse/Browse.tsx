@@ -28,16 +28,16 @@ export const Browse = () => {
   // };
   const {
     data: users,
-    isLoading,
-    isSuccess,
-    isError,
+    isLoading: usersIsLoading,
+    isSuccess: usersIsSuccess,
+    isError: usersIsError,
   } = useFetchUsers(searchQuery);
 
   // Pagination
   useEffect(() => {
     if (users) {
-      const offset = (page - 1) * 10;
-      const endOffset = offset + 10;
+      const offset = (page - 1) * 9;
+      const endOffset = offset + 9;
       setDisplayedUsers(users.slice(offset, endOffset));
     }
   }, [page, users]);
@@ -50,10 +50,10 @@ export const Browse = () => {
 
   // Content rendering
   let content;
-  if (isLoading) {
+  if (usersIsLoading) {
     content = "Loading...";
   }
-  if (isSuccess && users) {
+  if (usersIsSuccess && users) {
     content = (
       <>
         {/* <SearchBar onSubmit={updateSearchQuery}/> */}
@@ -67,7 +67,7 @@ export const Browse = () => {
       </>
     );
   }
-  if (isError) {
+  if (usersIsError) {
     content = "Error fetching users";
   }
   return <Layout>{content}</Layout>;

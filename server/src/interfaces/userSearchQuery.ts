@@ -66,7 +66,7 @@ export const userSearchQuerySchema = z
     sortBy: z.enum(["distance", "age", "fameRating"]).optional(),
     order: z.enum(["asc", "desc"]).optional(),
     limit: z.coerce.number().int().positive().optional(),
-    offset: z.coerce.number().int().positive().optional(),
+    offset: z.coerce.number().int().optional(),
   })
   .refine(
     (data) => {

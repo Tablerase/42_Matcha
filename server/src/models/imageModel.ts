@@ -24,8 +24,23 @@ class ImageModel {
     };
 
     try {
-      const result: QueryResult<Image> = await pool.query(query);
-      return result.rows[0];
+      const result: QueryResult<any> = await pool.query(query);
+      if (result.rows.length === 0) {
+        return {
+          id: -1,
+          userId: userId,
+          url: "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+          isProfilePic: false,
+        };
+      } else {
+        const data = result.rows[0];
+        return {
+          id: data.id,
+          userId: data.user_id,
+          url: data.image_url,
+          isProfilePic: data.is_profile,
+        };
+      }
     } catch (error) {
       throw new Error((error as Error).message);
     }

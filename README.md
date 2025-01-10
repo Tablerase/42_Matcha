@@ -21,3 +21,20 @@ https://randomuser.me/api/
 ## Design
 
 Browse profiles/users with tea bags opening and closing, and a cup of tea that fills up as you scroll down the page.
+
+## User Interface
+
+- MUI (Material-UI)
+  - [MUI Documentation](https://material-ui.com/getting-started/installation/)
+  - [MUI Icons](https://material-ui.com/components/material-icons/)
+  - [MUI Grid](https://mui.com/material-ui/react-grid2/)
+
+## Resources
+
+### Images
+
+- [Unsplash](https://unsplash.com/)
+
+```http
+https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_s
+```

@@ -1,13 +1,45 @@
-import { Card, CardContent, Typography, CardMedia, Box } from "@mui/material";
-import { PublicUser } from "@app/interfaces";
+import {
+  Card,
+  CardContent,
+  Typography,
+  CardMedia,
+  Box,
+  Skeleton,
+} from "@mui/material";
+import { UserCardProps } from "@app/interfaces";
 import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
 
-interface UserCardProps {
-  user: PublicUser;
-}
-
 export const UserCard = ({ user }: UserCardProps) => {
-  const { data: profilePic, isLoading } = useFetchUserProfilePic(user.id);
+  const { data: profilePic, isLoading: profilePicIsLoading } =
+    useFetchUserProfilePic(user.id);
+
+  console.log(profilePic);
+
+  if (profilePicIsLoading) {
+    return (
+      <Card
+        sx={{
+          maxWidth: 345,
+          margin: 2,
+        }}
+      >
+        <Skeleton variant="rectangular" height={200} animation="wave" />
+        <CardContent>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Skeleton variant="text" width={100} animation="wave" />
+            <Skeleton variant="text" width={50} animation="wave" />
+          </Box>
+          <Skeleton variant="text" width={150} animation="wave" />
+        </CardContent>
+      </Card>
+    );
+  }
 
   return (
     <Card
@@ -24,10 +56,7 @@ export const UserCard = ({ user }: UserCardProps) => {
       <CardMedia
         component="img"
         height="200"
-        image={
-          profilePic?.url ||
-          "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-        }
+        image={profilePic?.url || ""}
         alt={`${user.username}'s profile picture`}
         sx={{ objectFit: "cover" }}
       />
@@ -45,7 +74,7 @@ export const UserCard = ({ user }: UserCardProps) => {
           <Typography variant="body1">{user.age} years</Typography>
         </Box>
         <Typography variant="body2" color="text.secondary">
-          {user.city || "Location not specified"}
+          {user.city || "Matching city"}
         </Typography>
       </CardContent>
     </Card>

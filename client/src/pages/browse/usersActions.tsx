@@ -38,6 +38,7 @@ const fetchUsers = async (params?: UserSearchQuery) => {
 };
 
 export const useFetchUsers = (params?: UserSearchQuery) => {
+  console.log("useFetchUsers");
   return useQuery<PublicUser[], any>({
     queryFn: async () => {
       const response = await fetchUsers(params);
@@ -303,9 +304,9 @@ export const useFetchUserProfilePic = (userId?: number) => {
       const { data } = await fetchProfilePic(userId);
       return {
         id: data.id,
-        userId: data.user_id,
-        url: data.image_url,
-        isProfilePic: data.is_profile,
+        userId: data.userId,
+        url: data.url,
+        isProfilePic: data.isProfilePic,
       };
     },
     queryKey: ["userProfilePic", userId],
