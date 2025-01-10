@@ -1,27 +1,32 @@
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM0NTIwMDMxLCJleHAiOjE3MzQ1MjA5MzF9.Aqz5eiHPMmINmC5C3koukbC3rAhIxg3IPGZJ-91nSYs
+@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNjUyNTU3MiwiZXhwIjoxNzM3MTMwMzcyfQ.P_UepiWm7Y3ujq5WVv9G3TfRAkBR0fExLEvyAt15_d0
 ###
 
 GET http://localhost:8000/users
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 
 ###
 ### Likes routes
 ###
 
+### Check if user likes another user
+
+GET http://localhost:8000/users/1/liked
+Cookie: authToken={{authToken}}
+
 ### Get all likes
 
 GET http://localhost:8000/users/1/likes
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 
 ### Add like
 
 POST http://localhost:8000/users/1/likes
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 
 ### Remove like
 
 DELETE http://localhost:8000/users/2/likes
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 
 ###
 ### Matches routes
@@ -30,17 +35,17 @@ Authorization: Bearer {{authToken}}
 ### Get all matches
 
 GET http://localhost:8000/users/1/matches
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 
 ### Tags routes
 
 GET http://localhost:8000/users/1/tags
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 
 ###
 
 POST http://localhost:8000/users/1/tags
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 Content-Type: application/json
 
 {
@@ -50,7 +55,7 @@ Content-Type: application/json
 ###
 
 DELETE http://localhost:8000/users/1/tags
-Authorization: Bearer {{authToken}}
+Cookie: authToken={{authToken}}
 Content-Type: application/json
 
 {

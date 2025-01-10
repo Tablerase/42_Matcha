@@ -5,15 +5,51 @@ import {
   CardMedia,
   Box,
   Skeleton,
+  IconButton,
 } from "@mui/material";
 import { UserCardProps } from "@app/interfaces";
 import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
+import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { client } from "@/utils/axios";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 export const UserCard = ({ user }: UserCardProps) => {
   const { data: profilePic, isLoading: profilePicIsLoading } =
     useFetchUserProfilePic(user.id);
 
-  console.log(profilePic);
+  // Check if user is liked
+  const { data: isUserLiked, refetch: refetchLikeStatus } = useQuery({
+    queryKey: ["isUserLiked", user.id],
+    queryFn: async () => {
+      const response = await client.get(`/users/${user.id}/liked/`);
+      const data = {
+        liked: response.data.data.isLiked,
+      };
+      if (data.liked === true) {
+        return true;
+      }
+      return false;
+    },
+  });
+
+  // Like/Unlike mutation
+  const { mutate: toggleLike, isPending: isLikeLoading } = useMutation({
+    mutationFn: async () => {
+      if (isUserLiked) {
+        return client.delete(`/users/${user.id}/likes/`);
+      }
+      return client.post(`/users/${user.id}/likes/`);
+    },
+    onSuccess: () => {
+      refetchLikeStatus();
+    },
+  });
+
+  const handleLike = async () => {
+    if (!isLikeLoading) {
+      toggleLike();
+    }
+  };
 
   if (profilePicIsLoading) {
     return (
@@ -33,7 +69,7 @@ export const UserCard = ({ user }: UserCardProps) => {
             }}
           >
             <Skeleton variant="text" width={100} animation="wave" />
-            <Skeleton variant="text" width={50} animation="wave" />
+            <Skeleton variant="text" width={40} animation="wave" />
           </Box>
           <Skeleton variant="text" width={150} animation="wave" />
         </CardContent>
@@ -46,6 +82,7 @@ export const UserCard = ({ user }: UserCardProps) => {
       sx={{
         maxWidth: 345,
         margin: 2,
+        position: "relative",
         transition: "transform 0.2s",
         "&:hover": {
           transform: "scale(1.02)",
@@ -53,6 +90,24 @@ export const UserCard = ({ user }: UserCardProps) => {
         },
       }}
     >
+      <IconButton
+        sx={{
+          position: "absolute",
+          top: 8,
+          right: 8,
+          backgroundColor: "rgba(255, 255, 255, 0.7)",
+          "&:hover": {
+            backgroundColor: "rgba(255, 255, 255, 0.9)",
+          },
+          zIndex: 1,
+        }}
+        aria-label="Like"
+        color="primary"
+        onClick={handleLike}
+      >
+        {/* <FavoriteIcon /> */}
+        {isUserLiked ? <Favorite /> : <FavoriteBorder />}
+      </IconButton>
       <CardMedia
         component="img"
         height="200"

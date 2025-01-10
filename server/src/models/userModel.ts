@@ -157,7 +157,10 @@ class UserModel {
     return result.rows;
   }
 
-  async searchUsers(params: UserSearchQuery): Promise<PublicUser[]> {
+  async searchUsers(
+    params: UserSearchQuery,
+    excludeUserId: number
+  ): Promise<PublicUser[]> {
     try {
       const conditions: string[] = [];
       const values: any[] = [];
@@ -194,6 +197,13 @@ class UserModel {
         LEFT JOIN user_tags ut ON u.id = ut.user_id
         LEFT JOIN tags t ON ut.tag_id = t.id
       `;
+
+      // Remove self from search results
+      if (excludeUserId) {
+        conditions.push(`u.id != $${parameterIndex}`);
+        values.push(excludeUserId);
+        parameterIndex++;
+      }
 
       // Add conditions
       if (params.tags && params.tags.length > 0) {

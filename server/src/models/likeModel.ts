@@ -2,6 +2,16 @@ import { QueryResult } from "pg";
 import { pool } from "../settings";
 
 class LikeModel {
+  async checkUserLiked(likerId: number, likedId: number): Promise<any> {
+    const query = {
+      text: `SELECT * FROM likes WHERE liker_user_id = $1 AND liked_user_id = $2`,
+      values: [likerId, likedId],
+    };
+
+    const result: QueryResult = await pool.query(query);
+    return result.rows;
+  }
+
   async getUserLikes(userId: number): Promise<any[]> {
     const query = {
       text: `SELECT * FROM likes WHERE liked_user_id = $1`,

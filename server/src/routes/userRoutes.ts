@@ -35,6 +35,7 @@ router.get("/:id/tags", TagViews.getUserTags);
 router.post("/:id/tags", TagViews.addUserTag);
 router.delete("/:id/tags", TagViews.deleteUserTag);
 
+router.get("/:id/liked", LikeViews.checkUserLiked);
 router.get("/:id/likes", LikeViews.getUserLikes);
 router.post("/:id/likes", LikeViews.addUserLike);
 router.delete("/:id/likes", LikeViews.deleteUserLike);

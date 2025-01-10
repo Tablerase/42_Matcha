@@ -152,8 +152,8 @@ async function seed() {
     const createViewsTableQuery = `
       CREATE TABLE IF NOT EXISTS views (
         id SERIAL PRIMARY KEY,
-        viewer_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        viewed_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        viewer_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        viewed_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         view_count INTEGER DEFAULT 1,
         last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -164,9 +164,9 @@ async function seed() {
 
     const createLikesTableQuery = `
       CREATE TABLE IF NOT EXISTS likes (
-        id SERIAL PRIMARY KEY,
-        liker_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        liked_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        id SERIAL PRIMARY KEY, 
+        liker_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        liked_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(liker_user_id, liked_user_id)
       );
@@ -176,8 +176,8 @@ async function seed() {
     const createBlockedTableQuery = `
       CREATE TABLE IF NOT EXISTS blocked (
         id SERIAL PRIMARY KEY,
-        blocker_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
-        blocked_user_id INTEGER REFERENCES users(id) ON DELETE CASCADE,
+        blocker_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+        blocked_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         UNIQUE(blocker_id, blocked_user_id)
       );
