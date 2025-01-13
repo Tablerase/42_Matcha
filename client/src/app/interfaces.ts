@@ -1,4 +1,5 @@
 import { SelectChangeEvent } from "@mui/material";
+import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 
 export interface UserLogin {
@@ -17,7 +18,7 @@ export interface User {
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
-  city: string;
+  city?: string;
   fameRate: number;
   lastSeen: Date;
 }
@@ -33,7 +34,7 @@ export interface FormData {
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
-  city: string;
+  city?: string;
   interests: Tag[];
 }
 
@@ -122,5 +123,6 @@ export interface UserUpdateFormProps {
   user?: Partial<User>,
   tags?: Tag[],
   userTags: Tag[], 
+  onDateChange: (newValue: string) => void,
   onTagsChange: (event: SelectChangeEvent<string[]>) => void
 }

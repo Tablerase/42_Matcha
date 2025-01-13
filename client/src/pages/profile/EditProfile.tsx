@@ -25,6 +25,7 @@ export const EditProfile = ({
   const { data: tags } = useFetchAllTags();
   const { data: images } = useFetchUserImages(user.id);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
+  const [dateOfBirth, setDateOfBirth] = useState<string>("");
   const [interests, setInterests] = useState<Tag[]>(userTags || []);
 
   const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
@@ -38,6 +39,7 @@ export const EditProfile = ({
     user: user,
     tags: tags,
     userTags: interests,
+    onDateChange: setDateOfBirth,
     onTagsChange: handleChangeTags
   }
 

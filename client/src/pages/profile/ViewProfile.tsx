@@ -18,6 +18,10 @@ import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
 
 export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
+  if (!user.dateOfBirth) {
+    user.gender = undefined;
+    user.preferences = undefined;
+  }
   const [editMode, setEditMode] = useState(false);
   if (editMode) {
     return (

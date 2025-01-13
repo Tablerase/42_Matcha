@@ -25,6 +25,8 @@ import { IChangeEvent } from "@rjsf/core";
 import { FormEvent } from "react";
 import { LocationButton } from "@/components/LocationButton";
 import { FormData } from "@/app/interfaces";
+import { useState } from "react";
+import { FormDatePicker } from "@/components/FormDatePicker";
 
 // TODO: add proper format for dateOfBirth
 // TODO: add proper messages when required fields are not filled
@@ -103,8 +105,28 @@ export const UserUpdateForm = ({
   user,
   tags,
   userTags,
+  onDateChange,
   onTagsChange,
 }: UserUpdateFormProps) => {
+  const [formData, setFormData] = useState<Partial<FormData>>({
+    id: user?.id,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    username: user?.username,
+    email: user?.email,
+    dateOfBirth: user?.dateOfBirth,
+    gender: user?.gender,
+    preferences: user?.preferences,
+    bio: user?.bio || "",
+    city: user?.city || "",
+    interests: userTags,
+    location: user?.location,
+  });
+
+  const handleChange = (data: Partial<FormData>) => {
+    setFormData((prev) => ({ ...prev, ...data }));
+  };
+
   const uiSchema: UiSchema = {
     email: {
       "ui:widget": "email",
@@ -113,9 +135,11 @@ export const UserUpdateForm = ({
       },
     },
     dateOfBirth: {
-      "ui:widget": "date",
-      // TODO: fix options: warning, min and max year, etc
-      "ui:options": {},
+      "ui:widget": FormDatePicker,
+      "ui:options": {
+        dateOfBirth: user?.dateOfBirth || null,
+        handleChange: onDateChange,
+      },
     },
     gender: {
       "ui:widget": "radio",
@@ -145,24 +169,8 @@ export const UserUpdateForm = ({
       "ui:options": {},
     },
   };
-
   const fields: RegistryFieldsType = {
     location: LocationButton,
-  };
-
-  const formData: Partial<FormData> = {
-    id: user?.id,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    username: user?.username,
-    email: user?.email,
-    dateOfBirth: user?.dateOfBirth,
-    gender: user?.gender,
-    preferences: user?.preferences,
-    bio: user?.bio || "",
-    city: user?.city,
-    interests: userTags,
-    location: user?.location,
   };
 
   const customValidate = (formData: any, errors: any) => {
