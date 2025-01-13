@@ -1,6 +1,6 @@
 ###
 
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZW1haWwiOiJ0ZXN0QGV4YW1wbGUuY29tIiwiaWF0IjoxNzM1OTE0ODk2LCJleHAiOjE3MzY1MTk2OTZ9.5Dpq5P4Mflg5YKacSIQMyn7n5NoMOpudNNFPDLkmL6U
+@authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNjc3NTYwOCwiZXhwIjoxNzM3MzgwNDA4fQ.di2nmts2DzYCoIjXxh0Wwla77-1UX2zrFKzCEjTv720
 
 ###
 
@@ -23,7 +23,6 @@ Content-Type: application/json
     "username": "test",
     "email": "test@example.com",
     "password": "password"
-
 }
 
 ### Logout
@@ -31,4 +30,6 @@ Content-Type: application/json
 POST http://localhost:8000/auth/logout
 Cookie: authToken={{authToken}}
 
-###
+### Check
+GET http://localhost:8000/auth/check
+Cookie: authToken={{authToken}}

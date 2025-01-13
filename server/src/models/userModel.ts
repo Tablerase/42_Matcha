@@ -8,7 +8,6 @@ import {
 } from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
-import { on } from "events";
 
 class UserModel {
   async getUsers(params: SortParams | undefined): Promise<User[]> {
@@ -19,6 +18,50 @@ class UserModel {
     try {
       const results: QueryResult<User> = await pool.query(query);
       return results.rows;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async getClientUserById(id: number): Promise<PublicUser | null> {
+    try {
+      const query = {
+        text: `
+          SELECT 
+            u.id,
+            u.first_name,
+            u.last_name, 
+            u.username,
+            u.gender,
+            COALESCE(
+              array_to_json(
+                array_remove(
+                  array_remove(
+                    string_to_array(regexp_replace(u.preferences::text, '[{}]', '', 'g'), ','),
+                    ''
+                  ),
+                  NULL
+                )
+              ),
+              '[]'::json
+            ) as preferences,
+            u.date_of_birth,
+            u.bio,
+            u.location,
+            u.city,
+            u.fame_rate,
+            u.last_seen,
+            COALESCE(array_to_json(ARRAY_AGG(t.tag) FILTER (WHERE t.tag IS NOT NULL)), '[]'::json) as tags
+          FROM users u
+          LEFT JOIN user_tags ut ON u.id = ut.user_id
+          LEFT JOIN tags t ON ut.tag_id = t.id
+          WHERE u.id = $1
+          GROUP BY u.id
+          `,
+        values: [id],
+      };
+      const result: QueryResult<PublicUser> = await pool.query(query);
+      return result.rows[0] || null;
     } catch (error) {
       throw new Error((error as Error).message);
     }

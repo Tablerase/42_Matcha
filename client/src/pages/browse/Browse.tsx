@@ -4,6 +4,7 @@ import { UserList } from "@components/UserList";
 import { UserSearchQuery, PublicUser, User, Gender } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
+import { useAuth } from "@/utils/authContext";
 
 // TODO: Implement search bar and search functionality for users
 // pb: query not properly initialized
@@ -20,11 +21,11 @@ const setupSearchQuery = (
 };
 
 export const Browse = () => {
-  const { data: user } = useFetchCurrentUser();
+  const { userData } = useAuth();
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
-    gender: user?.gender,
-    sexualPreferences: user?.preferences,
+    gender: userData?.gender,
+    sexualPreferences: userData?.preferences,
   });
   const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
 

@@ -38,3 +38,7 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 ```http
 https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_s
 ```
+
+### Loading
+
+- [Codepen - Tea cup loading](https://codepen.io/oviedofer97/pen/dyNzQeX)

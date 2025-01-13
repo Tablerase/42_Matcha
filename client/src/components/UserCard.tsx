@@ -12,6 +12,7 @@ import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
 import { Favorite, FavoriteBorder } from "@mui/icons-material";
 import { client } from "@/utils/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
+import LoadingCup from "./LoadingCup/LoadingCup";
 
 export const UserCard = ({ user }: UserCardProps) => {
   const { data: profilePic, isLoading: profilePicIsLoading } =
@@ -59,7 +60,8 @@ export const UserCard = ({ user }: UserCardProps) => {
           margin: 2,
         }}
       >
-        <Skeleton variant="rectangular" height={200} animation="wave" />
+        {/* <Skeleton variant="rectangular" height={200} animation="wave" /> */}
+        <LoadingCup isMainLoading={false} />
         <CardContent>
           <Box
             sx={{

@@ -19,6 +19,7 @@ export interface User {
   location?: { x: number; y: number };
   city: string;
   fameRate: number;
+  tags: Tag[];
   lastSeen: Date;
 }
 
