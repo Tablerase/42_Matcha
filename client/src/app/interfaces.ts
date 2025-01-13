@@ -80,8 +80,8 @@ export enum Gender {
 }
 
 export interface UserSearchQuery {
-  minAge?: number;
-  maxAge?: number;
+  ageMin?: number;
+  ageMax?: number;
   gender?: Gender;
   sexualPreferences?: Gender[];
   distance?: number;

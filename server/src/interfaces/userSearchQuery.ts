@@ -3,8 +3,8 @@ import { validTags } from "./tagInterface";
 import { Gender } from "./userInterface";
 
 export interface UserSearchQuery {
-  minAge?: number;
-  maxAge?: number;
+  ageMin?: number;
+  ageMax?: number;
   gender?: Gender;
   sexualPreferences?: Gender[];
   distance?: number;
@@ -21,8 +21,8 @@ export interface UserSearchQuery {
 
 export const userSearchQuerySchema = z
   .object({
-    minAge: z.coerce.number().int().positive().optional(),
-    maxAge: z.coerce.number().int().positive().optional(),
+    ageMin: z.coerce.number().int().positive().optional(),
+    ageMax: z.coerce.number().int().positive().optional(),
     gender: z
       .enum([Gender.Male, Gender.Female, Gender.Other], {
         message: "Invalid gender provided",
@@ -70,14 +70,14 @@ export const userSearchQuerySchema = z
   })
   .refine(
     (data) => {
-      if (data.minAge !== undefined && data.maxAge !== undefined) {
-        return data.minAge <= data.maxAge;
+      if (data.ageMin !== undefined && data.ageMax !== undefined) {
+        return data.ageMin <= data.ageMax;
       }
       return true;
     },
     {
-      message: "minAge must be less than or equal to maxAge",
-      path: ["minAge", "maxAge"],
+      message: "ageMin must be less than or equal to ageMax",
+      path: ["ageMin", "ageMax"],
     }
   )
   .refine(

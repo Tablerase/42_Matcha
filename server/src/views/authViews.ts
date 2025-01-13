@@ -13,7 +13,7 @@ const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
   req.res?.cookie("authToken", refreshToken, {
     httpOnly: true,
     path: "/",
-    maxAge: 60 * 60 * 24 * 100,
+    ageMax: 60 * 60 * 24 * 100,
     expires: new Date(Date.now() + 60 * 60 * 24 * 100),
   });
 };

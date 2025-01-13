@@ -1,24 +1,12 @@
-import { Layout } from "@components/Layout";
 import { useFetchUsers, useFetchCurrentUser } from "./usersActions";
-import { UserList } from "@components/UserList";
 import { UserSearchQuery, PublicUser, User, Gender } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
-
-// TODO: Implement search bar and search functionality for users
-// pb: query not properly initialized
-// state not properly updated
-// user undefined so user search query not properly initialized
-const setupSearchQuery = (
-  user: User,
-  params: UserSearchQuery
-): UserSearchQuery => {
-  let updatedParams = { ...params };
-  updatedParams.gender = user.gender;
-  updatedParams.sexualPreferences = user.preferences;
-  return updatedParams;
-};
+import LoadingCup from "@/components/LoadingCup/LoadingCup";
+import { UserList } from "@components/UserList";
+import { Layout } from "@components/Layout";
+import SearchBar from "@components/SearchBar";
 
 export const Browse = () => {
   const { userData } = useAuth();
@@ -61,12 +49,12 @@ export const Browse = () => {
   // Content rendering
   let content;
   if (usersIsLoading) {
-    content = "Loading...";
+    content = <LoadingCup />;
   }
   if (usersIsSuccess && users) {
     content = (
       <>
-        {/* <SearchBar onSubmit={updateSearchQuery}/> */}
+        <SearchBar searchParams={searchParams} onSubmit={updateSearchQuery} />
         <UserList users={displayedUsers} />
         <Pagination
           count={Math.ceil(users.length / 10)}

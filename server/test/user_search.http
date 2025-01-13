@@ -8,12 +8,12 @@ Cookie: authToken={{authToken}}
 
 ### Search by age
 
-GET http://localhost:8000/users/search?maxAge=30&minAge=20
+GET http://localhost:8000/users/search?ageMax=30&ageMin=20
 Cookie: authToken={{authToken}}
 
 ###
 
-GET http://localhost:8000/users/search?maxAge=30&minAge=50
+GET http://localhost:8000/users/search?ageMax=30&ageMin=50
 Cookie: authToken={{authToken}}
 
 ### Search by fame rating
@@ -53,7 +53,7 @@ Cookie: authToken={{authToken}}
 
 ### Search with all filters
 
-GET http://localhost:8000/users/search/?maxAge=60&minAge=20&maxFameRating=150&minFameRating=0&distance=1000&latitude=42&longitude=2&tags=food&gender=male&sexualPreferences=female
+GET http://localhost:8000/users/search/?ageMax=60&ageMin=20&maxFameRating=150&minFameRating=0&distance=1000&latitude=42&longitude=2&tags=food&gender=male&sexualPreferences=female
 Cookie: authToken={{authToken}}
 
 ### Search without filters

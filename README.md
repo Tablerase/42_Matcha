@@ -27,6 +27,7 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 - MUI (Material-UI)
   - [MUI Documentation](https://material-ui.com/getting-started/installation/)
   - [MUI Icons](https://material-ui.com/components/material-icons/)
+  - [MUI Slider](https://mui.com/material-ui/react-slider/)
   - [MUI Grid](https://mui.com/material-ui/react-grid2/)
 
 ## Resources

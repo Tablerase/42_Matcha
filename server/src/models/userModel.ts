@@ -270,19 +270,19 @@ class UserModel {
         parameterIndex++;
       }
 
-      if (params.minAge !== undefined && !isNaN(params.minAge)) {
+      if (params.ageMin !== undefined && !isNaN(params.ageMin)) {
         conditions.push(
           `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) >= $${parameterIndex}`
         );
-        values.push(params.minAge);
+        values.push(params.ageMin);
         parameterIndex++;
       }
 
-      if (params.maxAge !== undefined && !isNaN(params.maxAge)) {
+      if (params.ageMax !== undefined && !isNaN(params.ageMax)) {
         conditions.push(
           `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) <= $${parameterIndex}`
         );
-        values.push(params.maxAge);
+        values.push(params.ageMax);
         parameterIndex++;
       }
 
@@ -447,19 +447,19 @@ class UserModel {
         parameterIndex += params.sexualPreferences.length;
       }
 
-      if (params.minAge !== undefined && !isNaN(params.minAge)) {
+      if (params.ageMin !== undefined && !isNaN(params.ageMin)) {
         conditions.push(
           `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) >= $${parameterIndex}`
         );
-        values.push(params.minAge);
+        values.push(params.ageMin);
         parameterIndex++;
       }
 
-      if (params.maxAge !== undefined && !isNaN(params.maxAge)) {
+      if (params.ageMax !== undefined && !isNaN(params.ageMax)) {
         conditions.push(
           `EXTRACT(YEAR FROM AGE(NOW(), u.date_of_birth)) <= $${parameterIndex}`
         );
-        values.push(params.maxAge);
+        values.push(params.ageMax);
         parameterIndex++;
       }
 
