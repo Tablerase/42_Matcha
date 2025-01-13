@@ -17,6 +17,7 @@ import { EditProfile } from "./EditProfile";
 import { ProfilePictures } from "@/components/ProfilePictures";
 import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
+import { FameLinearProgress } from "@/components/FameLinearProgress";
 
 export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   if (!user.dateOfBirth) {
@@ -65,6 +66,7 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
               {capitalize(user.firstName)} {capitalize(user.lastName)}
             </Typography>
             <Typography>@{user.username?.toLowerCase()}</Typography>
+
             <Typography>{user.bio || "No bio provided"}</Typography>
             <Stack
               direction="row"
@@ -91,7 +93,10 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
               )}
             </Stack>
           </Box>
-
+          <FameLinearProgress
+            variant="determinate"
+            value={user?.fameRate ?? 0}
+          />
           {me && (
             <Box>
               <Typography variant="subtitle2" color="text.secondary">
@@ -126,7 +131,9 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
               Preferences
             </Typography>
             <Typography sx={{ textTransform: "capitalize" }}>
-              {user.preferences ? user.preferences : "Not specified"}
+              {user.preferences
+                ? user.preferences.map((preference) => `${preference} `)
+                : "Not specified"}
             </Typography>
           </Box>
 

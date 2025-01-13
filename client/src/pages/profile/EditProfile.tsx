@@ -64,7 +64,7 @@ export const EditProfile = ({
       </CardContent>
       <CardActions sx={{ justifyContent: "center" }}>
         <Button variant="outlined" onClick={setEditMode}>
-          Cancel
+          Back to Profile
         </Button>
       </CardActions>
     </Card>

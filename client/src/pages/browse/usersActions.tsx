@@ -140,6 +140,7 @@ export const useUpdateUserProfile = () => {
     mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      enqueueSnackbar("Profile updated successfully", { variant: "success" });
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       if (error.response?.data?.status === 500) {
