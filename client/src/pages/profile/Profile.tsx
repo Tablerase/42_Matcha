@@ -1,15 +1,18 @@
 import { Layout } from "@components/Layout";
-import { useFetchCurrentUser } from "../browse/usersActions";
+import { useFetchCurrentUser, useFetchUserById } from "../browse/usersActions";
 import { ViewProfile } from "./ViewProfile";
 import { LinearProgress, Card, CardContent } from "@mui/material";
 import { useFetchUserTags } from "../browse/usersActions";
 import { useFetchUserImages } from "../browse/usersActions";
+import { useParams } from "react-router-dom";
 
 interface ProfileProps {
   me: boolean;
 }
 
 export const Profile = ({ me }: ProfileProps) => {
+  // const { username } = useParams();
+  // TODO: use username to fetch user - to add
   const {
     data: user,
     isLoading: userIsLoading,
@@ -17,6 +20,7 @@ export const Profile = ({ me }: ProfileProps) => {
     isSuccess: userIsSuccess,
     error,
   } = useFetchCurrentUser();
+
   const { data: tags } = useFetchUserTags(user?.id);
   const {
     data: images,
