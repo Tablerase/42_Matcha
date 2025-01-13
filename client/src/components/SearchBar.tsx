@@ -8,7 +8,8 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
+import { useAuth } from "@/utils/authContext";
 
 interface SearchBarProps {
   searchParams: UserSearchQuery;
@@ -16,6 +17,7 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
+  const { userData } = useAuth();
   const [inputAge, setInputAge] = useState<number[]>([18, 100]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
 
@@ -51,17 +53,40 @@ const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
           <Typography variant="h6" sx={{ minWidth: 80 }}>
             Age Filter
           </Typography>
-          <Slider
-            getAriaLabel={() => "Age Range"}
-            valueLabelDisplay="on"
-            value={[inputAge[0], inputAge[1]]}
-            onChange={handleAgeSlider}
-            min={18}
-            disableSwap
-          ></Slider>
+          {userData?.dateOfBirth ? (
+            <Slider
+              getAriaLabel={() => "Age Range"}
+              valueLabelDisplay="on"
+              value={[inputAge[0], inputAge[1]]}
+              onChange={handleAgeSlider}
+              min={18}
+              marks={[
+                {
+                  value:
+                    new Date().getFullYear() -
+                    new Date(userData!.dateOfBirth).getFullYear(),
+                  label: "Me",
+                },
+              ]}
+              disableSwap
+            />
+          ) : (
+            <Slider
+              getAriaLabel={() => "Age Range"}
+              valueLabelDisplay="on"
+              value={[inputAge[0], inputAge[1]]}
+              onChange={handleAgeSlider}
+              min={18}
+              marks={[
+                { value: 18, label: "18" },
+                { value: 100, label: "100" },
+              ]}
+              disableSwap
+            />
+          )}
         </Stack>
 
-        <Stack spacing={2} direction="row" alignItems="center" sx={{ mb: 2 }}>
+        {/* <Stack spacing={2} direction="row" alignItems="center" sx={{ mb: 2 }}>
           <Typography variant="h6" sx={{ minWidth: 80 }}>
             Distance (km)
           </Typography>
@@ -73,16 +98,16 @@ const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
             min={1}
             max={100}
           ></Slider>
-        </Stack>
+        </Stack> */}
 
-        {/* <TextField
+        <TextField
           label="Distance (km)"
           type="number"
           value={localParams.distance || ""}
           onChange={(e) =>
             setLocalParams({ ...localParams, distance: Number(e.target.value) })
           }
-        /> */}
+        />
 
         <Button type="submit" variant="contained">
           Search

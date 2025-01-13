@@ -54,7 +54,6 @@ export const Browse = () => {
   if (usersIsSuccess && users) {
     content = (
       <>
-        <SearchBar searchParams={searchParams} onSubmit={updateSearchQuery} />
         <UserList users={displayedUsers} />
         <Pagination
           count={Math.ceil(users.length / 10)}
@@ -68,5 +67,10 @@ export const Browse = () => {
   if (usersIsError) {
     content = "Error fetching users";
   }
-  return <Layout>{content}</Layout>;
+  return (
+    <Layout>
+      <SearchBar searchParams={searchParams} onSubmit={updateSearchQuery} />
+      {content}
+    </Layout>
+  );
 };

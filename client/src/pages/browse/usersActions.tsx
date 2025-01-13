@@ -31,6 +31,7 @@ interface ErrorResponse {
 }
 
 const fetchUsers = async (params?: UserSearchQuery) => {
+  console.log("fetchUsers", params);
   return await client.get("/users/search", {
     params: { ...params },
     withCredentials: true,
@@ -60,7 +61,7 @@ export const useFetchUsers = (params?: UserSearchQuery) => {
         distance: user.distance,
       })) as PublicUser[];
     },
-    queryKey: ["users", "searchParams"],
+    queryKey: ["users", params],
   });
 };
 
