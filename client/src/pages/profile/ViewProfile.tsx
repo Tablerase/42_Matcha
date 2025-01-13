@@ -1,8 +1,6 @@
 import { useState } from "react";
 import { Tag, ViewProfileProps } from "@/app/interfaces";
 import {
-  Card,
-  CardContent,
   Typography,
   Stack,
   Box,
@@ -37,114 +35,107 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   }
   if (editPictures) {
     return (
-      <Card sx={{ m: 4 }}>
-        <CardContent>
-          <ProfilePictures
-            images={images}
-            userId={user.id}
-            editPictures={true}
-            setEditPictures={() => setEditPictures(false)}
-          />
-        </CardContent>
-      </Card>
+      <ProfilePictures
+        images={images}
+        userId={user.id}
+        editPictures={true}
+        setEditPictures={() => setEditPictures(false)}
+      />
     );
   }
   return (
-    <Card sx={{ m: 4 }}>
-      <CardContent>
-        <Stack spacing={3}>
-          <Box
+    <>
+      <Stack spacing={3}>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            gap: 1,
+          }}
+        >
+          <ProfilePictures images={images} editMode={false} />
+          <Typography variant="h3">
+            {capitalize(user.firstName)} {capitalize(user.lastName)}
+          </Typography>
+          <Typography>@{user.username?.toLowerCase()}</Typography>
+
+          <Typography>{user.bio || "No bio provided"}</Typography>
+          <Stack
+            direction="row"
+            spacing={1.5}
+            flexWrap="wrap"
             sx={{
-              display: "flex",
-              flexDirection: "column",
-              alignItems: "center",
-              gap: 1,
+              rowGap: 0.5,
             }}
           >
-            <ProfilePictures images={images} editMode={false} />
-            <Typography variant="h3">
-              {capitalize(user.firstName)} {capitalize(user.lastName)}
-            </Typography>
-            <Typography>@{user.username?.toLowerCase()}</Typography>
-
-            <Typography>{user.bio || "No bio provided"}</Typography>
-            <Stack
-              direction="row"
-              spacing={1.5}
-              flexWrap="wrap"
-              sx={{
-                rowGap: 0.5,
-              }}
-            >
-              {tags && tags?.length > 0 ? (
-                tags?.map((tag: Tag) => (
-                  <Chip
-                    key={tag.id}
-                    label={`#${tag.tag}`}
-                    sx={{
-                      bgcolor: tagChipColors[tag.id % tagChipColors.length],
-                    }}
-                  />
-                ))
-              ) : (
-                <Typography variant="body2" color="text.secondary">
-                  No interests added yet
-                </Typography>
-              )}
-            </Stack>
-          </Box>
-          <FameLinearProgress
-            variant="determinate"
-            value={user?.fameRate ?? 0}
-          />
-          {me && (
-            <Box>
-              <Typography variant="subtitle2" color="text.secondary">
-                Email
+            {tags && tags?.length > 0 ? (
+              tags?.map((tag: Tag) => (
+                <Chip
+                  key={tag.id}
+                  label={`#${tag.tag}`}
+                  sx={{
+                    bgcolor: tagChipColors[tag.id % tagChipColors.length],
+                  }}
+                />
+              ))
+            ) : (
+              <Typography variant="body2" color="text.secondary">
+                No interests added yet
               </Typography>
-              <Typography>{user.email?.toLowerCase()}</Typography>
-            </Box>
-          )}
-
+            )}
+          </Stack>
+        </Box>
+        <FameLinearProgress variant="determinate" value={user?.fameRate ?? 0} />
+        {me && (
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
-              Date of Birth
+              Email
             </Typography>
-            <Typography>
-              {user.dateOfBirth
-                ? dayjs(user.dateOfBirth).format("MMMM D, YYYY")
-                : "Not specified"}
-            </Typography>
+            <Typography>{user.email?.toLowerCase()}</Typography>
           </Box>
+        )}
 
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary">
-              Gender
-            </Typography>
-            <Typography sx={{ textTransform: "capitalize" }}>
-              {user.gender ? user.gender : "Not specified"}
-            </Typography>
-          </Box>
+        <Box>
+          <Typography variant="subtitle2" color="text.secondary">
+            Date of Birth
+          </Typography>
+          <Typography>
+            {user.dateOfBirth
+              ? dayjs(user.dateOfBirth).format("MMMM D, YYYY")
+              : "Not specified"}
+          </Typography>
+        </Box>
 
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary">
-              Preferences
-            </Typography>
-            <Typography sx={{ textTransform: "capitalize" }}>
-              {user.preferences
-                ? user.preferences.map((preference) => `${preference} `)
-                : "Not specified"}
-            </Typography>
-          </Box>
+        <Box>
+          <Typography variant="subtitle2" color="text.secondary">
+            Gender
+          </Typography>
+          <Typography sx={{ textTransform: "capitalize" }}>
+            {user.gender ? user.gender : "Not specified"}
+          </Typography>
+        </Box>
 
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary">
-              Location
-            </Typography>
-            <Typography>{user.city ? user.city : "Not specified"}</Typography>
-          </Box>
-        </Stack>
-      </CardContent>
+        <Box>
+          <Typography variant="subtitle2" color="text.secondary">
+            Preferences
+          </Typography>
+          <Typography sx={{ textTransform: "capitalize" }}>
+            {user.preferences
+              ? user.preferences
+                  .map((pref) => pref.charAt(0).toUpperCase() + pref.slice(1))
+                  .join(", ")
+              : "Not specified"}
+          </Typography>
+        </Box>
+
+        <Box>
+          <Typography variant="subtitle2" color="text.secondary">
+            Location
+          </Typography>
+          <Typography>{user.city ? user.city : "Not specified"}</Typography>
+        </Box>
+      </Stack>
       {me && (
         <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
           <Button
@@ -167,6 +158,6 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
           </Button>
         </CardActions>
       )}
-    </Card>
+    </>
   );
 };

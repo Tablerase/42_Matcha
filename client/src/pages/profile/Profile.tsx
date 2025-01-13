@@ -1,7 +1,7 @@
 import { Layout } from "@components/Layout";
 import { useFetchCurrentUser } from "../browse/usersActions";
 import { ViewProfile } from "./ViewProfile";
-import { LinearProgress } from "@mui/material";
+import { LinearProgress, Card, CardContent } from "@mui/material";
 import { useFetchUserTags } from "../browse/usersActions";
 import { useFetchUserImages } from "../browse/usersActions";
 
@@ -36,7 +36,11 @@ export const Profile = ({ me }: ProfileProps) => {
   }
   return (
     <>
-      <Layout>{content}</Layout>
+      <Layout>
+        <Card sx={{ m: 4 }}>
+          <CardContent>{content}</CardContent>
+        </Card>
+      </Layout>
     </>
   );
 };
