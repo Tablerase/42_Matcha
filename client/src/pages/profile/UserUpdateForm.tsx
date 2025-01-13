@@ -13,7 +13,7 @@ import {
 } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
 import { Gender, Tag, User, UserUpdateFormProps } from "@/app/interfaces";
-import { SelectChangeEvent } from "@mui/material";
+import { SelectChangeEvent, Box } from "@mui/material";
 import { isValidUsername, isValidEmail } from "@/utils/helpers";
 import { SubmitButton } from "@/components/SubmitButton";
 import {
@@ -27,9 +27,6 @@ import { LocationButton } from "@/components/LocationButton";
 import { FormData } from "@/app/interfaces";
 import { useState } from "react";
 import { FormDatePicker } from "@/components/FormDatePicker";
-
-// TODO: add proper format for dateOfBirth
-// TODO: add proper messages when required fields are not filled
 
 const schema: RJSFSchema = {
   required: [
@@ -105,6 +102,7 @@ export const UserUpdateForm = ({
   user,
   tags,
   userTags,
+  oldTags,
   onDateChange,
   onTagsChange,
 }: UserUpdateFormProps) => {
@@ -123,8 +121,8 @@ export const UserUpdateForm = ({
     location: user?.location,
   });
 
-  const handleChange = (data: Partial<FormData>) => {
-    setFormData((prev) => ({ ...prev, ...data }));
+  const handleChange = (data: IChangeEvent<any, RJSFSchema, any>) => {
+    setFormData((prev) => ({ ...prev, ...data.formData }));
   };
 
   const uiSchema: UiSchema = {
@@ -161,6 +159,7 @@ export const UserUpdateForm = ({
       "ui:options": {
         items: tags,
         userTags: userTags,
+        oldTags: oldTags,
         handleChange: onTagsChange,
       },
     },
@@ -189,7 +188,6 @@ export const UserUpdateForm = ({
     errors: RJSFValidationError[],
     uiSchema?: UiSchema<any, RJSFSchema, any>
   ): RJSFValidationError[] => {
-    console.log("errors: ", errors);
     return errors.map((error: any) => {
       if (error.name === "type" || error.name === "required") {
         error.message = "This field is required";
@@ -217,31 +215,25 @@ export const UserUpdateForm = ({
     data: IChangeEvent<any, RJSFSchema, any>,
     event: FormEvent<any>
   ) => {
-    console.log("Data submitted: ", data.formData);
-    console.log(userTags);
-    console.log(data.formData?.interests);
-    for (const tag of data.formData?.interests) {
-      if (userTags?.includes(tag)) continue;
-      else if (!userTags?.includes(tag))
-        updateUserTags({ userId: data.formData.id, tagId: tag.id });
+    for (const tag of userTags) {
+      updateUserTags({ userId: data.formData.id, tagId: tag.id });
     }
-    // TODO: properly delete tags
-    // if (userTags) {
-    //   for (const tag of userTags) {
-    //     if (!interests?.some((interest) => tag.id === interest.id)) {
-    //       deleteUserTags({ userId: user.id, tagId: tag.id });
-    //     }
-    //   }
-    // }
+    if (oldTags) {
+      for (const tag of oldTags) {
+        if (!userTags.some((interest: Tag) => tag.id === interest.id)) {
+          deleteUserTags({ userId: data.formData.id, tagId: tag.id });
+        }
+      }
+    }
 
     if (data.formData) {
       updateUserData(data.formData);
     }
   };
-  // const [formData, setFormData] = React.useState(formData);
+
   return (
     <Form
-      // onChange={}
+      onChange={handleChange}
       schema={schema}
       uiSchema={uiSchema}
       validator={validator}

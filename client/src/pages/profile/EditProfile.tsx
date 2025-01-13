@@ -26,7 +26,7 @@ export const EditProfile = ({
   const { data: images } = useFetchUserImages(user.id);
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [dateOfBirth, setDateOfBirth] = useState<string>("");
-  const [interests, setInterests] = useState<Tag[]>(userTags || []);
+  const [interests, setInterests] = useState<Tag[]>(userTags ?? []);
 
   const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
     const {
@@ -39,6 +39,7 @@ export const EditProfile = ({
     user: user,
     tags: tags,
     userTags: interests,
+    oldTags: userTags,
     onDateChange: setDateOfBirth,
     onTagsChange: handleChangeTags
   }
@@ -59,11 +60,13 @@ export const EditProfile = ({
             },
           }}
         >
-          <UserUpdateForm {...formProps}/> 
           <Stack spacing={3}>
-
+          <Typography variant="h4">Personal Info</Typography>
+          <UserUpdateForm {...formProps}/> 
+          </Stack>
+          <Stack spacing={3}>
             <Typography variant="h4">Pictures</Typography>
-            {/* <ProfilePictures images={images} userData={formData} /> */}
+            <ProfilePictures images={images} userId={user.id} />
           </Stack>
         </Box>
       </CardContent>

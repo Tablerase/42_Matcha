@@ -23,14 +23,14 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface ProfilePicturesProps {
   images?: Image[];
-  userData?: any;
+  userId?: number;
   editMode?: boolean;
 }
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
 export const ProfilePictures = ({
   images,
-  userData,
+  userId,
   editMode = true,
 }: ProfilePicturesProps) => {
   const uploadImage = useUploadImage();
@@ -88,7 +88,7 @@ export const ProfilePictures = ({
       reader.onload = () => {
         const result = reader.result as string;
         uploadImage({
-          userId: userData!.id,
+          userId: userId!,
           url: result,
         });
       };
@@ -111,7 +111,7 @@ export const ProfilePictures = ({
 
     images?.forEach((image) => {
       updateImageStatus({
-        userId: userData!.id,
+        userId: userId!,
         id: image.id,
         isProfilePic: image.id === newSelectedId,
       });
@@ -212,7 +212,7 @@ export const ProfilePictures = ({
                                   fontSize="small"
                                   onClick={() => {
                                     deleteImage({
-                                      userId: userData!.id,
+                                      userId: userId!,
                                       id: image.id,
                                     });
                                   }}

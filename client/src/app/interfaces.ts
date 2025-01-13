@@ -123,6 +123,7 @@ export interface UserUpdateFormProps {
   user?: Partial<User>,
   tags?: Tag[],
   userTags: Tag[], 
+  oldTags?: Tag[],
   onDateChange: (newValue: string) => void,
   onTagsChange: (event: SelectChangeEvent<string[]>) => void
 }
