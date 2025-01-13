@@ -5,8 +5,18 @@ import { LinearProgress } from "@mui/material";
 import { useFetchUserTags } from "../browse/usersActions";
 import { useFetchUserImages } from "../browse/usersActions";
 
-export const Profile = () => {
-  const { data: user, isLoading: userIsLoading, isError: userIsError, isSuccess: userIsSuccess, error } = useFetchCurrentUser();
+interface ProfileProps {
+  me: boolean;
+}
+
+export const Profile = ({ me }: ProfileProps) => {
+  const {
+    data: user,
+    isLoading: userIsLoading,
+    isError: userIsError,
+    isSuccess: userIsSuccess,
+    error,
+  } = useFetchCurrentUser();
   const { data: tags } = useFetchUserTags(user?.id);
   const {
     data: images,
@@ -19,7 +29,7 @@ export const Profile = () => {
     content = <LinearProgress />;
   }
   if (userIsSuccess && user && images && imagesIsSuccess) {
-    content = <ViewProfile tags={tags} user={user} images={images} />;
+    content = <ViewProfile tags={tags} user={user} images={images} me={me} />;
   }
   if (userIsError || imagesIsError) {
     content = <>{error.toString()}</>;

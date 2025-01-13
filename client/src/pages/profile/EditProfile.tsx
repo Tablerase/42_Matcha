@@ -7,14 +7,10 @@ import {
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Tag, UserUpdateFormProps } from "@/app/interfaces";
 import {
-  useUpdateUserProfile,
   useFetchAllTags,
-  useDeleteUserTags,
 } from "@pages/browse/usersActions";
 import { EditProfileProps } from "@/app/interfaces";
-import { ProfilePictures } from "@/components/ProfilePictures";
 import { useFetchUserImages } from "@pages/browse/usersActions";
-import { } from "@mui/material";
 import { theme } from "@components/theme";
 
 export const EditProfile = ({
@@ -64,13 +60,9 @@ export const EditProfile = ({
           <Typography variant="h4">Personal Info</Typography>
           <UserUpdateForm {...formProps}/> 
           </Stack>
-          <Stack spacing={3}>
-            <Typography variant="h4">Pictures</Typography>
-            <ProfilePictures images={images} userId={user.id} />
-          </Stack>
         </Box>
       </CardContent>
-      <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
+      <CardActions sx={{ justifyContent: "center" }}>
         <Button variant="outlined" onClick={setEditMode}>
           Cancel
         </Button>

@@ -10,6 +10,7 @@ import {
   Button,
   CardActions,
 } from "@mui/material";
+import AddAPhotoIcon from "@mui/icons-material/AddAPhoto";
 import EditRoundedIcon from "@mui/icons-material/EditRounded";
 import dayjs from "dayjs";
 import { EditProfile } from "./EditProfile";
@@ -17,12 +18,13 @@ import { ProfilePictures } from "@/components/ProfilePictures";
 import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
 
-export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
+export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   if (!user.dateOfBirth) {
     user.gender = undefined;
     user.preferences = undefined;
   }
   const [editMode, setEditMode] = useState(false);
+  const [editPictures, setEditPictures] = useState(false);
   if (editMode) {
     return (
       <EditProfile
@@ -30,6 +32,20 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
         userTags={tags}
         setEditMode={() => setEditMode(false)}
       />
+    );
+  }
+  if (editPictures) {
+    return (
+      <Card sx={{ m: 4 }}>
+        <CardContent>
+          <ProfilePictures
+            images={images}
+            userId={user.id}
+            editPictures={true}
+            setEditPictures={() => setEditPictures(false)}
+          />
+        </CardContent>
+      </Card>
     );
   }
   return (
@@ -76,12 +92,14 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
             </Stack>
           </Box>
 
-          <Box>
-            <Typography variant="subtitle2" color="text.secondary">
-              Email
-            </Typography>
-            <Typography>{user.email?.toLowerCase()}</Typography>
-          </Box>
+          {me && (
+            <Box>
+              <Typography variant="subtitle2" color="text.secondary">
+                Email
+              </Typography>
+              <Typography>{user.email?.toLowerCase()}</Typography>
+            </Box>
+          )}
 
           <Box>
             <Typography variant="subtitle2" color="text.secondary">
@@ -120,18 +138,28 @@ export const ViewProfile = ({ user, tags, images }: ViewProfileProps) => {
           </Box>
         </Stack>
       </CardContent>
-      <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
-        <Button
-          variant="contained"
-          startIcon={<EditRoundedIcon />}
-          onClick={() => {
-            /* TODO: Add navigation to edit mode */
-            setEditMode(true);
-          }}
-        >
-          Edit Profile
-        </Button>
-      </CardActions>
+      {me && (
+        <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
+          <Button
+            variant="contained"
+            startIcon={<EditRoundedIcon />}
+            onClick={() => {
+              setEditMode(true);
+            }}
+          >
+            Edit Profile Info
+          </Button>
+          <Button
+            variant="contained"
+            startIcon={<AddAPhotoIcon />}
+            onClick={() => {
+              setEditPictures(true);
+            }}
+          >
+            Edit Profile Photos
+          </Button>
+        </CardActions>
+      )}
     </Card>
   );
 };

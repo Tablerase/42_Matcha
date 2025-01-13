@@ -53,10 +53,10 @@ export interface Tag {
 }
 
 export interface ViewProfileProps {
+  me: boolean;
   user: Partial<User>;
   tags: Tag[] | undefined;
   images: Image[] | undefined;
-  // editMode?: boolean;
 }
 
 export interface EditProfileProps {

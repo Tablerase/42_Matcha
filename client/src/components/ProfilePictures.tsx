@@ -3,13 +3,13 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Divider,
   Radio,
   RadioGroup,
   Stack,
   Typography,
   Badge,
   FormControl,
+  Button,
 } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 import { useState } from "react";
@@ -25,6 +25,8 @@ interface ProfilePicturesProps {
   images?: Image[];
   userId?: number;
   editMode?: boolean;
+  editPictures?: boolean;
+  setEditPictures?: () => void;
 }
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
@@ -32,6 +34,8 @@ export const ProfilePictures = ({
   images,
   userId,
   editMode = true,
+  editPictures,
+  setEditPictures,
 }: ProfilePicturesProps) => {
   const uploadImage = useUploadImage();
   const updateImageStatus = useUpdateImageStatus();
@@ -146,7 +150,8 @@ export const ProfilePictures = ({
         </>
       )}
       {editMode && (
-        <Stack spacing={3}>
+        <Stack spacing={3} sx={{ alignItems: "center" }}>
+          <Typography variant="h4">Profile Pictures</Typography>
           {images && images?.length < 5 && (
             <MuiFileInput
               value={files}
@@ -240,6 +245,12 @@ export const ProfilePictures = ({
               </Box>
             </>
           )}
+          <Button
+            variant="outlined"
+            onClick={() => setEditPictures && setEditPictures()}
+          >
+            Done
+          </Button>
         </Stack>
       )}
     </>
