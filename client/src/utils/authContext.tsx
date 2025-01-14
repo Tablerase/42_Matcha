@@ -1,15 +1,8 @@
-import {
-  createContext,
-  useState,
-  useContext,
-  useEffect,
-  Suspense,
-} from "react";
+import { createContext, useState, useContext, useEffect } from "react";
 import { routes } from "../utils/routes";
 import { Navigate, Outlet } from "react-router-dom";
 import { client } from "./axios";
 import { User } from "@/app/interfaces";
-import { Box, Skeleton } from "@mui/material";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 
 interface AuthContextType {

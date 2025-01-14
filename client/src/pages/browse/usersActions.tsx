@@ -31,7 +31,6 @@ interface ErrorResponse {
 }
 
 const fetchUsers = async (params?: UserSearchQuery) => {
-  console.log("fetchUsers", params);
   return await client.get("/users/search", {
     params: { ...params },
     withCredentials: true,
@@ -39,7 +38,6 @@ const fetchUsers = async (params?: UserSearchQuery) => {
 };
 
 export const useFetchUsers = (params?: UserSearchQuery) => {
-  console.log("useFetchUsers", params);
   return useQuery<PublicUser[], any>({
     queryFn: async () => {
       const response = await fetchUsers(params);

@@ -1,5 +1,5 @@
-import { useFetchUsers, useFetchCurrentUser } from "./usersActions";
-import { UserSearchQuery, PublicUser, User, Gender } from "@app/interfaces";
+import { useFetchUsers } from "./usersActions";
+import { UserSearchQuery, PublicUser } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
@@ -16,6 +16,7 @@ export const Browse = () => {
     sexualPreferences: userData?.preferences,
   });
   const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
+  const itemsPerPage = 9;
 
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
@@ -34,8 +35,8 @@ export const Browse = () => {
   // Pagination
   useEffect(() => {
     if (users) {
-      const offset = (page - 1) * 9;
-      const endOffset = offset + 9;
+      const offset = (page - 1) * itemsPerPage;
+      const endOffset = offset + itemsPerPage;
       setDisplayedUsers(users.slice(offset, endOffset));
     }
   }, [page, users]);
@@ -56,7 +57,7 @@ export const Browse = () => {
       <>
         <UserList users={displayedUsers} />
         <Pagination
-          count={Math.ceil(users.length / 10)}
+          count={Math.ceil(users.length / itemsPerPage)}
           page={page}
           onChange={handlePageChange}
           style={{ marginTop: "16px" }}
@@ -64,9 +65,11 @@ export const Browse = () => {
       </>
     );
   }
+
   if (usersIsError) {
     content = "Error fetching users";
   }
+
   return (
     <Layout>
       <SearchBar searchParams={searchParams} onSubmit={updateSearchQuery} />

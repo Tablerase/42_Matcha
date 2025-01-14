@@ -7,8 +7,9 @@ import {
   Slider,
   Stack,
   Typography,
+  InputAdornment,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { useAuth } from "@/utils/authContext";
 
 interface SearchBarProps {
@@ -39,17 +40,21 @@ const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
   };
 
   const handleDistanceChange = (
-    e: Event,
-    newValue: number | number[],
-    activeThumb: number
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
   ) => {
-    setLocalParams({ ...localParams, distance: Number(newValue) });
+    const value = Number(e.target.value);
+    setLocalParams({
+      ...localParams,
+      distance: value === 0 ? 1 : value,
+      latitude: userData!.location?.x,
+      longitude: userData!.location?.y,
+    });
   };
 
   return (
     <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
       <FormControl fullWidth sx={{ gap: 2 }}>
-        <Stack spacing={2} direction="row" alignItems="center" sx={{ mb: 2 }}>
+        <Stack spacing={2} direction="row" alignItems="center" sx={{ m: 1 }}>
           <Typography variant="h6" sx={{ minWidth: 80 }}>
             Age Filter
           </Typography>
@@ -74,6 +79,7 @@ const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
             <Slider
               getAriaLabel={() => "Age Range"}
               valueLabelDisplay="on"
+              sx={{ m: 1 }}
               value={[inputAge[0], inputAge[1]]}
               onChange={handleAgeSlider}
               min={18}
@@ -100,15 +106,37 @@ const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
           ></Slider>
         </Stack> */}
 
-        <TextField
-          label="Distance (km)"
-          type="number"
-          value={localParams.distance || ""}
-          onChange={(e) =>
-            setLocalParams({ ...localParams, distance: Number(e.target.value) })
-          }
-        />
-
+        {userData?.location === null ? (
+          <TextField
+            label="Allow location in your profil to filter by distance"
+            value={userData.location}
+            disabled
+          />
+        ) : (
+          <TextField
+            label="Distance"
+            type="number"
+            value={localParams.distance || ""}
+            sx={{ m: 1 }}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">km</InputAdornment>
+                ),
+              },
+            }}
+            // onChange={(e) =>
+            //   setLocalParams({
+            //     ...localParams,
+            //     distance:
+            //       Number(e.target.value) === 0 ? Number(e.target.value) : 1,
+            //     latitude: userData!.location?.x,
+            //     longitude: userData!.location?.y,
+            //   })
+            // }
+            onChange={handleDistanceChange}
+          />
+        )}
         <Button type="submit" variant="contained">
           Search
         </Button>
