@@ -30,6 +30,14 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
   - [MUI Slider](https://mui.com/material-ui/react-slider/)
   - [MUI Grid](https://mui.com/material-ui/react-grid2/)
 
+## Location
+
+- [Geolocation API](https://developer.mozilla.org/en-US/docs/Web/API/Geolocation_API)
+
+### Map
+
+- [React Leaflet](https://react-leaflet.js.org/)
+
 ## Resources
 
 ### Images
