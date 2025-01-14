@@ -103,7 +103,7 @@ const SearchBar = ({
               spacing={2}
               direction="row"
               alignItems="center"
-              sx={{ m: 1 }}
+              sx={{ ml: 5, mr: 5, mt: 2 }}
             >
               <Typography variant="h6" sx={{ minWidth: 80 }}>
                 Age Filter
