@@ -11,7 +11,6 @@ import {
   Fab,
   Zoom,
 } from "@mui/material";
-import { UserSearchQuery } from "@app/interfaces";
 import {
   InputAdornment,
   Select,
@@ -21,18 +20,21 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
-import { useAuth } from "@/utils/authContext";
-import { useFetchAllTags } from "@/pages/browse/usersActions";
-import { set } from "date-fns";
+import { Tag, User, UserSearchQuery } from "@app/interfaces";
 
 interface SearchBarProps {
+  userData: User;
+  tags: Tag[];
   searchParams: UserSearchQuery;
   onSubmit: (params: UserSearchQuery) => void;
 }
 
-const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
-  const { userData } = useAuth();
-  const { data: tags, isLoading: tagLoaded } = useFetchAllTags();
+const SearchBar = ({
+  userData,
+  tags,
+  searchParams,
+  onSubmit,
+}: SearchBarProps) => {
   const [inputAge, setInputAge] = useState<number[]>([18, 100]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
   const [drawerOpen, setDrawerOpen] = useState(false);
@@ -71,8 +73,6 @@ const SearchBar = ({ searchParams, onSubmit }: SearchBarProps) => {
     const value = e.target.value as string[];
     setLocalParams({ ...localParams, tags: value });
   };
-
-  if (tagLoaded) return <div>Loading...</div>;
 
   return (
     <>

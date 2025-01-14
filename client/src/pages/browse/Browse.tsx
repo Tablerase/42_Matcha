@@ -7,16 +7,17 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
+import { useFetchAllTags } from "@/pages/browse/usersActions";
 
 export const Browse = () => {
-  const { userData } = useAuth();
+  const { userData, isLoading: userDataLoading } = useAuth();
+  const { data: tags, isLoading: tagLoading } = useFetchAllTags();
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
     gender: userData?.gender,
     sexualPreferences: userData?.preferences,
   });
   const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
-  const itemsPerPage = 9;
 
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
@@ -33,6 +34,7 @@ export const Browse = () => {
   } = useFetchUsers(searchParams);
 
   // Pagination
+  const itemsPerPage = 9;
   useEffect(() => {
     if (users) {
       const offset = (page - 1) * itemsPerPage;
@@ -49,7 +51,7 @@ export const Browse = () => {
 
   // Content rendering
   let content;
-  if (usersIsLoading) {
+  if (usersIsLoading || userDataLoading || tagLoading) {
     content = <LoadingCup />;
   }
   if (usersIsSuccess && users) {
@@ -69,10 +71,18 @@ export const Browse = () => {
   if (usersIsError) {
     content = "Error fetching users";
   }
+  if (userData === null) {
+    content = "Please log in to view";
+  }
 
   return (
     <Layout>
-      <SearchBar searchParams={searchParams} onSubmit={updateSearchQuery} />
+      <SearchBar
+        userData={userData!}
+        tags={tags!}
+        searchParams={searchParams}
+        onSubmit={updateSearchQuery}
+      />
       {content}
     </Layout>
   );
