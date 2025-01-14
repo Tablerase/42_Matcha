@@ -1,9 +1,20 @@
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
 import Form from "@rjsf/mui";
-import { RJSFSchema, UiSchema, RegistryFieldsType } from "@rjsf/utils";
+import {
+  RJSFSchema,
+  UiSchema,
+  FieldProps,
+  ErrorTransformer,
+  RJSFValidationError,
+  SubmitButtonProps,
+  getSubmitButtonOptions,
+  RegistryWidgetsType,
+  RegistryFieldsType,
+} from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
-import { Gender, Tag, UserUpdateFormProps } from "@/app/interfaces";
-import { customValidate, transformErrors } from "@/utils/formUtils";
+import { Gender, Tag, User, UserUpdateFormProps } from "@/app/interfaces";
+import { SelectChangeEvent, Box } from "@mui/material";
+import { isValidUsername, isValidEmail } from "@/utils/helpers";
 import { SubmitButton } from "@/components/SubmitButton";
 import {
   useUpdateUserProfile,
@@ -161,6 +172,41 @@ export const UserUpdateForm = ({
     location: LocationButton,
   };
 
+  const customValidate = (formData: any, errors: any) => {
+    if (!isValidEmail(formData.email)) {
+      errors.email.addError("Invalid email address");
+    }
+    if (!isValidUsername(formData.username)) {
+      errors.username.addError(
+        "Username can only contain letters, numbers, and underscores"
+      );
+    }
+    return errors;
+  };
+
+  const transformErrors = (
+    errors: RJSFValidationError[],
+    uiSchema?: UiSchema<any, RJSFSchema, any>
+  ): RJSFValidationError[] => {
+    return errors.map((error: any) => {
+      if (error.name === "type" || error.name === "required") {
+        error.message = "This field is required";
+      }
+      if (error.name === "minLength") {
+        error.message = "Must be at least 3 characters long";
+      }
+      if (error.name === "maxLength" && error.params.limit === 100) {
+        error.message = "Must be at most 100 characters long";
+      }
+      if (error.name === "maxLength" && error.params.limit === 255) {
+        error.message = "Must be at most 255 characters long";
+      }
+      if (error.name === "maxLength" && error.params.limit === 500) {
+        error.message = "Must be at most 500 characters long";
+      }
+      return error;
+    });
+  };
   const { updateUserData } = useUpdateUserProfile();
   const updateUserTags = useAddUserTags();
   const deleteUserTags = useDeleteUserTags();
@@ -199,7 +245,6 @@ export const UserUpdateForm = ({
       showErrorList={false}
       templates={{ ButtonTemplates: { SubmitButton } }}
       fields={fields}
-      noHtml5Validate
     />
   );
 };

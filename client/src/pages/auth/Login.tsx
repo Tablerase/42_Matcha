@@ -1,67 +1,65 @@
-import React, { useState } from "react";
-import { TextField, Button, Typography, Box, Container } from "@mui/material";
+import { Link, Typography, Box, Container, Paper } from "@mui/material";
 import { theme } from "@components/theme";
-import { useLogin } from "./authActions";
+import { LoginForm } from "@/components/LoginForm";
+import { routes } from "@/utils/routes";
 
 export const Login = () => {
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const login = useLogin();
-  const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    console.log("Login submitted with:", { username, password });
-    login({ username, password });
-  };
-
   return (
-    <Container maxWidth="xs" sx={{ paddingTop: "5rem" }}>
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        // TODO: create a box for the form
+    <Container maxWidth="xs" sx={{ paddingTop: theme.spacing(8) }}>
+      <Paper
+        elevation={2}
         sx={{
+          p: theme.spacing(4),
           display: "flex",
           flexDirection: "column",
           alignItems: "center",
-          padding: "2rem",
-          borderRadius: "12px",
-          boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.1)",
-          backgroundColor: "#FFFFFF",
+          borderRadius: 2,
+          bgcolor: "background.paper",
         }}
       >
         <Typography
+          component="h1"
           variant="h4"
-          sx={{ marginBottom: "2rem", color: theme.palette.primary.main }}
+          sx={{
+            mb: theme.spacing(4),
+            color: "primary.main",
+            fontWeight: "bold",
+          }}
         >
-          Welcome Back
+          Sign In
         </Typography>
-        <TextField
-          label="Username"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-        />
-        <TextField
-          label="Password"
-          type="password"
-          variant="outlined"
-          fullWidth
-          margin="normal"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-        <Button type="submit" variant="contained" fullWidth>
-          Login
-        </Button>
-        <Typography variant="body2">
-          Don't have an account?
-          <Button>Sign up</Button>
-        </Typography>
-      </Box>
+
+        <LoginForm />
+
+        <Box sx={{ mt: theme.spacing(3) }}>
+          <Typography
+            variant="body2"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            Don't have an account?
+            <Link href={routes.REGISTER} color="primary" underline="hover">
+              Sign up
+            </Link>
+          </Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              gap: 1,
+            }}
+          >
+            Forgot password?
+            <Link href="#" color="primary" underline="hover">
+              Click here
+            </Link>
+          </Typography>
+        </Box>
+      </Paper>
     </Container>
   );
 };
