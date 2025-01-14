@@ -203,6 +203,7 @@ export const ProfilePictures = ({
                             }}
                             badgeContent={
                               <Box
+                                key={image.id}
                                 sx={{
                                   bgcolor: "primary.main",
                                   borderRadius: "50%",

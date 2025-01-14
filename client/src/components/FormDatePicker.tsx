@@ -13,10 +13,7 @@ export const FormDatePicker = ({ onChange, value }: FormDatePickerProps) => {
     if (!value) {
       return;
     }
-    onChange(dayjs(value)
-    .startOf("day")
-    .add(dayjs(value).utcOffset(), "minutes")
-    .toDate().toISOString());
+    onChange(dayjs(value).hour(12).minute(0).second(0).millisecond(0).format());
   };
 
   return (
@@ -29,7 +26,7 @@ export const FormDatePicker = ({ onChange, value }: FormDatePickerProps) => {
         maxDate={dayjs().subtract(18, "year")}
         format="DD/MM/YYYY"
         openTo="year"
-        views={['year', 'month', 'day']}
+        views={["year", "month", "day"]}
         slotProps={{
           textField: {
             fullWidth: true,

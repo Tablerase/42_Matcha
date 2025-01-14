@@ -16,6 +16,7 @@ import { LocationButton } from "@/components/LocationButton";
 import { FormData } from "@/app/interfaces";
 import { useState } from "react";
 import { FormDatePicker } from "@/components/FormDatePicker";
+import dayjs from "dayjs";
 
 const schema: RJSFSchema = {
   required: [
@@ -181,7 +182,20 @@ export const UserUpdateForm = ({
     }
 
     if (data.formData) {
-      updateUserData(data.formData);
+      const formattedData = {
+        ...data.formData,
+        dateOfBirth: data.formData.dateOfBirth
+          ? dayjs(data.formData.dateOfBirth)
+              .hour(12)
+              .minute(0)
+              .second(0)
+              .millisecond(0)
+              .format()
+          : null,
+      };
+      console.log("Original date:", data.formData.dateOfBirth);
+      console.log("Formatted date:", formattedData.dateOfBirth);
+      updateUserData(formattedData);
     }
   };
 

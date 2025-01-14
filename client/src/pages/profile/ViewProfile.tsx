@@ -128,13 +128,14 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
               : "Not specified"}
           </Typography>
         </Box>
-
-        <Box>
-          <Typography variant="subtitle2" color="text.secondary">
-            Location
-          </Typography>
-          <Typography>{user.city ? user.city : "Not specified"}</Typography>
-        </Box>
+        {user.city && user.city.trim().length > 0 && (
+          <Box>
+            <Typography variant="subtitle2" color="text.secondary">
+              Location
+            </Typography>
+            <Typography>{user.city}</Typography>
+          </Box>
+        )}
       </Stack>
       {me && (
         <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
@@ -145,7 +146,7 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
               setEditMode(true);
             }}
           >
-            Edit Profile Info
+            Edit Info
           </Button>
           <Button
             variant="contained"
@@ -154,7 +155,7 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
               setEditPictures(true);
             }}
           >
-            Edit Profile Photos
+            Edit Photo
           </Button>
         </CardActions>
       )}
