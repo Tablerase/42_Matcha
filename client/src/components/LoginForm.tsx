@@ -1,4 +1,4 @@
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import Form from "@rjsf/mui";
 import {
   RJSFSchema,
@@ -49,9 +49,23 @@ const LoginButton = (props: SubmitButtonProps) => {
     return null;
   }
   return (
-    <Button type="submit" variant="contained">
-      Login
-    </Button>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center",
+        mt: 2,
+      }}
+    >
+      <Button
+        type="submit"
+        variant="contained"
+        sx={{
+          minWidth: "120px",
+        }}
+      >
+        Login
+      </Button>
+    </Box>
   );
 };
 

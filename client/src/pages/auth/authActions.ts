@@ -1,8 +1,8 @@
 import { client } from "@utils/axios";
 import { useMutation } from "@tanstack/react-query";
-import { ErrorResponse, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { queryClient } from "../../app/App";
-import { User, UserLogin } from "@app/interfaces";
+import { User, UserLogin, UserSignup, ErrorResponse } from "@app/interfaces";
 import { routes } from "@utils/routes";
 import { useAuth } from "@utils/authContext";
 import { AxiosError } from "axios";
@@ -33,6 +33,34 @@ export const useLogin = () => {
     },
   });
   return login;
+};
+
+export const signupUser = async (data: UserSignup) => {
+  const user = await client.post<User>("/auth/signup", data, {
+    withCredentials: true,
+  });
+  return user.data as User;
+};
+
+export const useSignup = () => {
+  const navigate = useNavigate();
+  const { mutate: signup } = useMutation({
+    mutationKey: ["currentUser"],
+    mutationFn: signupUser,
+    onSuccess: () => {
+      navigate(routes.LOGIN, { replace: true });
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      if (error.response?.data?.status === 400) {
+        if (error.response?.data.message) {
+          enqueueSnackbar(error.response.data.message, { variant: "error" });
+        }
+      }
+    },
+    // TODO: implement with account confirmation with email
+    // onSuccess: () => {},
+  });
+  return signup;
 };
 
 /**

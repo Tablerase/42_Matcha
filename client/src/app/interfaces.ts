@@ -1,10 +1,15 @@
 import { SelectChangeEvent } from "@mui/material";
-import { Dayjs } from "dayjs";
 import { ReactNode } from "react";
 
 export interface UserLogin {
   username: string;
   password: string;
+}
+
+export interface UserSignup extends UserLogin {
+  firstName: string;
+  lastName: string;
+  email: string;
 }
 
 export interface User {
@@ -126,4 +131,17 @@ export interface UserUpdateFormProps {
   oldTags?: Tag[],
   onDateChange: (newValue: string) => void,
   onTagsChange: (event: SelectChangeEvent<string[]>) => void
+}
+
+export interface ValidationError {
+  code: string;
+  message: string;
+  path: string[];
+  validation: string;
+}
+
+export interface ErrorResponse {
+  error?: ValidationError[];
+  message?: string;
+  status: number;
 }

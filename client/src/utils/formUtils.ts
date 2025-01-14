@@ -27,16 +27,10 @@ export const transformErrors = (
       error.message = "This field is required";
     }
     if (error.name === "minLength") {
-      error.message = "Must be at least 3 characters long";
+      error.message = `Must be at least ${error.params.limit} characters long`;
     }
-    if (error.name === "maxLength" && error.params.limit === 100) {
-      error.message = "Must be at most 100 characters long";
-    }
-    if (error.name === "maxLength" && error.params.limit === 255) {
-      error.message = "Must be at most 255 characters long";
-    }
-    if (error.name === "maxLength" && error.params.limit === 500) {
-      error.message = "Must be at most 500 characters long";
+    if (error.name === "maxLength") {
+      error.message = `Must be at most ${error.params.limit} characters long`;
     }
     return error;
   });

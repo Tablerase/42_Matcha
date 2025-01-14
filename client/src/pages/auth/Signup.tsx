@@ -1,7 +1,10 @@
+import { AuthLayout } from "@/components/AuthLayout";
+import { SignupForm } from "@/components/SignupForm";
+
 export const Signup = () => {
   return (
-    <div>
-      <h1>Signup</h1>
-    </div>
+    <AuthLayout>
+      <SignupForm />
+    </AuthLayout>
   );
 };
