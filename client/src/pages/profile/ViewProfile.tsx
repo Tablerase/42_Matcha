@@ -121,7 +121,9 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
             Preferences
           </Typography>
           <Typography sx={{ textTransform: "capitalize" }}>
-            {user.preferences
+            {user.preferences &&
+            user.preferences.length > 0 &&
+            Array.isArray(user.preferences)
               ? user.preferences
                   .map((pref) => pref.charAt(0).toUpperCase() + pref.slice(1))
                   .join(", ")

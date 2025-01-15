@@ -35,7 +35,7 @@ export const Sidebar = () => {
               position: "fixed",
               bottom: 0,
               width: "100%",
-              height: "auto",
+              // height: "auto",
               padding: 0,
               justifyContent: "space-around",
             }

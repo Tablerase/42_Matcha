@@ -17,14 +17,14 @@ export const loginUser = async (data: UserLogin) => {
 
 export const useLogin = () => {
   const navigate = useNavigate();
-  const { login: setAuth } = useAuth();
+  const { userData, login: setAuth } = useAuth();
   const { mutate: login } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: loginUser,
     onSuccess: () => {
       setAuth();
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
-      navigate(routes.BROWSE, { replace: true });
+      userData?.dateOfBirth ? navigate(routes.BROWSE, { replace: true }) : navigate(routes.ME, { replace: true });
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       if (error.status === 400) {

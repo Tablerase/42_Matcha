@@ -27,6 +27,16 @@ export interface User {
   fameRate: number;
   tags: Tag[];
   lastSeen: Date;
+  age?: number;
+  distance?: number;
+}
+
+export interface UserCardProps {
+  user: User;
+}
+
+export interface UserListProps {
+  users: User[];
 }
 
 export interface FormData {

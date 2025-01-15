@@ -45,7 +45,6 @@ export interface PublicUser {
   // Details
   tags?: Tag[];
   age?: number;
-  // Distance from search location to searched user in km
   distance?: number;
 }
 

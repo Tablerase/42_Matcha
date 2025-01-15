@@ -7,7 +7,6 @@ import {
   Skeleton,
   IconButton,
   Popover,
-  Button,
 } from "@mui/material";
 import { UserCardProps } from "@app/interfaces";
 import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
@@ -85,7 +84,7 @@ export const UserCard = ({ user }: UserCardProps) => {
     );
   }
   const open = Boolean(anchorEl);
-  const id = open ? 'simple-popover' : undefined;
+  const id = open ? 'profile-popover' : undefined;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -139,7 +138,7 @@ export const UserCard = ({ user }: UserCardProps) => {
           <CardMedia
             component="img"
             height="200"
-            image={profilePic?.url || ""}
+            image={profilePic?.url || "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
             alt={`${user.username}'s profile picture`}
             sx={{ objectFit: "cover" }}
           />
@@ -158,7 +157,7 @@ export const UserCard = ({ user }: UserCardProps) => {
             </Box>
             {user.city && (
               <Typography variant="body2" color="text.secondary">
-                {user.city || "   "}
+                {user.city}
               </Typography>
             )}
           </CardContent>
@@ -179,9 +178,9 @@ export const UserCard = ({ user }: UserCardProps) => {
           horizontal: "center",
         }}
       >
-        <Box sx={{ p: 2 }}>
-          <Profile me={false} />
-        </Box>
+        {/* <Box sx={{ p: 2 }}> */}
+          <Profile me={false} user={user} userIsSuccess={true}/>
+        {/* </Box> */}
       </Popover>
     </>
   );

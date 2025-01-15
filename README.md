@@ -51,3 +51,6 @@ https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_
 ### Loading
 
 - [Codepen - Tea cup loading](https://codepen.io/oviedofer97/pen/dyNzQeX)
+
+### Notifications
+- https://notistack.com/features/customization#custom-variant-(typescript)

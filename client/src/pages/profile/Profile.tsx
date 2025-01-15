@@ -1,26 +1,24 @@
-import { Layout } from "@components/Layout";
-import { useFetchCurrentUser, useFetchUserById } from "../browse/usersActions";
 import { ViewProfile } from "./ViewProfile";
-import { LinearProgress, Card, CardContent } from "@mui/material";
+import { Card, CardContent } from "@mui/material";
 import { useFetchUserTags } from "../browse/usersActions";
 import { useFetchUserImages } from "../browse/usersActions";
-import { useParams } from "react-router-dom";
+import { User } from "@/app/interfaces";
+import LoadingCup from "@/components/LoadingCup/LoadingCup";
 
 interface ProfileProps {
   me: boolean;
+  user?: User;
+  userIsLoading?: boolean;
+  userIsError?: boolean;
+  userIsSuccess?: boolean;
 }
 
-export const Profile = ({ me }: ProfileProps) => {
-  // const { username } = useParams();
-  // TODO: use username to fetch user - to add
-  const {
-    data: user,
-    isLoading: userIsLoading,
-    isError: userIsError,
-    isSuccess: userIsSuccess,
-    error,
-  } = useFetchCurrentUser();
-
+export const Profile = ({
+  me,
+  user,
+  userIsLoading,
+  userIsSuccess,
+}: ProfileProps) => {
   const { data: tags } = useFetchUserTags(user?.id);
   const {
     data: images,
@@ -30,21 +28,16 @@ export const Profile = ({ me }: ProfileProps) => {
   } = useFetchUserImages(user?.id);
   let content;
   if (userIsLoading || imagesIsLoading) {
-    content = <LinearProgress />;
+    content = <LoadingCup />;
   }
   if (userIsSuccess && user && images && imagesIsSuccess) {
     content = <ViewProfile tags={tags} user={user} images={images} me={me} />;
   }
-  if (userIsError || imagesIsError) {
-    content = <>{error.toString()}</>;
-  }
   return (
     <>
-      {/* <Layout> */}
-        <Card sx={{ m: 4 }}>
-          <CardContent>{content}</CardContent>
-        </Card>
-      {/* </Layout> */}
+      <Card>
+        <CardContent sx={{ p: 5 }}>{content}</CardContent>
+      </Card>
     </>
   );
 };
