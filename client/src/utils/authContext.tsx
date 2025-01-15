@@ -9,6 +9,8 @@ import { useFetchAllTags, useFetchCurrentUser } from "@/pages/browse/usersAction
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
+  isError: boolean;
+  isSuccess: boolean;
   userData?: User;
   tags?: Tag[];
   login: () => void;
@@ -20,7 +22,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const {data: userData, isLoading: userDataLoading} = useFetchCurrentUser();
+  const {data: userData, isLoading: userDataLoading, isError, isSuccess} = useFetchCurrentUser();
   const { data: tags, isLoading: tagLoading } = useFetchAllTags();
 
   const checkAuthStatus = async () => {
@@ -66,7 +68,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, isLoading, userData, tags }}
+      value={{ isAuthenticated, login, logout, isLoading, userData, isError, isSuccess, tags }}
     >
       {children}
     </AuthContext.Provider>

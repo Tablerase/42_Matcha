@@ -5,7 +5,7 @@ import { Signup } from "@pages/auth/Signup";
 import { Login } from "@pages/auth/Login";
 import { Matches } from "@pages/browse/Matches";
 import { Browse } from "@pages/browse/Browse";
-import { Profile } from "@pages/profile/Profile";
+import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { Chat } from "@pages/chat/Chat";
 import { ThemeProvider } from "@emotion/react";
 import { CssBaseline } from "@mui/material";
@@ -34,11 +34,7 @@ export const App = () => {
                 <Route element={<ProtectedRoute />}>
                   <Route path={routes.MATCHES} element={<Matches />} />
                   <Route path={routes.BROWSE} element={<Browse />} />
-                  <Route path={routes.ME} element={<Profile me={true} />} />
-                  {/* <Route
-                    path={routes.PROFILE}
-                    element={<Profile me={false} />}
-                  /> */}
+                  <Route path={routes.ME} element={<ProfilePage />} />
                   <Route path={routes.CHAT} element={<Chat />} />
                 </Route>
               </Routes>

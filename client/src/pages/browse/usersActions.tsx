@@ -7,7 +7,6 @@ import {
   UserResponse,
   Tag,
   UserSearchQuery,
-  PublicUser,
 } from "@app/interfaces";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
@@ -25,7 +24,7 @@ const fetchUsers = async (params?: UserSearchQuery) => {
 };
 
 export const useFetchUsers = (params?: UserSearchQuery) => {
-  return useQuery<PublicUser[], any>({
+  return useQuery<User[], any>({
     queryFn: async () => {
       const response = await fetchUsers(params);
       const data = response.data.data;
@@ -44,7 +43,7 @@ export const useFetchUsers = (params?: UserSearchQuery) => {
         tags: user.tags,
         age: user.age,
         distance: user.distance,
-      })) as PublicUser[];
+      })) as User[];
     },
     queryKey: ["users", params],
   });

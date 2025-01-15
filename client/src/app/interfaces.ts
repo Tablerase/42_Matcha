@@ -27,6 +27,16 @@ export interface User {
   fameRate: number;
   tags: Tag[];
   lastSeen: Date;
+  age?: number;
+  distance?: number;
+}
+
+export interface UserCardProps {
+  user: User;
+}
+
+export interface UserListProps {
+  users: User[];
 }
 
 export interface FormData {
@@ -100,33 +110,6 @@ export interface UserSearchQuery {
   order?: "asc" | "desc";
   limit?: number;
   offset?: number;
-}
-
-export interface PublicUser {
-  id: number;
-  firstName: string;
-  lastName: string;
-  username: string;
-  gender?: Gender;
-  preferences?: Gender[];
-  dateOfBirth?: Date;
-  bio?: string;
-  city?: string;
-  fameRate: number;
-  lastSeen?: Date;
-  // Details
-  tags?: Tag[];
-  age?: number;
-  // Distance from search location to searched user in km
-  distance?: number;
-}
-
-export interface UserCardProps {
-  user: PublicUser;
-}
-
-export interface UserListProps {
-  users: PublicUser[];
 }
 
 export interface UserUpdateFormProps {

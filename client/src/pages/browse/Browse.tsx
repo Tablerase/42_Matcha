@@ -1,5 +1,5 @@
 import { useFetchUsers } from "./usersActions";
-import { UserSearchQuery, PublicUser } from "@app/interfaces";
+import { UserSearchQuery, User } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
@@ -16,7 +16,7 @@ export const Browse = () => {
     gender: userData?.gender,
     sexualPreferences: userData?.preferences,
   });
-  const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
+  const [displayedUsers, setDisplayedUsers] = useState<User[]>([]);
 
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
