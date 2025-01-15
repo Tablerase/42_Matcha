@@ -35,10 +35,10 @@ export const App = () => {
                   <Route path={routes.MATCHES} element={<Matches />} />
                   <Route path={routes.BROWSE} element={<Browse />} />
                   <Route path={routes.ME} element={<Profile me={true} />} />
-                  <Route
+                  {/* <Route
                     path={routes.PROFILE}
                     element={<Profile me={false} />}
-                  />
+                  /> */}
                   <Route path={routes.CHAT} element={<Chat />} />
                 </Route>
               </Routes>

@@ -40,11 +40,11 @@ export const Profile = ({ me }: ProfileProps) => {
   }
   return (
     <>
-      <Layout>
+      {/* <Layout> */}
         <Card sx={{ m: 4 }}>
           <CardContent>{content}</CardContent>
         </Card>
-      </Layout>
+      {/* </Layout> */}
     </>
   );
 };
