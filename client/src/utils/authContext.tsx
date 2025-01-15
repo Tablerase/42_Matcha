@@ -2,13 +2,15 @@ import { createContext, useState, useContext, useEffect } from "react";
 import { routes } from "../utils/routes";
 import { Navigate, Outlet } from "react-router-dom";
 import { client } from "./axios";
-import { User } from "@/app/interfaces";
+import { Tag, User } from "@/app/interfaces";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
+import { useFetchAllTags, useFetchCurrentUser } from "@/pages/browse/usersActions";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  userData: User | null;
+  userData?: User;
+  tags?: Tag[];
   login: () => void;
   logout: () => void;
 }
@@ -18,7 +20,8 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const [userData, setUserData] = useState<User | null>(null);
+  const {data: userData, isLoading: userDataLoading} = useFetchCurrentUser();
+  const { data: tags, isLoading: tagLoading } = useFetchAllTags();
 
   const checkAuthStatus = async () => {
     setIsLoading(true);
@@ -31,24 +34,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (response.data.isAuthenticated === true) {
           console.log("User is authenticated");
           setIsAuthenticated(true);
-          const user = response.data.user;
-          const parsedUser: User = {
-            id: user.id,
-            username: user.username,
-            email: user.email,
-            firstName: user.first_name,
-            lastName: user.last_name,
-            gender: user.gender,
-            preferences: user.preferences,
-            dateOfBirth: user.date_of_birth,
-            bio: user.bio,
-            location: user.location,
-            city: user.city,
-            fameRate: user.fame_rate,
-            tags: user.tags,
-            lastSeen: user.last_seen,
-          };
-          setUserData(parsedUser);
         } else {
           console.log("User not authenticated: " + response.data.message);
           setIsAuthenticated(false);
@@ -63,13 +48,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const login = async () => {
-    // setIsAuthenticated(true);
+    setIsAuthenticated(true);
     checkAuthStatus();
   };
 
   const logout = async () => {
     setIsAuthenticated(false);
-    setUserData(null);
   };
 
   useEffect(() => {
@@ -82,7 +66,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, isLoading, userData }}
+      value={{ isAuthenticated, login, logout, isLoading, userData, tags }}
     >
       {children}
     </AuthContext.Provider>

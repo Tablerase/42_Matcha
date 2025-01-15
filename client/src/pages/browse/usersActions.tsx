@@ -12,23 +12,10 @@ import {
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
 import { formatCoordinates } from "@/utils/helpers";
-import { Image, FormData } from "@/app/interfaces";
+import { Image, FormData, ErrorResponse } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
 import { enqueueSnackbar } from "notistack";
 import { formatPreferences } from "@/utils/helpers";
-
-interface ValidationError {
-  code: string;
-  message: string;
-  path: string[];
-  validation: string;
-}
-
-interface ErrorResponse {
-  error?: ValidationError[];
-  message?: string;
-  status: number;
-}
 
 const fetchUsers = async (params?: UserSearchQuery) => {
   return await client.get("/users/search", {
@@ -131,6 +118,7 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
       } as User;
     },
     queryKey: ["currentUser"],
+    retry: false
   });
 };
 
@@ -140,6 +128,7 @@ export const useUpdateUserProfile = () => {
     mutationFn: updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUser"] });
+      enqueueSnackbar("Profile updated successfully", { variant: "success" });
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       if (error.response?.data?.status === 500) {
@@ -208,6 +197,7 @@ export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
       return data;
     },
     queryKey: ["tags"],
+    retry: false
   });
 };
 

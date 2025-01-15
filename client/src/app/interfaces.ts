@@ -6,6 +6,12 @@ export interface UserLogin {
   password: string;
 }
 
+export interface UserSignup extends UserLogin {
+  firstName: string;
+  lastName: string;
+  email: string;
+}
+
 export interface User {
   id: number;
   firstName: string;
@@ -17,7 +23,7 @@ export interface User {
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
-  city: string;
+  city?: string;
   fameRate: number;
   tags: Tag[];
   lastSeen: Date;
@@ -34,7 +40,7 @@ export interface FormData {
   dateOfBirth: Date;
   bio: string;
   location?: { x: number; y: number };
-  city: string;
+  city?: string;
   interests: Tag[];
 }
 
@@ -53,10 +59,10 @@ export interface Tag {
 }
 
 export interface ViewProfileProps {
+  me: boolean;
   user: Partial<User>;
   tags: Tag[] | undefined;
   images: Image[] | undefined;
-  // editMode?: boolean;
 }
 
 export interface EditProfileProps {
@@ -124,8 +130,23 @@ export interface UserListProps {
 }
 
 export interface UserUpdateFormProps {
-  user?: Partial<User>;
-  tags?: Tag[];
-  userTags: Tag[];
-  onTagsChange: (event: SelectChangeEvent<string[]>) => void;
+  user?: Partial<User>,
+  tags?: Tag[],
+  userTags: Tag[], 
+  oldTags?: Tag[],
+  onDateChange: (newValue: string) => void,
+  onTagsChange: (event: SelectChangeEvent<string[]>) => void
+}
+
+export interface ValidationError {
+  code: string;
+  message: string;
+  path: string[];
+  validation: string;
+}
+
+export interface ErrorResponse {
+  error?: ValidationError[];
+  message?: string;
+  status: number;
 }

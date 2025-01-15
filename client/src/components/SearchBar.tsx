@@ -21,10 +21,11 @@ import {
 } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import { Tag, User, UserSearchQuery } from "@app/interfaces";
+import { MAX_AGE, MIN_AGE } from "@/utils/config";
 
 interface SearchBarProps {
-  userData: User;
-  tags: Tag[];
+  userData?: User;
+  tags?: Tag[];
   searchParams: UserSearchQuery;
   onSubmit: (params: UserSearchQuery) => void;
 }
@@ -35,7 +36,7 @@ const SearchBar = ({
   searchParams,
   onSubmit,
 }: SearchBarProps) => {
-  const [inputAge, setInputAge] = useState<number[]>([18, 100]);
+  const [inputAge, setInputAge] = useState<number[]>([MIN_AGE, MAX_AGE]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -114,7 +115,7 @@ const SearchBar = ({
                   valueLabelDisplay="on"
                   value={[inputAge[0], inputAge[1]]}
                   onChange={handleAgeSlider}
-                  min={18}
+                  min={MIN_AGE}
                   marks={[
                     {
                       value:
@@ -132,10 +133,10 @@ const SearchBar = ({
                   sx={{ m: 1 }}
                   value={[inputAge[0], inputAge[1]]}
                   onChange={handleAgeSlider}
-                  min={18}
+                  min={MIN_AGE}
                   marks={[
-                    { value: 18, label: "18" },
-                    { value: 100, label: "100" },
+                    { value: MIN_AGE, label: MIN_AGE },
+                    { value: MAX_AGE, label: MAX_AGE },
                   ]}
                   disableSwap
                 />

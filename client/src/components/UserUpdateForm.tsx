@@ -1,20 +1,9 @@
 import { MultipleSelectChip } from "@/components/MultipleSelectChip";
 import Form from "@rjsf/mui";
-import {
-  RJSFSchema,
-  UiSchema,
-  FieldProps,
-  ErrorTransformer,
-  RJSFValidationError,
-  SubmitButtonProps,
-  getSubmitButtonOptions,
-  RegistryWidgetsType,
-  RegistryFieldsType,
-} from "@rjsf/utils";
+import { RJSFSchema, UiSchema, RegistryFieldsType } from "@rjsf/utils";
 import validator from "@rjsf/validator-ajv8";
-import { Gender, Tag, User, UserUpdateFormProps } from "@/app/interfaces";
-import { SelectChangeEvent } from "@mui/material";
-import { isValidUsername, isValidEmail } from "@/utils/helpers";
+import { Gender, Tag, UserUpdateFormProps } from "@/app/interfaces";
+import { customValidate, transformErrors } from "@/utils/formUtils";
 import { SubmitButton } from "@/components/SubmitButton";
 import {
   useUpdateUserProfile,
@@ -25,9 +14,9 @@ import { IChangeEvent } from "@rjsf/core";
 import { FormEvent } from "react";
 import { LocationButton } from "@/components/LocationButton";
 import { FormData } from "@/app/interfaces";
-
-// TODO: add proper format for dateOfBirth
-// TODO: add proper messages when required fields are not filled
+import { useState } from "react";
+import { FormDatePicker } from "@/components/FormDatePicker";
+import dayjs from "dayjs";
 
 const schema: RJSFSchema = {
   required: [
@@ -103,8 +92,29 @@ export const UserUpdateForm = ({
   user,
   tags,
   userTags,
+  oldTags,
+  onDateChange,
   onTagsChange,
 }: UserUpdateFormProps) => {
+  const [formData, setFormData] = useState<Partial<FormData>>({
+    id: user?.id,
+    firstName: user?.firstName,
+    lastName: user?.lastName,
+    username: user?.username,
+    email: user?.email,
+    dateOfBirth: user?.dateOfBirth,
+    gender: user?.gender,
+    preferences: user?.preferences,
+    bio: user?.bio || "",
+    city: user?.city || "",
+    interests: userTags,
+    location: user?.location,
+  });
+
+  const handleChange = (data: IChangeEvent<any, RJSFSchema, any>) => {
+    setFormData((prev) => ({ ...prev, ...data.formData }));
+  };
+
   const uiSchema: UiSchema = {
     email: {
       "ui:widget": "email",
@@ -113,9 +123,11 @@ export const UserUpdateForm = ({
       },
     },
     dateOfBirth: {
-      "ui:widget": "date",
-      // TODO: fix options: warning, min and max year, etc
-      "ui:options": {},
+      "ui:widget": FormDatePicker,
+      "ui:options": {
+        dateOfBirth: user?.dateOfBirth || null,
+        handleChange: onDateChange,
+      },
     },
     gender: {
       "ui:widget": "radio",
@@ -137,6 +149,7 @@ export const UserUpdateForm = ({
       "ui:options": {
         items: tags,
         userTags: userTags,
+        oldTags: oldTags,
         handleChange: onTagsChange,
       },
     },
@@ -145,62 +158,10 @@ export const UserUpdateForm = ({
       "ui:options": {},
     },
   };
-
   const fields: RegistryFieldsType = {
     location: LocationButton,
   };
 
-  const formData: Partial<FormData> = {
-    id: user?.id,
-    firstName: user?.firstName,
-    lastName: user?.lastName,
-    username: user?.username,
-    email: user?.email,
-    dateOfBirth: user?.dateOfBirth,
-    gender: user?.gender,
-    preferences: user?.preferences,
-    bio: user?.bio || "",
-    city: user?.city,
-    interests: userTags,
-    location: user?.location,
-  };
-
-  const customValidate = (formData: any, errors: any) => {
-    if (!isValidEmail(formData.email)) {
-      errors.email.addError("Invalid email address");
-    }
-    if (!isValidUsername(formData.username)) {
-      errors.username.addError(
-        "Username can only contain letters, numbers, and underscores"
-      );
-    }
-    return errors;
-  };
-
-  const transformErrors = (
-    errors: RJSFValidationError[],
-    uiSchema?: UiSchema<any, RJSFSchema, any>
-  ): RJSFValidationError[] => {
-    console.log("errors: ", errors);
-    return errors.map((error: any) => {
-      if (error.name === "type" || error.name === "required") {
-        error.message = "This field is required";
-      }
-      if (error.name === "minLength") {
-        error.message = "Must be at least 3 characters long";
-      }
-      if (error.name === "maxLength" && error.params.limit === 100) {
-        error.message = "Must be at most 100 characters long";
-      }
-      if (error.name === "maxLength" && error.params.limit === 255) {
-        error.message = "Must be at most 255 characters long";
-      }
-      if (error.name === "maxLength" && error.params.limit === 500) {
-        error.message = "Must be at most 500 characters long";
-      }
-      return error;
-    });
-  };
   const { updateUserData } = useUpdateUserProfile();
   const updateUserTags = useAddUserTags();
   const deleteUserTags = useDeleteUserTags();
@@ -209,31 +170,36 @@ export const UserUpdateForm = ({
     data: IChangeEvent<any, RJSFSchema, any>,
     event: FormEvent<any>
   ) => {
-    console.log("Data submitted: ", data.formData);
-    console.log(userTags);
-    console.log(data.formData?.interests);
-    for (const tag of data.formData?.interests) {
-      if (userTags?.includes(tag)) continue;
-      else if (!userTags?.includes(tag))
-        updateUserTags({ userId: data.formData.id, tagId: tag.id });
+    for (const tag of userTags) {
+      updateUserTags({ userId: data.formData.id, tagId: tag.id });
     }
-    // TODO: properly delete tags
-    // if (userTags) {
-    //   for (const tag of userTags) {
-    //     if (!interests?.some((interest) => tag.id === interest.id)) {
-    //       deleteUserTags({ userId: user.id, tagId: tag.id });
-    //     }
-    //   }
-    // }
+    if (oldTags) {
+      for (const tag of oldTags) {
+        if (!userTags.some((interest: Tag) => tag.id === interest.id)) {
+          deleteUserTags({ userId: data.formData.id, tagId: tag.id });
+        }
+      }
+    }
 
     if (data.formData) {
-      updateUserData(data.formData);
+      const formattedData = {
+        ...data.formData,
+        dateOfBirth: data.formData.dateOfBirth
+          ? dayjs(data.formData.dateOfBirth)
+              .hour(12)
+              .minute(0)
+              .second(0)
+              .millisecond(0)
+              .format()
+          : null,
+      };
+      updateUserData(formattedData);
     }
   };
-  // const [formData, setFormData] = React.useState(formData);
+
   return (
     <Form
-      // onChange={}
+      onChange={handleChange}
       schema={schema}
       uiSchema={uiSchema}
       validator={validator}
@@ -245,6 +211,7 @@ export const UserUpdateForm = ({
       showErrorList={false}
       templates={{ ButtonTemplates: { SubmitButton } }}
       fields={fields}
+      noHtml5Validate
     />
   );
 };

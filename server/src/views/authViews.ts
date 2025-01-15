@@ -124,11 +124,11 @@ export const checkUser = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    const user = await userModel.getClientUserById(decoded.id);
+    // const user = await userModel.getClientUserById(decoded.id);
     res.status(200).json({
       isAuthenticated: true,
       message: "User is authenticated",
-      user: user,
+      // user: user,
     });
   } catch (err) {
     res.status(200).json({

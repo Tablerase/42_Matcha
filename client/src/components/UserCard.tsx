@@ -130,9 +130,9 @@ export const UserCard = ({ user }: UserCardProps) => {
           </Typography>
           <Typography variant="body1">{user.age} years</Typography>
         </Box>
-        <Typography variant="body2" color="text.secondary">
-          {user.city || "Matching city"}
-        </Typography>
+        {user.city && <Typography variant="body2" color="text.secondary">
+          {user.city || "   "}
+        </Typography>}
       </CardContent>
     </Card>
   );

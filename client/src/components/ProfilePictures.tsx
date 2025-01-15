@@ -3,13 +3,13 @@ import {
   Avatar,
   AvatarGroup,
   Box,
-  Divider,
   Radio,
   RadioGroup,
   Stack,
   Typography,
   Badge,
   FormControl,
+  Button,
 } from "@mui/material";
 import { MuiFileInput } from "mui-file-input";
 import { useState } from "react";
@@ -23,15 +23,19 @@ import AttachFileIcon from "@mui/icons-material/AttachFile";
 
 interface ProfilePicturesProps {
   images?: Image[];
-  userData?: any;
+  userId?: number;
   editMode?: boolean;
+  editPictures?: boolean;
+  setEditPictures?: () => void;
 }
 const MAX_FILE_SIZE = 1 * 1024 * 1024;
 
 export const ProfilePictures = ({
   images,
-  userData,
+  userId,
   editMode = true,
+  editPictures,
+  setEditPictures,
 }: ProfilePicturesProps) => {
   const uploadImage = useUploadImage();
   const updateImageStatus = useUpdateImageStatus();
@@ -88,7 +92,7 @@ export const ProfilePictures = ({
       reader.onload = () => {
         const result = reader.result as string;
         uploadImage({
-          userId: userData!.id,
+          userId: userId!,
           url: result,
         });
       };
@@ -111,7 +115,7 @@ export const ProfilePictures = ({
 
     images?.forEach((image) => {
       updateImageStatus({
-        userId: userData!.id,
+        userId: userId!,
         id: image.id,
         isProfilePic: image.id === newSelectedId,
       });
@@ -146,7 +150,8 @@ export const ProfilePictures = ({
         </>
       )}
       {editMode && (
-        <Stack spacing={3}>
+        <Stack spacing={3} sx={{ alignItems: "center" }}>
+          <Typography variant="h4">Profile Pictures</Typography>
           {images && images?.length < 5 && (
             <MuiFileInput
               value={files}
@@ -198,6 +203,7 @@ export const ProfilePictures = ({
                             }}
                             badgeContent={
                               <Box
+                                key={image.id}
                                 sx={{
                                   bgcolor: "primary.main",
                                   borderRadius: "50%",
@@ -212,7 +218,7 @@ export const ProfilePictures = ({
                                   fontSize="small"
                                   onClick={() => {
                                     deleteImage({
-                                      userId: userData!.id,
+                                      userId: userId!,
                                       id: image.id,
                                     });
                                   }}
@@ -240,6 +246,12 @@ export const ProfilePictures = ({
               </Box>
             </>
           )}
+          <Button
+            variant="outlined"
+            onClick={() => setEditPictures && setEditPictures()}
+          >
+            Done
+          </Button>
         </Stack>
       )}
     </>

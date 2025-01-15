@@ -18,8 +18,8 @@ export const queryClient = new QueryClient();
 
 export const App = () => {
   return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <AuthProvider>
         <BrowserRouter>
           <ThemeProvider theme={theme}>
             <CssBaseline />
@@ -34,15 +34,19 @@ export const App = () => {
                 <Route element={<ProtectedRoute />}>
                   <Route path={routes.MATCHES} element={<Matches />} />
                   <Route path={routes.BROWSE} element={<Browse />} />
-                  <Route path={routes.ME} element={<Profile />} />
+                  <Route path={routes.ME} element={<Profile me={true} />} />
+                  <Route
+                    path={routes.PROFILE}
+                    element={<Profile me={false} />}
+                  />
                   <Route path={routes.CHAT} element={<Chat />} />
                 </Route>
               </Routes>
             </SnackbarProvider>
           </ThemeProvider>
         </BrowserRouter>
-        <ReactQueryDevtools initialIsOpen />
-      </QueryClientProvider>
-    </AuthProvider>
+      </AuthProvider>
+      <ReactQueryDevtools initialIsOpen />
+    </QueryClientProvider>
   );
 };

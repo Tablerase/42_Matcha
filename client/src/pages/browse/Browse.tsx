@@ -7,11 +7,10 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
-import { useFetchAllTags } from "@/pages/browse/usersActions";
 
 export const Browse = () => {
   const { userData, isLoading: userDataLoading } = useAuth();
-  const { data: tags, isLoading: tagLoading } = useFetchAllTags();
+  const { tags, isLoading: tagLoading } = useAuth();
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
     gender: userData?.gender,
@@ -71,7 +70,7 @@ export const Browse = () => {
   if (usersIsError) {
     content = "Error fetching users";
   }
-  if (userData === null) {
+  if (!userData) {
     content = "Please log in to view";
   }
 

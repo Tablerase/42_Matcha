@@ -1,31 +1,28 @@
 import { useState } from "react";
-import { UserUpdateForm } from "./UserUpdateForm";
+import { UserUpdateForm } from "../../components/UserUpdateForm";
 import {
-  CardContent,
-  Typography,useMediaQuery, Box, Button, Stack, Card, CardActions
+  Typography,
+  useMediaQuery,
+  Box,
+  Button,
+  Stack,
+  CardActions,
 } from "@mui/material";
 import { SelectChangeEvent } from "@mui/material/Select";
 import { Tag, UserUpdateFormProps } from "@/app/interfaces";
-import {
-  useUpdateUserProfile,
-  useFetchAllTags,
-  useDeleteUserTags,
-} from "@pages/browse/usersActions";
 import { EditProfileProps } from "@/app/interfaces";
-import { ProfilePictures } from "@/components/ProfilePictures";
-import { useFetchUserImages } from "@pages/browse/usersActions";
-import { } from "@mui/material";
 import { theme } from "@components/theme";
+import { useAuth } from "@/utils/authContext";
 
 export const EditProfile = ({
   user,
   userTags,
   setEditMode,
 }: EditProfileProps) => {
-  const { data: tags } = useFetchAllTags();
-  const { data: images } = useFetchUserImages(user.id);
+  const { tags } = useAuth();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-  const [interests, setInterests] = useState<Tag[]>(userTags || []);
+  const [dateOfBirth, setDateOfBirth] = useState<string>("");
+  const [interests, setInterests] = useState<Tag[]>(userTags ?? []);
 
   const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
     const {
@@ -38,38 +35,36 @@ export const EditProfile = ({
     user: user,
     tags: tags,
     userTags: interests,
-    onTagsChange: handleChangeTags
-  }
+    oldTags: userTags,
+    onDateChange: setDateOfBirth,
+    onTagsChange: handleChangeTags,
+  };
 
   return (
-    <Card sx={{ m: 4 }}>
-      <CardContent>
-        <Box
-          sx={{
-            display: "flex",
-            flexDirection: isMobile ? "column" : "row",
-            alignItems: "flex-start",
-            justifyContent: "space-evenly",
-            gap: 3,
-            "& > *": {
-              maxWidth: isMobile ? "100%" : "50%",
-              width: "100%",
-            },
-          }}
-        >
-          <UserUpdateForm {...formProps}/> 
-          <Stack spacing={3}>
-
-            <Typography variant="h4">Pictures</Typography>
-            {/* <ProfilePictures images={images} userData={formData} /> */}
-          </Stack>
-        </Box>
-      </CardContent>
-      <CardActions sx={{ justifyContent: "flex-end", p: 2 }}>
+    <>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: isMobile ? "column" : "row",
+          alignItems: "flex-start",
+          justifyContent: "space-evenly",
+          gap: 3,
+          "& > *": {
+            maxWidth: isMobile ? "100%" : "50%",
+            width: "100%",
+          },
+        }}
+      >
+        <Stack spacing={3}>
+          <Typography variant="h4">Personal Info</Typography>
+          <UserUpdateForm {...formProps} />
+        </Stack>
+      </Box>
+      <CardActions sx={{ justifyContent: "center" }}>
         <Button variant="outlined" onClick={setEditMode}>
-          Cancel
+          Back to Profile
         </Button>
       </CardActions>
-    </Card>
+    </>
   );
 };
