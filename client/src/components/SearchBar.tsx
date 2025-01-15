@@ -21,7 +21,7 @@ import {
 } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import { Tag, User, UserSearchQuery } from "@app/interfaces";
-import { MAX_AGE, MIN_AGE } from "@/utils/config";
+import { MAX_AGE, MAX_FAME, MIN_AGE, MIN_FAME } from "@/utils/config";
 
 interface SearchBarProps {
   userData?: User;
@@ -37,6 +37,7 @@ const SearchBar = ({
   onSubmit,
 }: SearchBarProps) => {
   const [inputAge, setInputAge] = useState<number[]>([MIN_AGE, MAX_AGE]);
+  const [inputFame, setInputFame] = useState<number[]>([MIN_FAME, MAX_FAME]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -58,13 +59,27 @@ const SearchBar = ({
     setLocalParams({ ...localParams });
   };
 
-  const handleDistanceChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  const handleFameSlider = (
+    e: Event,
+    newValue: number | number[],
+    activeThumb: number
   ) => {
-    const value = Number(e.target.value);
+    setInputFame(newValue as number[]);
+    if (typeof newValue !== "object") return;
+    localParams.minFameRating = newValue[0];
+    localParams.maxFameRating = newValue[1];
+    setLocalParams({ ...localParams });
+  };
+
+  const handleDistanceChange = (
+    event: Event,
+    value: number | number[],
+    activeThumb: number
+  ) => {
+    const numValue = typeof value === "number" ? value : value[0];
     setLocalParams({
       ...localParams,
-      distance: value === 0 ? 1 : value,
+      distance: numValue <= 0 ? 1 : numValue,
       latitude: userData!.location?.x,
       longitude: userData!.location?.y,
     });
@@ -104,10 +119,10 @@ const SearchBar = ({
               spacing={2}
               direction="row"
               alignItems="center"
-              sx={{ ml: 5, mr: 5, mt: 2 }}
+              sx={{ ml: 5, mr: 5, mt: 4 }}
             >
               <Typography variant="h6" sx={{ minWidth: 80 }}>
-                Age Filter
+                Age
               </Typography>
               {userData?.dateOfBirth ? (
                 <Slider
@@ -116,6 +131,7 @@ const SearchBar = ({
                   value={[inputAge[0], inputAge[1]]}
                   onChange={handleAgeSlider}
                   min={MIN_AGE}
+                  max={MAX_AGE}
                   marks={[
                     {
                       value:
@@ -134,10 +150,7 @@ const SearchBar = ({
                   value={[inputAge[0], inputAge[1]]}
                   onChange={handleAgeSlider}
                   min={MIN_AGE}
-                  marks={[
-                    { value: MIN_AGE, label: MIN_AGE },
-                    { value: MAX_AGE, label: MAX_AGE },
-                  ]}
+                  max={MAX_AGE}
                   disableSwap
                 />
               )}
@@ -146,25 +159,75 @@ const SearchBar = ({
             {userData?.location === null ? (
               <TextField
                 label="Allow location in your profile to filter by distance"
-                value={userData.location}
                 disabled
               />
             ) : (
-              <TextField
-                label="Distance"
-                type="number"
-                value={localParams.distance || ""}
-                sx={{ m: 1 }}
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">km</InputAdornment>
-                    ),
-                  },
-                }}
-                onChange={handleDistanceChange}
-              />
+              <Stack
+                spacing={2}
+                direction="row"
+                alignItems="center"
+                sx={{ ml: 5, mr: 5, mt: 4 }}
+              >
+                <Typography variant="h6" sx={{ minWidth: 80 }}>
+                  Distance
+                </Typography>
+                <Slider
+                  getAriaLabel={() => "Distance"}
+                  valueLabelDisplay="auto"
+                  value={localParams.distance || 1}
+                  onChange={handleDistanceChange}
+                  min={1}
+                  max={1000}
+                  step={null}
+                  marks={[
+                    { value: 1 },
+                    { value: 5 },
+                    { value: 10 },
+                    { value: 15 },
+                    { value: 20 },
+                    { value: 30 },
+                    { value: 40 },
+                    { value: 50 },
+                    { value: 75 },
+                    { value: 100 },
+                    { value: 150 },
+                    { value: 200 },
+                    { value: 350 },
+                    { value: 500 },
+                    { value: 750 },
+                    { value: 1000 },
+                  ]}
+                  valueLabelFormat={(value) => `${value} km`}
+                />
+              </Stack>
             )}
+
+            <Stack
+              spacing={2}
+              direction="row"
+              alignItems="center"
+              sx={{ ml: 5, mr: 5, mt: 4 }}
+            >
+              <Typography variant="h6" sx={{ minWidth: 80 }}>
+                Fame
+              </Typography>
+              <Slider
+                getAriaLabel={() => "Fame Range"}
+                valueLabelDisplay="on"
+                value={[inputFame[0], inputFame[1]]}
+                onChange={handleFameSlider}
+                min={MIN_FAME}
+                max={MAX_FAME}
+                marks={[
+                  {
+                    value: userData?.fameRate || 0,
+                    label: "Me",
+                  },
+                ]}
+                disableSwap
+                valueLabelFormat={(value) => `${value}%`}
+              />
+            </Stack>
 
             <Select
               sx={{ m: 1 }}
