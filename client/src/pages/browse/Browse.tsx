@@ -1,5 +1,5 @@
 import { useFetchUsers } from "./usersActions";
-import { UserSearchQuery, UsersSortParams, PublicUser } from "@app/interfaces";
+import { UserSearchQuery, UsersSortParams, User } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
@@ -22,7 +22,7 @@ export const Browse = () => {
   const [sortParams, setSortParams] = useState<UsersSortParams>({
     age: "asc",
   });
-  const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
+  const [displayedUsers, setDisplayedUsers] = useState<User[]>([]);
 
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {

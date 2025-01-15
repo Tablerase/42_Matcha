@@ -119,31 +119,12 @@ export interface UsersSortParams {
   commonTags?: "asc" | "desc";
 }
 
-export interface PublicUser {
-  id: number;
-  firstName: string;
-  lastName: string;
-  username: string;
-  gender?: Gender;
-  preferences?: Gender[];
-  dateOfBirth?: Date;
-  bio?: string;
-  city?: string;
-  fameRate: number;
-  lastSeen?: Date;
-  // Details
-  tags?: Tag[];
-  age?: number;
-  // Distance from search location to searched user in km
-  distance?: number;
-}
-
 export interface UserCardProps {
-  user: PublicUser;
+  user: User;
 }
 
 export interface UserListProps {
-  users: PublicUser[];
+  users: User[];
 }
 
 export interface UserUpdateFormProps {
