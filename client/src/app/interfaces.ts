@@ -102,6 +102,13 @@ export interface UserSearchQuery {
   offset?: number;
 }
 
+export interface UsersSortParams {
+  age?: "asc" | "desc";
+  fameRate?: "asc" | "desc";
+  distance?: "asc" | "desc";
+  commonTags?: "asc" | "desc";
+}
+
 export interface PublicUser {
   id: number;
   firstName: string;
@@ -130,12 +137,12 @@ export interface UserListProps {
 }
 
 export interface UserUpdateFormProps {
-  user?: Partial<User>,
-  tags?: Tag[],
-  userTags: Tag[], 
-  oldTags?: Tag[],
-  onDateChange: (newValue: string) => void,
-  onTagsChange: (event: SelectChangeEvent<string[]>) => void
+  user?: Partial<User>;
+  tags?: Tag[];
+  userTags: Tag[];
+  oldTags?: Tag[];
+  onDateChange: (newValue: string) => void;
+  onTagsChange: (event: SelectChangeEvent<string[]>) => void;
 }
 
 export interface ValidationError {

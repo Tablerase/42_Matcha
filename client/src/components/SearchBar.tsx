@@ -20,13 +20,17 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
-import { Tag, User, UserSearchQuery } from "@app/interfaces";
+import { Tag, User, UserSearchQuery, UsersSortParams } from "@app/interfaces";
 import { MAX_AGE, MAX_FAME, MIN_AGE, MIN_FAME } from "@/utils/config";
+
+// TODO: Transform FAB to SpeedDial with multiple options
 
 interface SearchBarProps {
   userData?: User;
   tags?: Tag[];
   searchParams: UserSearchQuery;
+  sortParams: UsersSortParams;
+  setSortParams: (params: UsersSortParams) => void;
   onSubmit: (params: UserSearchQuery) => void;
 }
 
@@ -34,6 +38,8 @@ const SearchBar = ({
   userData,
   tags,
   searchParams,
+  sortParams,
+  setSortParams,
   onSubmit,
 }: SearchBarProps) => {
   const [inputAge, setInputAge] = useState<number[]>([MIN_AGE, MAX_AGE]);

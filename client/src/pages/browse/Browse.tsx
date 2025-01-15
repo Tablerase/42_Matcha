@@ -1,5 +1,5 @@
 import { useFetchUsers } from "./usersActions";
-import { UserSearchQuery, PublicUser } from "@app/interfaces";
+import { UserSearchQuery, UsersSortParams, PublicUser } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
@@ -7,14 +7,20 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
+import { Sort } from "@mui/icons-material";
 
 export const Browse = () => {
+  const [browseStatus, setBrowseStatus] = useState(false);
+  // TODO: ADD appBar with tabs for Browse and Search modes depending on browseStatus
   const { userData, isLoading: userDataLoading } = useAuth();
   const { tags, isLoading: tagLoading } = useAuth();
   const [page, setPage] = useState(1);
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
     gender: userData?.gender,
     sexualPreferences: userData?.preferences,
+  });
+  const [sortParams, setSortParams] = useState<UsersSortParams>({
+    age: "asc",
   });
   const [displayedUsers, setDisplayedUsers] = useState<PublicUser[]>([]);
 
@@ -31,6 +37,36 @@ export const Browse = () => {
     isSuccess: usersIsSuccess,
     isError: usersIsError,
   } = useFetchUsers(searchParams);
+
+  // Sort users
+  const sortUsers = (sortParams: UsersSortParams) => {
+    users?.sort((a, b) => {
+      if (sortParams.age === "desc") {
+        return b.age! - a.age!;
+      }
+      if (sortParams.fameRate === "desc") {
+        return b.fameRate! - a.fameRate!;
+      }
+      if (sortParams.distance === "desc") {
+        return b.distance! - a.distance!;
+      }
+      if (sortParams.age) {
+        return a.age! - b.age!;
+      }
+      if (sortParams.fameRate) {
+        return a.fameRate! - b.fameRate!;
+      }
+      if (sortParams.distance) {
+        return a.distance! - b.distance!;
+      }
+      // TODO: Implement commonTags sorting
+      // if (sortParams.commonTags) {
+      //   return a.tags!.length - b.tags!.length;
+      // }
+      return 0;
+    });
+    setPage(1);
+  };
 
   // Pagination
   const itemsPerPage = 9;
@@ -80,6 +116,8 @@ export const Browse = () => {
         userData={userData!}
         tags={tags!}
         searchParams={searchParams}
+        sortParams={sortParams}
+        setSortParams={setSortParams}
         onSubmit={updateSearchQuery}
       />
       {content}
