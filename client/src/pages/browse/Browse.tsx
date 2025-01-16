@@ -26,10 +26,12 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const Browse = () => {
+  // State
   const [browseStatus, setBrowseStatus] = useState(false);
   const { userData, isLoading: userDataLoading } = useAuth();
   const { tags, isLoading: tagLoading } = useAuth();
-  const [page, setPage] = useState(1);
+
+  // Search and sort state
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
     gender: userData?.gender,
     sexualPreferences: userData?.preferences,
@@ -37,7 +39,11 @@ export const Browse = () => {
   const [sortParams, setSortParams] = useState<UsersSortParams>({
     age: "asc",
   });
+  const [sortedUsers, setSortedUsers] = useState<User[]>([]);
+
+  // Pagination state
   const [displayedUsers, setDisplayedUsers] = useState<User[]>([]);
+  const [page, setPage] = useState(1);
 
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
@@ -46,7 +52,7 @@ export const Browse = () => {
   };
 
   // Fetch users
-  const {
+  let {
     data: users,
     isLoading: usersIsLoading,
     isSuccess: usersIsSuccess,
@@ -54,34 +60,36 @@ export const Browse = () => {
   } = useFetchUsers(searchParams);
 
   // Sort users
-  const sortUsers = (sortParams: UsersSortParams) => {
-    users?.sort((a, b) => {
-      if (sortParams.age === "desc") {
-        return b.age! - a.age!;
-      }
-      if (sortParams.fameRate === "desc") {
-        return b.fameRate! - a.fameRate!;
-      }
-      if (sortParams.distance === "desc") {
-        return b.distance! - a.distance!;
-      }
-      if (sortParams.age) {
-        return a.age! - b.age!;
-      }
-      if (sortParams.fameRate) {
-        return a.fameRate! - b.fameRate!;
-      }
-      if (sortParams.distance) {
-        return a.distance! - b.distance!;
-      }
-      // TODO: Implement commonTags sorting
-      // if (sortParams.commonTags) {
-      //   return a.tags!.length - b.tags!.length;
-      // }
-      return 0;
-    });
+  useEffect(() => {
+    if (users) {
+      const sortedUsers = [...users].sort((a, b) => {
+        if (sortParams.age === "desc") {
+          return b.age! - a.age!;
+        }
+        if (sortParams.fameRate === "desc") {
+          return b.fameRate! - a.fameRate!;
+        }
+        if (sortParams.distance === "desc") {
+          return b.distance! - a.distance!;
+        }
+        if (sortParams.age) {
+          return a.age! - b.age!;
+        }
+        if (sortParams.fameRate) {
+          return a.fameRate! - b.fameRate!;
+        }
+        if (sortParams.distance) {
+          return a.distance! - b.distance!;
+        }
+        // TODO: CommonTags calculation to sort each user by score of common tags
+        return 0;
+      });
+      setSortedUsers(sortedUsers);
+    }
+    // Create a new array to trigger re-render
+    // Update state with new sorted array
     setPage(1);
-  };
+  }, [sortParams, users]); // Remove users from dependencies if using setUsers
 
   // Pagination
   const itemsPerPage = 9;
@@ -89,9 +97,10 @@ export const Browse = () => {
     if (users) {
       const offset = (page - 1) * itemsPerPage;
       const endOffset = offset + itemsPerPage;
-      setDisplayedUsers(users.slice(offset, endOffset));
+      setDisplayedUsers(sortedUsers.slice(offset, endOffset));
+      // setDisplayedUsers(users.slice(offset, endOffset));
     }
-  }, [page, users]);
+  }, [page, users, sortedUsers]);
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     value: number
@@ -132,6 +141,15 @@ export const Browse = () => {
   return (
     <Layout>
       <Box sx={{ width: "100%" }}>
+        <SearchBar
+          browseStatus={browseStatus}
+          userData={userData}
+          tags={tags}
+          searchParams={searchParams}
+          sortParams={sortParams}
+          setSortParams={setSortParams}
+          onSubmit={updateSearchQuery}
+        />
         <AppBar position="static" color="default">
           <Tabs
             value={browseStatus}
@@ -147,28 +165,10 @@ export const Browse = () => {
 
         <TabPanel value={browseStatus} index={false}>
           {/* Browse mode content */}
-          <SearchBar
-            browseStatus={browseStatus}
-            userData={userData}
-            tags={tags}
-            searchParams={searchParams}
-            sortParams={sortParams}
-            setSortParams={setSortParams}
-            onSubmit={updateSearchQuery}
-          />
         </TabPanel>
 
         <TabPanel value={browseStatus} index={true}>
           {/* Search mode content */}
-          <SearchBar
-            browseStatus={browseStatus}
-            userData={userData}
-            tags={tags}
-            searchParams={searchParams}
-            sortParams={sortParams}
-            setSortParams={setSortParams}
-            onSubmit={updateSearchQuery}
-          />
         </TabPanel>
         {content}
       </Box>

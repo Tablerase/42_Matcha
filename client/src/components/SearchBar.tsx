@@ -10,6 +10,7 @@ import {
   Button,
   Fab,
   Zoom,
+  colors,
 } from "@mui/material";
 import {
   Select,
@@ -36,31 +37,9 @@ import EditIcon from "@mui/icons-material/Edit";
 
 import { Tag, User, UserSearchQuery, UsersSortParams } from "@app/interfaces";
 import { MAX_AGE, MAX_FAME, MIN_AGE, MIN_FAME } from "@/utils/config";
+import def from "ajv/dist/vocabularies/discriminator";
 
 // TODO: Transform FAB to SpeedDial with multiple options
-
-const speedDialActions = [
-  {
-    icon: <StyleIcon />,
-    name: "Tags",
-    sx: { backgroundColor: "#f0f4c3" }, // light yellow
-  },
-  {
-    icon: <Diversity1Icon />,
-    name: "Fame",
-    sx: { backgroundColor: "#f8bbd0" }, // light pink
-  },
-  {
-    icon: <SocialDistanceIcon />,
-    name: "Distance",
-    sx: { backgroundColor: "#c8e6c9" }, // light green
-  },
-  {
-    icon: <DateRangeIcon />,
-    name: "Age",
-    sx: { backgroundColor: "#e3f2fd" }, // light blue
-  },
-];
 
 interface SearchBarProps {
   browseStatus: boolean;
@@ -91,6 +70,77 @@ const SearchBar = ({
   ]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
   const [drawerOpen, setDrawerOpen] = useState(false);
+
+  const getSortSpeedDialColors = (
+    sortType: string,
+    lightColor: string,
+    darkColor: string
+  ): string => {
+    const defaultColor = colors.grey[50];
+    switch (sortType) {
+      case "age":
+        if (sortParams.age === "asc") return darkColor;
+        if (sortParams.age === "desc") return lightColor;
+        else return defaultColor;
+      case "fameRate":
+        if (sortParams.fameRate === "asc") return darkColor;
+        if (sortParams.fameRate === "desc") return lightColor;
+        else return defaultColor;
+      case "distance":
+        if (sortParams.distance === "asc") return darkColor;
+        if (sortParams.distance === "desc") return lightColor;
+        else return defaultColor;
+      case "commonTags":
+        if (sortParams.commonTags === "asc") return darkColor;
+        if (sortParams.commonTags === "desc") return lightColor;
+        else return defaultColor;
+      default:
+        return defaultColor;
+    }
+  };
+
+  const speedDialActions = [
+    {
+      icon: <StyleIcon />,
+      name: "Tags",
+      sx: {
+        backgroundColor: getSortSpeedDialColors(
+          "commonTags",
+          "#f0f4c3",
+          "#9ccc65"
+        ),
+      }, // light green
+    },
+    {
+      icon: <Diversity1Icon />,
+      name: "Fame",
+      sx: {
+        backgroundColor: getSortSpeedDialColors(
+          "fameRate",
+          "#f8bbd0",
+          "#f06292"
+        ),
+      }, // light pink
+    },
+    {
+      icon: <SocialDistanceIcon />,
+      name: "Distance",
+      sx: {
+        backgroundColor: getSortSpeedDialColors(
+          "distance",
+          "#b3e5fc",
+          "#03a9f4"
+        ),
+      }, // light blue
+    },
+    {
+      icon: <DateRangeIcon />,
+      name: "Age",
+      sx: {
+        backgroundColor: getSortSpeedDialColors("age", "#ffcc80", "#ff9800"),
+      }, // light orange
+    },
+  ];
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -156,14 +206,30 @@ const SearchBar = ({
             tooltipTitle={`Sort by ${action.name}`}
             sx={action.sx}
             onClick={() => {
-              if (action.name === "Tags") {
-                // Handle tags action
-              } else if (action.name === "Distance") {
-                // Handle distance action
-              } else if (action.name === "Fame") {
-                // Handle fame action
-              } else if (action.name === "Age") {
-                // Handle age action
+              switch (action.name) {
+                case "Age":
+                  setSortParams({
+                    age: sortParams.age === "asc" ? "desc" : "asc",
+                  });
+                  break;
+                case "Fame":
+                  setSortParams({
+                    fameRate: sortParams.fameRate === "asc" ? "desc" : "asc",
+                  });
+                  break;
+                case "Distance":
+                  setSortParams({
+                    distance: sortParams.distance === "asc" ? "desc" : "asc",
+                  });
+                  break;
+                case "Tags":
+                  setSortParams({
+                    commonTags:
+                      sortParams.commonTags === "asc" ? "desc" : "asc",
+                  });
+                  break;
+                default:
+                  break;
               }
             }}
           />
