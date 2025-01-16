@@ -32,6 +32,9 @@ export const transformErrors = (
     if (error.name === "maxLength") {
       error.message = `Must be at most ${error.params.limit} characters long`;
     }
+    if (error.name === "minItems") {
+      error.message = "Choose at least one option";
+    }
     return error;
   });
 };

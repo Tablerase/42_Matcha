@@ -14,12 +14,14 @@ import { useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { routes } from "@/utils/routes";
 import { useLogout } from "@/pages/auth/authActions";
+import { useAuth } from "@/utils/authContext";
 
 export const Sidebar = () => {
   const theme = useTheme();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const logout = useLogout();
+  const { userData } = useAuth(); 
 
   const handleLogout = () => {
     logout();
@@ -56,6 +58,7 @@ export const Sidebar = () => {
           disableRipple
           disableTouchRipple
           onClick={() => navigate(routes.BROWSE)}
+          disabled={userData && !userData.dateOfBirth}
         >
           <ListItemIcon>
             <SearchIcon fontSize="small" />
