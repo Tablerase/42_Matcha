@@ -24,7 +24,7 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   }
   const [editMode, setEditMode] = useState(false);
   const [editPictures, setEditPictures] = useState(false);
-  if (editMode) {
+  if (editMode || !user.dateOfBirth) {
     return (
       <EditProfile
         user={user}
