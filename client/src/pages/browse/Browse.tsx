@@ -1,7 +1,7 @@
 import { useFetchUsers } from "./usersActions";
 import { UserSearchQuery, UsersSortParams, User } from "@app/interfaces";
 import { useState, useEffect } from "react";
-import { Pagination } from "@mui/material";
+import { Pagination, AppBar, Tabs, Tab, Box } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
@@ -9,9 +9,24 @@ import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
 import { Sort } from "@mui/icons-material";
 
+interface TabPanelProps {
+  children?: React.ReactNode;
+  value: boolean;
+  index: boolean;
+}
+
+function TabPanel(props: TabPanelProps) {
+  const { children, value, index } = props;
+
+  return (
+    <div role="tabpanel" hidden={value !== index}>
+      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
+    </div>
+  );
+}
+
 export const Browse = () => {
   const [browseStatus, setBrowseStatus] = useState(false);
-  // TODO: ADD appBar with tabs for Browse and Search modes depending on browseStatus
   const { userData, isLoading: userDataLoading } = useAuth();
   const { tags, isLoading: tagLoading } = useAuth();
   const [page, setPage] = useState(1);
@@ -110,17 +125,53 @@ export const Browse = () => {
     content = "Please log in to view";
   }
 
+  const handleChange = (event: React.SyntheticEvent, newValue: boolean) => {
+    setBrowseStatus(newValue);
+  };
+
   return (
     <Layout>
-      <SearchBar
-        userData={userData!}
-        tags={tags!}
-        searchParams={searchParams}
-        sortParams={sortParams}
-        setSortParams={setSortParams}
-        onSubmit={updateSearchQuery}
-      />
-      {content}
+      <Box sx={{ width: "100%" }}>
+        <AppBar position="static" color="default">
+          <Tabs
+            value={browseStatus}
+            onChange={handleChange}
+            indicatorColor="primary"
+            textColor="primary"
+            variant="fullWidth"
+          >
+            <Tab label="Browse" value={false} />
+            <Tab label="Search" value={true} />
+          </Tabs>
+        </AppBar>
+
+        <TabPanel value={browseStatus} index={false}>
+          {/* Browse mode content */}
+          <SearchBar
+            browseStatus={browseStatus}
+            userData={userData}
+            tags={tags}
+            searchParams={searchParams}
+            sortParams={sortParams}
+            setSortParams={setSortParams}
+            onSubmit={updateSearchQuery}
+          />
+        </TabPanel>
+
+        <TabPanel value={browseStatus} index={true}>
+          {/* Search mode content */}
+          <SearchBar
+            browseStatus={browseStatus}
+            userData={userData}
+            tags={tags}
+            searchParams={searchParams}
+            sortParams={sortParams}
+            setSortParams={setSortParams}
+            onSubmit={updateSearchQuery}
+          />
+        </TabPanel>
+        {content}
+      </Box>
     </Layout>
   );
 };

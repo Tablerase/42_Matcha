@@ -12,7 +12,6 @@ import {
   Zoom,
 } from "@mui/material";
 import {
-  InputAdornment,
   Select,
   Chip,
   OutlinedInput,
@@ -20,12 +19,51 @@ import {
   SelectChangeEvent,
 } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
+import SortIcon from "@mui/icons-material/Sort";
+import SpeedDial from "@mui/material/SpeedDial";
+import SpeedDialIcon from "@mui/material/SpeedDialIcon";
+import SpeedDialAction from "@mui/material/SpeedDialAction";
+import DateRangeIcon from "@mui/icons-material/DateRange";
+import StyleIcon from "@mui/icons-material/Style";
+import Diversity1Icon from "@mui/icons-material/Diversity1";
+import SocialDistanceIcon from "@mui/icons-material/SocialDistance";
+
+import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
+import SaveIcon from "@mui/icons-material/Save";
+import PrintIcon from "@mui/icons-material/Print";
+import ShareIcon from "@mui/icons-material/Share";
+import EditIcon from "@mui/icons-material/Edit";
+
 import { Tag, User, UserSearchQuery, UsersSortParams } from "@app/interfaces";
 import { MAX_AGE, MAX_FAME, MIN_AGE, MIN_FAME } from "@/utils/config";
 
 // TODO: Transform FAB to SpeedDial with multiple options
 
+const speedDialActions = [
+  {
+    icon: <StyleIcon />,
+    name: "Tags",
+    sx: { backgroundColor: "#f0f4c3" }, // light yellow
+  },
+  {
+    icon: <Diversity1Icon />,
+    name: "Fame",
+    sx: { backgroundColor: "#f8bbd0" }, // light pink
+  },
+  {
+    icon: <SocialDistanceIcon />,
+    name: "Distance",
+    sx: { backgroundColor: "#c8e6c9" }, // light green
+  },
+  {
+    icon: <DateRangeIcon />,
+    name: "Age",
+    sx: { backgroundColor: "#e3f2fd" }, // light blue
+  },
+];
+
 interface SearchBarProps {
+  browseStatus: boolean;
   userData?: User;
   tags?: Tag[];
   searchParams: UserSearchQuery;
@@ -35,6 +73,7 @@ interface SearchBarProps {
 }
 
 const SearchBar = ({
+  browseStatus,
   userData,
   tags,
   searchParams,
@@ -42,8 +81,14 @@ const SearchBar = ({
   setSortParams,
   onSubmit,
 }: SearchBarProps) => {
-  const [inputAge, setInputAge] = useState<number[]>([MIN_AGE, MAX_AGE]);
-  const [inputFame, setInputFame] = useState<number[]>([MIN_FAME, MAX_FAME]);
+  const [inputAge, setInputAge] = useState<number[]>([
+    searchParams.ageMin || MIN_AGE,
+    searchParams.ageMax || MAX_AGE,
+  ]);
+  const [inputFame, setInputFame] = useState<number[]>([
+    searchParams.minFameRating || MIN_FAME,
+    searchParams.maxFameRating || MAX_FAME,
+  ]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -96,78 +141,64 @@ const SearchBar = ({
     setLocalParams({ ...localParams, tags: value });
   };
 
-  return (
-    <>
-      <Zoom
-        in={true}
-        style={{
-          transitionDelay: "100ms",
-        }}
-        unmountOnExit
+  // Show the FAB sort params only
+  if (!browseStatus) {
+    return (
+      <SpeedDial
+        ariaLabel="Sort options"
+        sx={{ position: "fixed", bottom: 16, left: 16 }}
+        icon={<SortIcon />}
       >
-        <Fab
-          aria-label="manage search"
-          color="primary"
-          onClick={() => setDrawerOpen(true)}
-          style={{ position: "fixed", bottom: 16, left: 16 }}
-        >
-          <ManageSearchIcon />
-        </Fab>
-      </Zoom>
-      <Drawer
-        anchor="top"
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-      >
-        <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
-          <FormControl fullWidth sx={{ gap: 2 }}>
-            <Stack
-              spacing={2}
-              direction="row"
-              alignItems="center"
-              sx={{ ml: 5, mr: 5, mt: 4 }}
-            >
-              <Typography variant="h6" sx={{ minWidth: 80 }}>
-                Age
-              </Typography>
-              {userData?.dateOfBirth ? (
-                <Slider
-                  getAriaLabel={() => "Age Range"}
-                  valueLabelDisplay="on"
-                  value={[inputAge[0], inputAge[1]]}
-                  onChange={handleAgeSlider}
-                  min={MIN_AGE}
-                  max={MAX_AGE}
-                  marks={[
-                    {
-                      value:
-                        new Date().getFullYear() -
-                        new Date(userData!.dateOfBirth).getFullYear(),
-                      label: "Me",
-                    },
-                  ]}
-                  disableSwap
-                />
-              ) : (
-                <Slider
-                  getAriaLabel={() => "Age Range"}
-                  valueLabelDisplay="on"
-                  sx={{ m: 1 }}
-                  value={[inputAge[0], inputAge[1]]}
-                  onChange={handleAgeSlider}
-                  min={MIN_AGE}
-                  max={MAX_AGE}
-                  disableSwap
-                />
-              )}
-            </Stack>
+        {speedDialActions.map((action) => (
+          <SpeedDialAction
+            key={action.name}
+            icon={action.icon}
+            tooltipTitle={`Sort by ${action.name}`}
+            sx={action.sx}
+            onClick={() => {
+              if (action.name === "Tags") {
+                // Handle tags action
+              } else if (action.name === "Distance") {
+                // Handle distance action
+              } else if (action.name === "Fame") {
+                // Handle fame action
+              } else if (action.name === "Age") {
+                // Handle age action
+              }
+            }}
+          />
+        ))}
+      </SpeedDial>
+    );
+  }
 
-            {userData?.location === null ? (
-              <TextField
-                label="Allow location in your profile to filter by distance"
-                disabled
-              />
-            ) : (
+  // Show the FAB search params
+  else {
+    return (
+      <>
+        <Zoom
+          in={true}
+          style={{
+            transitionDelay: "100ms",
+          }}
+          unmountOnExit
+        >
+          <Fab
+            aria-label="manage search"
+            color="primary"
+            onClick={() => setDrawerOpen(true)}
+            style={{ position: "fixed", bottom: 16, left: 16 }}
+          >
+            <ManageSearchIcon />
+          </Fab>
+        </Zoom>
+        <Drawer
+          anchor="top"
+          open={drawerOpen}
+          onClose={() => setDrawerOpen(false)}
+        >
+          <Box component="form" onSubmit={handleSubmit} sx={{ p: 2 }}>
+            <FormControl fullWidth sx={{ gap: 2 }}>
               <Stack
                 spacing={2}
                 direction="row"
@@ -175,117 +206,165 @@ const SearchBar = ({
                 sx={{ ml: 5, mr: 5, mt: 4 }}
               >
                 <Typography variant="h6" sx={{ minWidth: 80 }}>
-                  Distance
+                  Age
+                </Typography>
+                {userData?.dateOfBirth ? (
+                  <Slider
+                    getAriaLabel={() => "Age Range"}
+                    valueLabelDisplay="on"
+                    value={[inputAge[0], inputAge[1]]}
+                    onChange={handleAgeSlider}
+                    min={MIN_AGE}
+                    max={MAX_AGE}
+                    marks={[
+                      {
+                        value:
+                          new Date().getFullYear() -
+                          new Date(userData!.dateOfBirth).getFullYear(),
+                        label: "Me",
+                      },
+                    ]}
+                    disableSwap
+                  />
+                ) : (
+                  <Slider
+                    getAriaLabel={() => "Age Range"}
+                    valueLabelDisplay="on"
+                    sx={{ m: 1 }}
+                    value={[inputAge[0], inputAge[1]]}
+                    onChange={handleAgeSlider}
+                    min={MIN_AGE}
+                    max={MAX_AGE}
+                    disableSwap
+                  />
+                )}
+              </Stack>
+
+              {userData?.location === null ? (
+                <TextField
+                  label="Allow location in your profile to filter by distance"
+                  disabled
+                />
+              ) : (
+                <Stack
+                  spacing={2}
+                  direction="row"
+                  alignItems="center"
+                  sx={{ ml: 5, mr: 5, mt: 4 }}
+                >
+                  <Typography variant="h6" sx={{ minWidth: 80 }}>
+                    Distance
+                  </Typography>
+                  <Slider
+                    getAriaLabel={() => "Distance"}
+                    valueLabelDisplay="auto"
+                    value={localParams.distance || 1}
+                    onChange={handleDistanceChange}
+                    min={1}
+                    max={1000}
+                    step={null}
+                    marks={[
+                      { value: 1 },
+                      { value: 5 },
+                      { value: 10 },
+                      { value: 15 },
+                      { value: 20 },
+                      { value: 30 },
+                      { value: 40 },
+                      { value: 50 },
+                      { value: 75 },
+                      { value: 100 },
+                      { value: 150 },
+                      { value: 200 },
+                      { value: 350 },
+                      { value: 500 },
+                      { value: 750 },
+                      { value: 1000 },
+                    ]}
+                    valueLabelFormat={(value) => `${value} km`}
+                  />
+                </Stack>
+              )}
+
+              <Stack
+                spacing={2}
+                direction="row"
+                alignItems="center"
+                sx={{ ml: 5, mr: 5, mt: 4 }}
+              >
+                <Typography variant="h6" sx={{ minWidth: 80 }}>
+                  Fame
                 </Typography>
                 <Slider
-                  getAriaLabel={() => "Distance"}
-                  valueLabelDisplay="auto"
-                  value={localParams.distance || 1}
-                  onChange={handleDistanceChange}
-                  min={1}
-                  max={1000}
-                  step={null}
+                  getAriaLabel={() => "Fame Range"}
+                  valueLabelDisplay="on"
+                  value={[inputFame[0], inputFame[1]]}
+                  onChange={handleFameSlider}
+                  min={MIN_FAME}
+                  max={MAX_FAME}
                   marks={[
-                    { value: 1 },
-                    { value: 5 },
-                    { value: 10 },
-                    { value: 15 },
-                    { value: 20 },
-                    { value: 30 },
-                    { value: 40 },
-                    { value: 50 },
-                    { value: 75 },
-                    { value: 100 },
-                    { value: 150 },
-                    { value: 200 },
-                    { value: 350 },
-                    { value: 500 },
-                    { value: 750 },
-                    { value: 1000 },
+                    {
+                      value: userData?.fameRate || 0,
+                      label: "Me",
+                    },
                   ]}
-                  valueLabelFormat={(value) => `${value} km`}
+                  disableSwap
+                  valueLabelFormat={(value) => `${value}%`}
                 />
               </Stack>
-            )}
 
-            <Stack
-              spacing={2}
-              direction="row"
-              alignItems="center"
-              sx={{ ml: 5, mr: 5, mt: 4 }}
-            >
-              <Typography variant="h6" sx={{ minWidth: 80 }}>
-                Fame
-              </Typography>
-              <Slider
-                getAriaLabel={() => "Fame Range"}
-                valueLabelDisplay="on"
-                value={[inputFame[0], inputFame[1]]}
-                onChange={handleFameSlider}
-                min={MIN_FAME}
-                max={MAX_FAME}
-                marks={[
-                  {
-                    value: userData?.fameRate || 0,
-                    label: "Me",
-                  },
-                ]}
-                disableSwap
-                valueLabelFormat={(value) => `${value}%`}
-              />
-            </Stack>
-
-            <Select
-              sx={{ m: 1 }}
-              multiple
-              displayEmpty
-              value={localParams.tags?.map((tag) => tag) || []}
-              onChange={handleTagsChange}
-              input={<OutlinedInput />}
-              renderValue={(selected) => {
-                if ((selected as string[]).length === 0) {
-                  return <em>Tags</em>;
-                } else
-                  return (
-                    <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
-                      {selected.map((value) => (
-                        <Chip
-                          key={value}
-                          color="primary"
-                          label={value}
-                          onMouseDown={(event) => event.stopPropagation()}
-                          onDelete={(event) => {
-                            event.stopPropagation();
-                            event.preventDefault();
-                            const newTags = localParams.tags?.filter(
-                              (tag) => tag !== value
-                            );
-                            setLocalParams({ ...localParams, tags: newTags });
-                          }}
-                        />
-                      ))}
-                    </Box>
-                  );
-              }}
-            >
-              <MenuItem disabled value="">
-                Tags
-              </MenuItem>
-              {tags?.map((tag) => (
-                <MenuItem key={tag.tag} value={tag.tag}>
-                  {tag.tag}
+              <Select
+                sx={{ m: 1 }}
+                multiple
+                displayEmpty
+                value={localParams.tags?.map((tag) => tag) || []}
+                onChange={handleTagsChange}
+                input={<OutlinedInput />}
+                renderValue={(selected) => {
+                  if ((selected as string[]).length === 0) {
+                    return <em>Tags</em>;
+                  } else
+                    return (
+                      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 0.5 }}>
+                        {selected.map((value) => (
+                          <Chip
+                            key={value}
+                            color="primary"
+                            label={value}
+                            onMouseDown={(event) => event.stopPropagation()}
+                            onDelete={(event) => {
+                              event.stopPropagation();
+                              event.preventDefault();
+                              const newTags = localParams.tags?.filter(
+                                (tag) => tag !== value
+                              );
+                              setLocalParams({ ...localParams, tags: newTags });
+                            }}
+                          />
+                        ))}
+                      </Box>
+                    );
+                }}
+              >
+                <MenuItem disabled value="">
+                  Tags
                 </MenuItem>
-              ))}
-            </Select>
+                {tags?.map((tag) => (
+                  <MenuItem key={tag.tag} value={tag.tag}>
+                    {tag.tag}
+                  </MenuItem>
+                ))}
+              </Select>
 
-            <Button type="submit" variant="contained">
-              Search
-            </Button>
-          </FormControl>
-        </Box>
-      </Drawer>
-    </>
-  );
+              <Button type="submit" variant="contained">
+                Search
+              </Button>
+            </FormControl>
+          </Box>
+        </Drawer>
+      </>
+    );
+  }
 };
 
 export default SearchBar;
