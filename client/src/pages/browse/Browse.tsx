@@ -43,6 +43,7 @@ export const Browse = () => {
     gender: userData?.gender || DEFAULT_SEARCH_PARAMS.gender,
     sexualPreferences:
       userData?.preferences || DEFAULT_SEARCH_PARAMS.sexualPreferences,
+    distance: DEFAULT_SEARCH_PARAMS.distance,
     latitude: userData?.location?.x ?? DEFAULT_SEARCH_PARAMS.latitude,
     longitude: userData?.location?.y ?? DEFAULT_SEARCH_PARAMS.longitude,
   });
