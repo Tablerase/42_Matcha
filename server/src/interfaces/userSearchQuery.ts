@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { validTags } from "./tagInterface";
 import { Gender } from "./userInterface";
+import { Order } from "./orderInterface";
 
 export interface UserSearchQuery {
   ageMin?: number;

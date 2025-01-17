@@ -70,7 +70,39 @@ class UserModel {
   async getUserById(id: number): Promise<User | null> {
     try {
       const query = {
-        text: "SELECT * FROM users WHERE id = $1",
+        text: `
+          SELECT 
+            u.id,
+            u.first_name,
+            u.last_name, 
+            u.username,
+            u.email,
+            u.gender,
+            COALESCE(
+              array_to_json(
+                array_remove(
+                  array_remove(
+                    string_to_array(regexp_replace(u.preferences::text, '[{}]', '', 'g'), ','),
+                    ''
+                  ),
+                  NULL
+                )
+              ),
+              '[]'::json
+            ) as preferences,
+            u.date_of_birth,
+            u.bio,
+            u.location,
+            u.city,
+            u.fame_rate,
+            u.last_seen,
+            COALESCE(array_to_json(ARRAY_AGG(t.tag) FILTER (WHERE t.tag IS NOT NULL)), '[]'::json) as tags
+          FROM users u
+          LEFT JOIN user_tags ut ON u.id = ut.user_id
+          LEFT JOIN tags t ON ut.tag_id = t.id
+          WHERE u.id = $1
+          GROUP BY u.id
+        `,
         values: [id],
       };
       const results: QueryResult<User> = await pool.query(query);

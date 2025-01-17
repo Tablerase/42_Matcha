@@ -48,7 +48,7 @@ export const Browse = () => {
   const [sortedUsers, setSortedUsers] = useState<SortUser[]>([]);
 
   // Pagination state
-  const [displayedUsers, setDisplayedUsers] = useState<User[]>([]);
+  const [displayedUsers, setDisplayedUsers] = useState<SortUser[]>([]);
   const [page, setPage] = useState(1);
 
   // Update search params
@@ -67,15 +67,16 @@ export const Browse = () => {
 
   // Sort users
   useEffect(() => {
-    if (users && sortParams.commonTags && userData) {
-      const sortedUsers = sortUsersByCommonTags(
-        users,
+    let sorted: SortUser[] = [];
+    if (users && sortParams.commonTags! && userData?.tags) {
+      sorted = [...users];
+      sorted = sortUsersByCommonTags(
+        sorted,
         sortParams.commonTags,
         userData.tags
       );
-      setSortedUsers(sortedUsers);
     } else if (users) {
-      const sortedUsers = [...users].sort((a, b) => {
+      sorted = [...users].sort((a, b) => {
         if (sortParams.age === Order.desc) {
           return b.age! - a.age!;
         }
@@ -96,9 +97,9 @@ export const Browse = () => {
         }
         return 0;
       });
-      setSortedUsers(sortedUsers);
     }
     // Update state with new sorted array
+    setSortedUsers(sorted);
     setPage(1);
   }, [sortParams, userData, users]); // Remove users from dependencies if using setUsers
 
@@ -123,6 +124,7 @@ export const Browse = () => {
   let content;
   if (usersIsLoading || userDataLoading || tagLoading) {
     content = <LoadingCup />;
+    return content;
   }
   if (usersIsSuccess && users) {
     content = (

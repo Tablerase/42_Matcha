@@ -95,6 +95,7 @@ export const getCurrentUser = async (
       const decoded = jwtDecode(token);
       const userId = (decoded as { id: number }).id;
       const user = await userModel.getUserById(userId);
+      // const user = await userModel.getClientUserById(userId);
       if (!user) {
         res.status(404).json({
           status: 404,

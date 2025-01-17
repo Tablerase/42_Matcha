@@ -14,7 +14,6 @@ import { formatCoordinates } from "@/utils/helpers";
 import { Image, FormData, ErrorResponse } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
 import { enqueueSnackbar } from "notistack";
-import { formatPreferences } from "@/utils/helpers";
 
 const fetchUsers = async (params?: UserSearchQuery) => {
   return await client.get("/users/search", {
@@ -79,7 +78,6 @@ const updateUser = async (data: Partial<FormData>) => {
   return user.data as User;
 };
 
-// TODO: not for current user
 export const useFetchUserById = (
   id: number
 ): QueryObserverResult<User, any> => {
@@ -107,17 +105,18 @@ export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
         email: userData.email,
         username: userData.username,
         gender: userData.gender,
-        preferences: formatPreferences(userData.preferences),
+        preferences: userData.preferences,
         dateOfBirth: userData.date_of_birth,
         bio: userData.bio,
         location: userData.location,
         city: userData.city,
         fameRate: userData.fame_rate,
         lastSeen: userData.last_seen,
+        tags: userData.tags,
       } as User;
     },
     queryKey: ["currentUser"],
-    retry: false
+    retry: false,
   });
 };
 
@@ -196,7 +195,7 @@ export const useFetchAllTags = (): QueryObserverResult<Tag[], any> => {
       return data;
     },
     queryKey: ["tags"],
-    retry: false
+    retry: false,
   });
 };
 

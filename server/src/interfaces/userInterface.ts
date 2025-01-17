@@ -28,6 +28,8 @@ export interface User {
   lastSeen?: Date;
   created?: Date;
   updated?: Date;
+  // Details
+  tags?: Tag[];
 }
 
 export interface PublicUser {
