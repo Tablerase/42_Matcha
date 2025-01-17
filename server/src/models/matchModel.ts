@@ -16,8 +16,8 @@ class MatchModel {
       text: `INSERT INTO matches (user_id1, user_id2)
             SELECT $1, $2
             WHERE NOT EXISTS (
-              SELECT 1 FROM matches WHERE user_id1 = $1 AND user_id2) = $2
-            )`,
+              SELECT 1 FROM matches WHERE user_id1 = $1 AND user_id2 = $2)
+            `,
       values: [userId, matchedUserId],
     };
     const result: QueryResult = await pool.query(query);

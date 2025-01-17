@@ -16,6 +16,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingCup from "./LoadingCup/LoadingCup";
 import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
+import { deepPurple, grey } from "@mui/material/colors";
 
 export const UserCard = ({ user }: UserCardProps) => {
   const { data: profilePic, isLoading: profilePicIsLoading } =
@@ -120,9 +121,9 @@ export const UserCard = ({ user }: UserCardProps) => {
               position: "absolute",
               top: 8,
               right: 8,
-              backgroundColor: "rgba(255, 255, 255, 0.7)",
+              backgroundColor: grey[50],
               "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.9)",
+                backgroundColor: grey[300],
               },
               zIndex: 1,
             }}

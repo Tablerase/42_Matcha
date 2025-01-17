@@ -36,8 +36,6 @@ import {
 } from "@app/interfaces";
 import { MAX_AGE, MAX_FAME, MIN_AGE, MIN_FAME } from "@/utils/config";
 
-// TODO: Transform FAB to SpeedDial with multiple options
-
 interface SearchBarProps {
   browseStatus: boolean;
   userData?: User;
