@@ -13,6 +13,7 @@ import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
 import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
+import { DEFAULT_SEARCH_PARAMS, MAX_AGE, MIN_AGE } from "@/utils/config";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -31,15 +32,19 @@ function TabPanel(props: TabPanelProps) {
 }
 
 export const Browse = () => {
+  /* _____________________________ State ____________________________ */
   // State
   const [browseStatus, setBrowseStatus] = useState(false);
   const { userData, isLoading: userDataLoading } = useAuth();
   const { tags, isLoading: tagLoading } = useAuth();
-
   // Search and sort state
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
-    gender: userData?.gender,
-    sexualPreferences: userData?.preferences,
+    // ...DEFAULT_SEARCH_PARAMS,
+    gender: userData?.gender || DEFAULT_SEARCH_PARAMS.gender,
+    sexualPreferences:
+      userData?.preferences || DEFAULT_SEARCH_PARAMS.sexualPreferences,
+    latitude: userData?.location?.x ?? DEFAULT_SEARCH_PARAMS.latitude,
+    longitude: userData?.location?.y ?? DEFAULT_SEARCH_PARAMS.longitude,
   });
   const [sortParams, setSortParams] = useState<UsersSortParams>({
     age: Order.asc,
@@ -50,11 +55,24 @@ export const Browse = () => {
   const [displayedUsers, setDisplayedUsers] = useState<SortUser[]>([]);
   const [page, setPage] = useState(1);
 
+  /* _____________________________ Search Params ____________________________ */
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
     setSearchParams(params);
     setPage(1);
   };
+  // Update search params when UserData loads
+  // useEffect(() => {
+  //   if (userData) {
+  //     setSearchParams((prev) => ({
+  //       ...prev,
+  //       gender: userData.gender || prev.gender,
+  //       sexualPreferences: userData.preferences || prev.sexualPreferences,
+  //       latitude: userData.location?.x ?? prev.latitude,
+  //       longitude: userData.location?.y ?? prev.longitude,
+  //     }));
+  //   }
+  // }, [userData]);
 
   // Fetch users
   let {
@@ -63,14 +81,18 @@ export const Browse = () => {
     isSuccess: usersIsSuccess,
     isError: usersIsError,
   } = useFetchUsers(searchParams);
-  // TODO: Change fetch to /users/search to add distance, age, fameRate to query params
-  if (browseStatus === true && usersIsSuccess && users) {
-    let sorted = [...users];
-    sorted = sortWeightedUsers(userData!, sorted);
-    setSortedUsers(sorted);
-    setPage(1);
-  }
 
+  // Browse mode
+  // useEffect(() => {
+  //   if (browseStatus === true && users && userData) {
+  //     let sorted = [...users!];
+  //     sorted = sortWeightedUsers(userData!, sorted);
+  //     setSortedUsers(sorted);
+  //     setPage(1);
+  //   }
+  // }, [browseStatus, users, userData]);
+
+  /* _____________________________ Sort Params ____________________________ */
   // Sort users
   useEffect(() => {
     let sorted: SortUser[] = [];
@@ -109,7 +131,7 @@ export const Browse = () => {
     setPage(1);
   }, [sortParams, userData, users]); // Remove users from dependencies if using setUsers
 
-  // Pagination
+  /* _____________________________ Pagination ____________________________ */
   const itemsPerPage = 9;
   useEffect(() => {
     if (users) {
@@ -126,7 +148,7 @@ export const Browse = () => {
     setPage(value);
   };
 
-  // Content rendering
+  /* _____________________________ Content ____________________________ */
   let content;
   if (usersIsLoading || userDataLoading || tagLoading) {
     content = <LoadingCup />;

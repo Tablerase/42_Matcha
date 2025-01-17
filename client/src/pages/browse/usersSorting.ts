@@ -45,8 +45,8 @@ export const sortUsersByCommonTags = (
 const criteriaWeights = {
   age: 0.1,
   fameRate: 0.2,
-  distance: 0.4,
-  tags: 0.3,
+  distance: 0.3,
+  tags: 0.4,
 };
 
 const calculateUserScore = (user: SortUser, currentUser: User): number => {
