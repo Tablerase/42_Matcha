@@ -2,7 +2,6 @@ import { useFetchUsers } from "./usersActions";
 import {
   UserSearchQuery,
   UsersSortParams,
-  User,
   SortUser,
   Order,
 } from "@app/interfaces";
@@ -13,7 +12,7 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
-import { sortUsersByCommonTags } from "./usersSorting";
+import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -64,6 +63,13 @@ export const Browse = () => {
     isSuccess: usersIsSuccess,
     isError: usersIsError,
   } = useFetchUsers(searchParams);
+  // TODO: Change fetch to /users/search to add distance, age, fameRate to query params
+  if (browseStatus === true && usersIsSuccess && users) {
+    let sorted = [...users];
+    sorted = sortWeightedUsers(userData!, sorted);
+    setSortedUsers(sorted);
+    setPage(1);
+  }
 
   // Sort users
   useEffect(() => {

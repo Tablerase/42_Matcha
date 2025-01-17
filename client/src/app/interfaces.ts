@@ -120,6 +120,9 @@ export interface UserSearchQuery {
 export interface SortUser extends User {
   totalScore?: number;
   commonTags?: number;
+  ageScore?: number;
+  distanceScore?: number;
+  fameRateScore?: number;
 }
 
 export interface UsersSortParams {

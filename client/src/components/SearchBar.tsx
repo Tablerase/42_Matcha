@@ -186,6 +186,34 @@ const SearchBar = ({
     setLocalParams({ ...localParams, tags: value });
   };
 
+  const handleSort = (actionName: string) => {
+    switch (actionName) {
+      case "Age":
+        setSortParams({
+          age: sortParams.age === Order.asc ? Order.desc : Order.asc,
+        });
+        break;
+      case "Fame":
+        setSortParams({
+          fameRate: sortParams.fameRate === Order.asc ? Order.desc : Order.asc,
+        });
+        break;
+      case "Distance":
+        setSortParams({
+          distance: sortParams.distance === Order.asc ? Order.desc : Order.asc,
+        });
+        break;
+      case "Tags":
+        setSortParams({
+          commonTags:
+            sortParams.commonTags === Order.asc ? Order.desc : Order.asc,
+        });
+        break;
+      default:
+        break;
+    }
+  };
+
   // Show the FAB sort params only
   if (!browseStatus) {
     return (
@@ -200,41 +228,7 @@ const SearchBar = ({
             icon={action.icon}
             tooltipTitle={`Sort by ${action.name}`}
             sx={action.sx}
-            onClick={() => {
-              switch (action.name) {
-                case "Age":
-                  setSortParams({
-                    age: sortParams.age === Order.asc ? Order.desc : Order.asc,
-                  });
-                  break;
-                case "Fame":
-                  setSortParams({
-                    fameRate:
-                      sortParams.fameRate === Order.asc
-                        ? Order.desc
-                        : Order.asc,
-                  });
-                  break;
-                case "Distance":
-                  setSortParams({
-                    distance:
-                      sortParams.distance === Order.asc
-                        ? Order.desc
-                        : Order.asc,
-                  });
-                  break;
-                case "Tags":
-                  setSortParams({
-                    commonTags:
-                      sortParams.commonTags === Order.asc
-                        ? Order.desc
-                        : Order.asc,
-                  });
-                  break;
-                default:
-                  break;
-              }
-            }}
+            onClick={() => handleSort(action.name)}
           />
         ))}
       </SpeedDial>
@@ -261,7 +255,9 @@ const SearchBar = ({
             }}
             icon={<ManageSearchIcon />}
             title="Advanced search"
-            onClick={() => setDrawerOpen(true)}
+            // TODO: Add a way to open the drawer on click / long press instead of temporary double click
+            // Prevent the drawer from opening on with each speed dial action
+            onDoubleClick={() => setDrawerOpen(true)}
           >
             {speedDialActions.map((action) => (
               <SpeedDialAction
@@ -269,42 +265,7 @@ const SearchBar = ({
                 icon={action.icon}
                 tooltipTitle={`Sort by ${action.name}`}
                 sx={action.sx}
-                onClick={() => {
-                  switch (action.name) {
-                    case "Age":
-                      setSortParams({
-                        age:
-                          sortParams.age === Order.asc ? Order.desc : Order.asc,
-                      });
-                      break;
-                    case "Fame":
-                      setSortParams({
-                        fameRate:
-                          sortParams.fameRate === Order.asc
-                            ? Order.desc
-                            : Order.asc,
-                      });
-                      break;
-                    case "Distance":
-                      setSortParams({
-                        distance:
-                          sortParams.distance === Order.asc
-                            ? Order.desc
-                            : Order.asc,
-                      });
-                      break;
-                    case "Tags":
-                      setSortParams({
-                        commonTags:
-                          sortParams.commonTags === Order.asc
-                            ? Order.desc
-                            : Order.asc,
-                      });
-                      break;
-                    default:
-                      break;
-                  }
-                }}
+                onClick={() => handleSort(action.name)}
               />
             ))}
           </SpeedDial>
