@@ -21,7 +21,6 @@ export const UserCard = ({ user }: UserCardProps) => {
   const { data: profilePic, isLoading: profilePicIsLoading } =
     useFetchUserProfilePic(user.id);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [showProfile, setShowProfile] = useState(false);
 
   // Check if user is liked
   const { data: isUserLiked, refetch: refetchLikeStatus } = useQuery({
@@ -84,7 +83,7 @@ export const UserCard = ({ user }: UserCardProps) => {
     );
   }
   const open = Boolean(anchorEl);
-  const id = open ? 'profile-popover' : undefined;
+  const id = open ? "profile-popover" : undefined;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -92,16 +91,15 @@ export const UserCard = ({ user }: UserCardProps) => {
 
   const handleClose = () => {
     setAnchorEl(null);
-    setShowProfile(false);
   };
 
   return (
     <>
-      <Box 
+      <Box
         onClick={handleClick}
-        sx={{ 
-          cursor: 'pointer',
-          '&:hover': { opacity: 0.9 }
+        sx={{
+          cursor: "pointer",
+          "&:hover": { opacity: 0.9 },
         }}
       >
         <Card
@@ -138,7 +136,10 @@ export const UserCard = ({ user }: UserCardProps) => {
           <CardMedia
             component="img"
             height="200"
-            image={profilePic?.url || "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"}
+            image={
+              profilePic?.url ||
+              "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+            }
             alt={`${user.username}'s profile picture`}
             sx={{ objectFit: "cover" }}
           />
@@ -179,7 +180,7 @@ export const UserCard = ({ user }: UserCardProps) => {
         }}
       >
         {/* <Box sx={{ p: 2 }}> */}
-          <Profile me={false} user={user} userIsSuccess={true}/>
+        <Profile me={false} user={user} userIsSuccess={true} />
         {/* </Box> */}
       </Popover>
     </>

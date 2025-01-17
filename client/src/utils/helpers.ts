@@ -1,5 +1,10 @@
 export function formatCoordinates(obj: any) {
-  if (typeof obj !== 'object' || obj === null || !('x' in obj) || !('y' in obj)) {
+  if (
+    typeof obj !== "object" ||
+    obj === null ||
+    !("x" in obj) ||
+    !("y" in obj)
+  ) {
     return "";
   }
   const { x, y } = obj;
@@ -7,14 +12,15 @@ export function formatCoordinates(obj: any) {
 }
 
 export const isValidEmail = (email: string): boolean => {
-  const emailRegex = /^([A-Z0-9_+-]+\.?)*[A-Z0-9_+-]@([A-Z0-9][A-Z0-9\-]*\.)+[A-Z]{2,}$/i;
+  const emailRegex =
+    /^([A-Z0-9_+-]+\.?)*[A-Z0-9_+-]@([A-Z0-9][A-Z0-9-]*\.)+[A-Z]{2,}$/i;
   return emailRegex.test(email);
 };
 
 export const isValidUsername = (username: string): boolean => {
   const usernameRegex = /^[a-zA-Z0-9_]*$/;
   return usernameRegex.test(username);
-}
+};
 
 export async function getIpData() {
   try {
@@ -33,9 +39,13 @@ export async function getIpData() {
 export const capitalize = (str?: string): string => {
   if (!str) return "";
   return str.charAt(0).toUpperCase() + str.slice(1);
-}
+};
 
 export const formatPreferences = (preferences: string): string[] => {
   if (!preferences) return [];
-  return preferences.slice(1).slice(0, -1).split(",").map((preference) => preference.trim());
-}
+  return preferences
+    .slice(1)
+    .slice(0, -1)
+    .split(",")
+    .map((preference) => preference.trim());
+};

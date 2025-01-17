@@ -22,22 +22,20 @@ import {
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import SortIcon from "@mui/icons-material/Sort";
 import SpeedDial from "@mui/material/SpeedDial";
-import SpeedDialIcon from "@mui/material/SpeedDialIcon";
 import SpeedDialAction from "@mui/material/SpeedDialAction";
 import DateRangeIcon from "@mui/icons-material/DateRange";
 import StyleIcon from "@mui/icons-material/Style";
 import Diversity1Icon from "@mui/icons-material/Diversity1";
 import SocialDistanceIcon from "@mui/icons-material/SocialDistance";
 
-import FileCopyIcon from "@mui/icons-material/FileCopyOutlined";
-import SaveIcon from "@mui/icons-material/Save";
-import PrintIcon from "@mui/icons-material/Print";
-import ShareIcon from "@mui/icons-material/Share";
-import EditIcon from "@mui/icons-material/Edit";
-
-import { Tag, User, UserSearchQuery, UsersSortParams } from "@app/interfaces";
+import {
+  Order,
+  Tag,
+  User,
+  UserSearchQuery,
+  UsersSortParams,
+} from "@app/interfaces";
 import { MAX_AGE, MAX_FAME, MIN_AGE, MIN_FAME } from "@/utils/config";
-import def from "ajv/dist/vocabularies/discriminator";
 
 // TODO: Transform FAB to SpeedDial with multiple options
 
@@ -79,20 +77,20 @@ const SearchBar = ({
     const defaultColor = colors.grey[50];
     switch (sortType) {
       case "age":
-        if (sortParams.age === "asc") return darkColor;
-        if (sortParams.age === "desc") return lightColor;
+        if (sortParams.age === Order.asc) return darkColor;
+        if (sortParams.age === Order.desc) return lightColor;
         else return defaultColor;
       case "fameRate":
-        if (sortParams.fameRate === "asc") return darkColor;
-        if (sortParams.fameRate === "desc") return lightColor;
+        if (sortParams.fameRate === Order.asc) return darkColor;
+        if (sortParams.fameRate === Order.desc) return lightColor;
         else return defaultColor;
       case "distance":
-        if (sortParams.distance === "asc") return darkColor;
-        if (sortParams.distance === "desc") return lightColor;
+        if (sortParams.distance === Order.asc) return darkColor;
+        if (sortParams.distance === Order.desc) return lightColor;
         else return defaultColor;
       case "commonTags":
-        if (sortParams.commonTags === "asc") return darkColor;
-        if (sortParams.commonTags === "desc") return lightColor;
+        if (sortParams.commonTags === Order.asc) return darkColor;
+        if (sortParams.commonTags === Order.desc) return lightColor;
         else return defaultColor;
       default:
         return defaultColor;
@@ -209,23 +207,31 @@ const SearchBar = ({
               switch (action.name) {
                 case "Age":
                   setSortParams({
-                    age: sortParams.age === "asc" ? "desc" : "asc",
+                    age: sortParams.age === Order.asc ? Order.desc : Order.asc,
                   });
                   break;
                 case "Fame":
                   setSortParams({
-                    fameRate: sortParams.fameRate === "asc" ? "desc" : "asc",
+                    fameRate:
+                      sortParams.fameRate === Order.asc
+                        ? Order.desc
+                        : Order.asc,
                   });
                   break;
                 case "Distance":
                   setSortParams({
-                    distance: sortParams.distance === "asc" ? "desc" : "asc",
+                    distance:
+                      sortParams.distance === Order.asc
+                        ? Order.desc
+                        : Order.asc,
                   });
                   break;
                 case "Tags":
                   setSortParams({
                     commonTags:
-                      sortParams.commonTags === "asc" ? "desc" : "asc",
+                      sortParams.commonTags === Order.asc
+                        ? Order.desc
+                        : Order.asc,
                   });
                   break;
                 default:

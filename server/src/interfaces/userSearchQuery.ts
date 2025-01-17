@@ -14,7 +14,7 @@ export interface UserSearchQuery {
   minFameRating?: number;
   maxFameRating?: number;
   sortBy?: "distance" | "age" | "fameRating";
-  order?: "asc" | "desc";
+  order?: Order;
   limit?: number;
   offset?: number;
 }

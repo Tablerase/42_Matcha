@@ -1,5 +1,11 @@
 import { useFetchUsers } from "./usersActions";
-import { UserSearchQuery, UsersSortParams, User } from "@app/interfaces";
+import {
+  UserSearchQuery,
+  UsersSortParams,
+  User,
+  SortUser,
+  Order,
+} from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination, AppBar, Tabs, Tab, Box } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
@@ -7,7 +13,7 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
-import { Sort } from "@mui/icons-material";
+import { sortUsersByCommonTags } from "./usersSorting";
 
 interface TabPanelProps {
   children?: React.ReactNode;
@@ -37,9 +43,9 @@ export const Browse = () => {
     sexualPreferences: userData?.preferences,
   });
   const [sortParams, setSortParams] = useState<UsersSortParams>({
-    age: "asc",
+    age: Order.asc,
   });
-  const [sortedUsers, setSortedUsers] = useState<User[]>([]);
+  const [sortedUsers, setSortedUsers] = useState<SortUser[]>([]);
 
   // Pagination state
   const [displayedUsers, setDisplayedUsers] = useState<User[]>([]);
@@ -61,15 +67,22 @@ export const Browse = () => {
 
   // Sort users
   useEffect(() => {
-    if (users) {
+    if (users && sortParams.commonTags && userData) {
+      const sortedUsers = sortUsersByCommonTags(
+        users,
+        sortParams.commonTags,
+        userData.tags
+      );
+      setSortedUsers(sortedUsers);
+    } else if (users) {
       const sortedUsers = [...users].sort((a, b) => {
-        if (sortParams.age === "desc") {
+        if (sortParams.age === Order.desc) {
           return b.age! - a.age!;
         }
-        if (sortParams.fameRate === "desc") {
+        if (sortParams.fameRate === Order.desc) {
           return b.fameRate! - a.fameRate!;
         }
-        if (sortParams.distance === "desc") {
+        if (sortParams.distance === Order.desc) {
           return b.distance! - a.distance!;
         }
         if (sortParams.age) {
@@ -81,15 +94,13 @@ export const Browse = () => {
         if (sortParams.distance) {
           return a.distance! - b.distance!;
         }
-        // TODO: CommonTags calculation to sort each user by score of common tags
         return 0;
       });
       setSortedUsers(sortedUsers);
     }
-    // Create a new array to trigger re-render
     // Update state with new sorted array
     setPage(1);
-  }, [sortParams, users]); // Remove users from dependencies if using setUsers
+  }, [sortParams, userData, users]); // Remove users from dependencies if using setUsers
 
   // Pagination
   const itemsPerPage = 9;

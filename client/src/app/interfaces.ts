@@ -1,6 +1,11 @@
 import { SelectChangeEvent } from "@mui/material";
 import { ReactNode } from "react";
 
+export enum Order {
+  asc = "asc",
+  desc = "desc",
+}
+
 export interface UserLogin {
   username: string;
   password: string;
@@ -107,16 +112,21 @@ export interface UserSearchQuery {
   minFameRating?: number;
   maxFameRating?: number;
   sortBy?: "distance" | "age" | "fameRating";
-  order?: "asc" | "desc";
+  order?: Order;
   limit?: number;
   offset?: number;
 }
 
+export interface SortUser extends User {
+  totalScore?: number;
+  commonTags?: number;
+}
+
 export interface UsersSortParams {
-  age?: "asc" | "desc";
-  fameRate?: "asc" | "desc";
-  distance?: "asc" | "desc";
-  commonTags?: "asc" | "desc";
+  age?: Order;
+  fameRate?: Order;
+  distance?: Order;
+  commonTags?: Order;
 }
 
 export interface UserCardProps {
