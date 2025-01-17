@@ -8,7 +8,6 @@ import {
   TextField,
   Typography,
   Button,
-  Fab,
   Zoom,
   colors,
 } from "@mui/material";
@@ -255,14 +254,62 @@ const SearchBar = ({
           }}
           unmountOnExit
         >
-          <Fab
-            aria-label="manage search"
-            color="primary"
+          <SpeedDial
+            ariaLabel="Manage search and sort options"
+            sx={{
+              position: "fixed",
+              bottom: 16,
+              left: 16,
+            }}
+            icon={<ManageSearchIcon />}
+            title="Advanced search"
             onClick={() => setDrawerOpen(true)}
-            style={{ position: "fixed", bottom: 16, left: 16 }}
           >
-            <ManageSearchIcon />
-          </Fab>
+            {speedDialActions.map((action) => (
+              <SpeedDialAction
+                key={action.name}
+                icon={action.icon}
+                tooltipTitle={`Sort by ${action.name}`}
+                sx={action.sx}
+                onClick={() => {
+                  switch (action.name) {
+                    case "Age":
+                      setSortParams({
+                        age:
+                          sortParams.age === Order.asc ? Order.desc : Order.asc,
+                      });
+                      break;
+                    case "Fame":
+                      setSortParams({
+                        fameRate:
+                          sortParams.fameRate === Order.asc
+                            ? Order.desc
+                            : Order.asc,
+                      });
+                      break;
+                    case "Distance":
+                      setSortParams({
+                        distance:
+                          sortParams.distance === Order.asc
+                            ? Order.desc
+                            : Order.asc,
+                      });
+                      break;
+                    case "Tags":
+                      setSortParams({
+                        commonTags:
+                          sortParams.commonTags === Order.asc
+                            ? Order.desc
+                            : Order.asc,
+                      });
+                      break;
+                    default:
+                      break;
+                  }
+                }}
+              />
+            ))}
+          </SpeedDial>
         </Zoom>
         <Drawer
           anchor="top"
