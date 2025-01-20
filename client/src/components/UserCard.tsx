@@ -134,7 +134,7 @@ export const UserCard = ({ user }: UserCardProps) => {
             {/* <FavoriteIcon /> */}
             {isUserLiked ? <Favorite /> : <FavoriteBorder />}
           </IconButton>
-          <CardMedia
+          {/* <CardMedia
             component="img"
             height="200"
             image={
@@ -143,7 +143,16 @@ export const UserCard = ({ user }: UserCardProps) => {
             }
             alt={`${user.username}'s profile picture`}
             sx={{ objectFit: "cover" }}
-          />
+          /> */}
+          <ul>
+            <li> Username: {user.username}</li>
+            <li> Age: {user.age} years</li>
+            <li> FameRate: {user.fameRate}</li>
+            <li> Distance: {user.distance} km</li>
+            <li> TotalScore: {user.totalScore}</li>
+            <li> CommonTags: {user.commonTags}</li>
+            <li>Tags: {user.tags?.map((tag) => tag).join(", ") || ""}</li>
+          </ul>
           <CardContent>
             <Box
               sx={{

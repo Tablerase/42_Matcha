@@ -215,7 +215,7 @@ const SearchBar = ({
   };
 
   // Show the FAB sort params only
-  if (!browseStatus) {
+  if (browseStatus) {
     return (
       <SpeedDial
         ariaLabel="Sort options"

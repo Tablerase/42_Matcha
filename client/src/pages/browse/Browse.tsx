@@ -47,8 +47,11 @@ export const Browse = () => {
     latitude: userData?.location?.x ?? DEFAULT_SEARCH_PARAMS.latitude,
     longitude: userData?.location?.y ?? DEFAULT_SEARCH_PARAMS.longitude,
   });
-  const [sortParams, setSortParams] = useState<UsersSortParams>({});
+  const [sortParams, setSortParams] = useState<UsersSortParams>({
+    age: Order.asc,
+  });
   const [sortedUsers, setSortedUsers] = useState<SortUser[]>([]);
+  const [browseUsers, setBrowseUsers] = useState<SortUser[]>([]);
 
   // Pagination state
   const [displayedUsers, setDisplayedUsers] = useState<SortUser[]>([]);
@@ -57,7 +60,9 @@ export const Browse = () => {
   /* _____________________________ Search Params ____________________________ */
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
+    console.log("Updating search query");
     setSearchParams(params);
+    setSortParams({ age: Order.asc });
     setPage(1);
   };
   // Update search params when UserData loads
@@ -81,14 +86,27 @@ export const Browse = () => {
     isError: usersIsError,
   } = useFetchUsers(searchParams);
 
-  // Browse mode
+  /* _____________________________ Browse Mode ____________________________ */
+  /**
+   * Browse mode will sort users by weighted score
+   * @param browseStatus - browse mode status
+   * @param users - users list filtered by search or by default params
+   * @param userData - current user data
+   * @returns browseUsers - sorted users list by weighted score
+   * @returns sortParams - sort params for browse mode
+   * @returns page - current page
+   * @note browseUsers will be updated when users or userData changes (so when search params changes)
+   * @todo Maybe change the way browseUsers is updated not to depend on users like search mode
+   */
   useEffect(() => {
-    console.log("Users", users, "UserData", userData, "Browse", browseStatus);
     if (browseStatus === true && users && userData) {
-      console.log("Sorting users");
+      console.log("Sorting users by weighted score");
       let sorted = [...users!];
       sorted = sortWeightedUsers(userData!, sorted);
-      setSortedUsers(sorted);
+      setSortParams({
+        totalScore: Order.desc,
+      });
+      setBrowseUsers(sorted);
       setPage(1);
     }
   }, [browseStatus, users, userData]);
@@ -96,16 +114,37 @@ export const Browse = () => {
   /* _____________________________ Sort Params ____________________________ */
   // Sort users
   useEffect(() => {
+    console.log("Sorting users");
+    console.log(
+      "sortParams",
+      sortParams,
+      "browseStatus",
+      browseStatus,
+      "browseUsers",
+      browseUsers,
+      "sortedUsers",
+      sortedUsers
+    );
+    let to_sort: SortUser[] = [];
+    if (browseStatus) {
+      to_sort = [...browseUsers];
+    } else {
+      to_sort = users ? [...users] : [];
+    }
     let sorted: SortUser[] = [];
-    if (users && sortParams.commonTags! && userData?.tags) {
-      sorted = [...users];
+    if (to_sort && sortParams.commonTags! && userData?.tags) {
+      sorted = [...to_sort];
       sorted = sortUsersByCommonTags(
         sorted,
         sortParams.commonTags,
         userData.tags
       );
-    } else if (users) {
-      sorted = [...users].sort((a, b) => {
+    } else if (
+      to_sort &&
+      (sortParams.age! || sortParams.fameRate! || sortParams.distance!)
+    ) {
+      console.log("Sorting users by sort params");
+      sorted = [...to_sort].sort((a, b) => {
         if (sortParams.age === Order.desc) {
           return b.age! - a.age!;
         }
@@ -126,11 +165,13 @@ export const Browse = () => {
         }
         return 0;
       });
+    } else {
+      sorted = to_sort;
     }
     // Update state with new sorted array
     setSortedUsers(sorted);
     setPage(1);
-  }, [sortParams, userData, users]); // Remove users from dependencies if using setUsers
+  }, [sortParams, browseStatus, browseUsers, userData, users]); // Do not include sortedUsers here to avoid infinite loop
 
   /* _____________________________ Pagination ____________________________ */
   const itemsPerPage = 9;

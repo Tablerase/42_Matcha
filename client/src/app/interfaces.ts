@@ -37,11 +37,11 @@ export interface User {
 }
 
 export interface UserCardProps {
-  user: User;
+  user: SortUser;
 }
 
 export interface UserListProps {
-  users: User[];
+  users: SortUser[];
 }
 
 export interface FormData {
@@ -130,14 +130,7 @@ export interface UsersSortParams {
   fameRate?: Order;
   distance?: Order;
   commonTags?: Order;
-}
-
-export interface UserCardProps {
-  user: User;
-}
-
-export interface UserListProps {
-  users: User[];
+  totalScore?: Order;
 }
 
 export interface UserUpdateFormProps {
