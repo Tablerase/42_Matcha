@@ -34,7 +34,7 @@ function TabPanel(props: TabPanelProps) {
 export const Browse = () => {
   /* _____________________________ State ____________________________ */
   // State
-  const [browseStatus, setBrowseStatus] = useState(false);
+  const [browseStatus, setBrowseStatus] = useState(true);
   const { userData, isLoading: userDataLoading } = useAuth();
   const { tags, isLoading: tagLoading } = useAuth();
   // Search and sort state
@@ -47,9 +47,7 @@ export const Browse = () => {
     latitude: userData?.location?.x ?? DEFAULT_SEARCH_PARAMS.latitude,
     longitude: userData?.location?.y ?? DEFAULT_SEARCH_PARAMS.longitude,
   });
-  const [sortParams, setSortParams] = useState<UsersSortParams>({
-    age: Order.asc,
-  });
+  const [sortParams, setSortParams] = useState<UsersSortParams>({});
   const [sortedUsers, setSortedUsers] = useState<SortUser[]>([]);
 
   // Pagination state
@@ -63,17 +61,17 @@ export const Browse = () => {
     setPage(1);
   };
   // Update search params when UserData loads
-  // useEffect(() => {
-  //   if (userData) {
-  //     setSearchParams((prev) => ({
-  //       ...prev,
-  //       gender: userData.gender || prev.gender,
-  //       sexualPreferences: userData.preferences || prev.sexualPreferences,
-  //       latitude: userData.location?.x ?? prev.latitude,
-  //       longitude: userData.location?.y ?? prev.longitude,
-  //     }));
-  //   }
-  // }, [userData]);
+  useEffect(() => {
+    if (userData) {
+      setSearchParams((prev) => ({
+        ...prev,
+        gender: userData.gender || prev.gender,
+        sexualPreferences: userData.preferences || prev.sexualPreferences,
+        latitude: userData.location?.x ?? prev.latitude,
+        longitude: userData.location?.y ?? prev.longitude,
+      }));
+    }
+  }, [userData]);
 
   // Fetch users
   let {
@@ -84,14 +82,16 @@ export const Browse = () => {
   } = useFetchUsers(searchParams);
 
   // Browse mode
-  // useEffect(() => {
-  //   if (browseStatus === true && users && userData) {
-  //     let sorted = [...users!];
-  //     sorted = sortWeightedUsers(userData!, sorted);
-  //     setSortedUsers(sorted);
-  //     setPage(1);
-  //   }
-  // }, [browseStatus, users, userData]);
+  useEffect(() => {
+    console.log("Users", users, "UserData", userData, "Browse", browseStatus);
+    if (browseStatus === true && users && userData) {
+      console.log("Sorting users");
+      let sorted = [...users!];
+      sorted = sortWeightedUsers(userData!, sorted);
+      setSortedUsers(sorted);
+      setPage(1);
+    }
+  }, [browseStatus, users, userData]);
 
   /* _____________________________ Sort Params ____________________________ */
   // Sort users
@@ -200,16 +200,16 @@ export const Browse = () => {
             textColor="primary"
             variant="fullWidth"
           >
-            <Tab label="Browse" value={false} />
-            <Tab label="Search" value={true} />
+            <Tab label="Browse" value={true} />
+            <Tab label="Search" value={false} />
           </Tabs>
         </AppBar>
 
-        <TabPanel value={browseStatus} index={false}>
+        <TabPanel value={browseStatus} index={true}>
           {/* Browse mode content */}
         </TabPanel>
 
-        <TabPanel value={browseStatus} index={true}>
+        <TabPanel value={browseStatus} index={false}>
           {/* Search mode content */}
         </TabPanel>
         {content}
