@@ -60,7 +60,6 @@ export const Browse = () => {
   /* _____________________________ Search Params ____________________________ */
   // Update search params
   const updateSearchQuery = (params: UserSearchQuery) => {
-    console.log("Updating search query");
     setSearchParams(params);
     setSortParams({ age: Order.asc });
     setPage(1);
@@ -100,9 +99,8 @@ export const Browse = () => {
    */
   useEffect(() => {
     if (browseStatus === true && users && userData) {
-      console.log("Sorting users by weighted score");
       let sorted = [...users!];
-      sorted = sortWeightedUsers(userData!, sorted);
+      sorted = sortWeightedUsers(userData!, sorted, itemsPerPage * 4);
       setSortParams({
         totalScore: Order.desc,
       });
@@ -114,17 +112,6 @@ export const Browse = () => {
   /* _____________________________ Sort Params ____________________________ */
   // Sort users
   useEffect(() => {
-    console.log("Sorting users");
-    console.log(
-      "sortParams",
-      sortParams,
-      "browseStatus",
-      browseStatus,
-      "browseUsers",
-      browseUsers,
-      "sortedUsers",
-      sortedUsers
-    );
     let to_sort: SortUser[] = [];
     if (browseStatus) {
       to_sort = [...browseUsers];
@@ -143,7 +130,6 @@ export const Browse = () => {
       to_sort &&
       (sortParams.age! || sortParams.fameRate! || sortParams.distance!)
     ) {
-      console.log("Sorting users by sort params");
       sorted = [...to_sort].sort((a, b) => {
         if (sortParams.age === Order.desc) {
           return b.age! - a.age!;
