@@ -1,7 +1,7 @@
 name: matcha
 
 services:
-  db:
+  database:
     image: postgres:17
     environment:
       POSTGRES_USER: ${POSTGRES_USER}
