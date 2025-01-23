@@ -21,7 +21,7 @@ export const Sidebar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const logout = useLogout();
-  const { userData } = useAuth(); 
+  const { userData } = useAuth();
 
   const handleLogout = () => {
     logout();
@@ -42,8 +42,12 @@ export const Sidebar = () => {
               justifyContent: "space-around",
             }
           : {
+              position: "fixed",
               flexDirection: "column",
+              minHeight: "100%",
+              right: 0,
               padding: 0,
+              flexGrow: 1,
             }),
       }}
     >
