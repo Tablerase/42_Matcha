@@ -15,26 +15,11 @@ import SearchBar from "@components/SearchBar";
 import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
 import { DEFAULT_SEARCH_PARAMS, MAX_AGE, MIN_AGE } from "@/utils/config";
 
-interface TabPanelProps {
-  children?: React.ReactNode;
-  value: boolean;
-  index: boolean;
-}
-
-function TabPanel(props: TabPanelProps) {
-  const { children, value, index } = props;
-
-  return (
-    <div role="tabpanel" hidden={value !== index}>
-      {value === index && <Box sx={{ p: 3 }}>{children}</Box>}
-    </div>
-  );
-}
-
 export const Browse = () => {
   /* _____________________________ State ____________________________ */
   // State
   const [browseStatus, setBrowseStatus] = useState(true);
+  const [tabValue, setTabValue] = useState(0);
   const { userData, isLoading: userDataLoading } = useAuth();
   const { tags, isLoading: tagLoading } = useAuth();
   // Search and sort state
@@ -204,7 +189,8 @@ export const Browse = () => {
   }
 
   const handleChange = (event: React.SyntheticEvent, newValue: boolean) => {
-    setBrowseStatus(newValue);
+    setBrowseStatus(!browseStatus);
+    setTabValue(newValue ? 1 : 0);
   };
 
   return (
@@ -221,24 +207,18 @@ export const Browse = () => {
         />
         <AppBar position="static" color="default">
           <Tabs
-            value={browseStatus}
+            value={tabValue}
             onChange={handleChange}
             indicatorColor="primary"
             textColor="primary"
             variant="fullWidth"
+            aria-label="browse or search tabs"
           >
-            <Tab label="Browse" value={true} />
-            <Tab label="Search" value={false} />
+            <Tab label="Browse" />
+            <Tab label="Search" />
           </Tabs>
         </AppBar>
 
-        <TabPanel value={browseStatus} index={true}>
-          {/* Browse mode content */}
-        </TabPanel>
-
-        <TabPanel value={browseStatus} index={false}>
-          {/* Search mode content */}
-        </TabPanel>
         {content}
       </Box>
     </Layout>
