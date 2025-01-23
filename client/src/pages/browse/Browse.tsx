@@ -14,6 +14,7 @@ import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
 import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
 import { DEFAULT_SEARCH_PARAMS, MAX_AGE, MIN_AGE } from "@/utils/config";
+import { theme } from "@components/theme";
 
 export const Browse = () => {
   /* _____________________________ State ____________________________ */
@@ -209,8 +210,8 @@ export const Browse = () => {
           <Tabs
             value={tabValue}
             onChange={handleChange}
-            indicatorColor="primary"
-            textColor="primary"
+            indicatorColor="secondary"
+            textColor="secondary"
             variant="fullWidth"
             aria-label="browse or search tabs"
           >

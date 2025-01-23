@@ -54,9 +54,10 @@ const palette = {
   },
   action: {
     // Buttons and links hover effects
-    hover: deepPurple[50],
+    hover: deepPurple["A100"],
     // Selected elements
-    selected: lightGreen["A200"],
+    // selected: lightGreen["A200"],
+    selected: deepPurple[50],
   },
 };
 

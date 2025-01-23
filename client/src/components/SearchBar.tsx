@@ -18,6 +18,7 @@ import {
   MenuItem,
   SelectChangeEvent,
 } from "@mui/material";
+import { useMediaQuery, useTheme } from "@mui/material";
 import ManageSearchIcon from "@mui/icons-material/ManageSearch";
 import SortIcon from "@mui/icons-material/Sort";
 import SpeedDial from "@mui/material/SpeedDial";
@@ -65,6 +66,8 @@ const SearchBar = ({
   ]);
   const [localParams, setLocalParams] = useState<UserSearchQuery>(searchParams);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const theme = useTheme();
+  const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   const getSortSpeedDialColors = (
     sortType: string,
@@ -219,7 +222,11 @@ const SearchBar = ({
     return (
       <SpeedDial
         ariaLabel="Sort options"
-        sx={{ position: "fixed", bottom: 16, left: 16 }}
+        sx={
+          isMobile
+            ? { position: "fixed", bottom: 72, left: 16 }
+            : { position: "fixed", bottom: 16, left: 16 }
+        }
         icon={<SortIcon />}
       >
         {speedDialActions.map((action) => (
@@ -248,11 +255,11 @@ const SearchBar = ({
         >
           <SpeedDial
             ariaLabel="Manage search and sort options"
-            sx={{
-              position: "fixed",
-              bottom: 16,
-              left: 16,
-            }}
+            sx={
+              isMobile
+                ? { position: "fixed", bottom: 72, left: 16 }
+                : { position: "fixed", bottom: 16, left: 16 }
+            }
             icon={<ManageSearchIcon />}
             title="Advanced search"
             // TODO: Add a way to open the drawer on click / long press instead of temporary double click

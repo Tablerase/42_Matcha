@@ -11,10 +11,58 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import { MatchaNavBar } from "./MatchaNavBar";
 import Box from "@mui/material/Box";
 import { useTheme, useMediaQuery } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { routes } from "@/utils/routes";
 import { useLogout } from "@/pages/auth/authActions";
 import { useAuth } from "@/utils/authContext";
+import { theme } from "./theme";
+
+interface SidebarButtonProps {
+  isMobile: boolean;
+  route: string;
+  icon: React.ReactNode;
+  label: string;
+  disabled?: boolean;
+  onClick: () => void;
+}
+
+const getButtonStyles = (isActive: boolean, isMobile?: boolean) => ({
+  backgroundColor: isActive ? theme.palette.action.selected : "transparent",
+  borderRadius: isActive ? "12px" : "0", // Keep rounded corners on hover
+  transform: isActive ? "scale(1.2)" : "", // Grow on hover
+  paddingRight: "1rem",
+  margin: isMobile ? 0 : "0.3rem 0",
+  "&:hover": {
+    backgroundColor: isActive
+      ? theme.palette.action.selected
+      : theme.palette.action.hover,
+  },
+});
+
+const SidebarButton = ({
+  isMobile,
+  route,
+  icon,
+  label,
+  disabled,
+  onClick,
+}: SidebarButtonProps) => {
+  const location = useLocation();
+  const isActive = location.pathname === route;
+
+  return (
+    <ListItemButton
+      disableRipple
+      disableTouchRipple
+      onClick={onClick}
+      disabled={disabled}
+      sx={getButtonStyles(isActive, isMobile)}
+    >
+      <ListItemIcon>{icon}</ListItemIcon>
+      {!isMobile && <ListItemText>{label}</ListItemText>}
+    </ListItemButton>
+  );
+};
 
 export const Sidebar = () => {
   const theme = useTheme();
@@ -27,21 +75,50 @@ export const Sidebar = () => {
     logout();
   };
 
+  const sidebarItems = [
+    {
+      route: routes.BROWSE,
+      icon: <SearchIcon fontSize="small" />,
+      label: "Browse",
+      disabled: userData && !userData.dateOfBirth,
+    },
+    {
+      route: routes.MATCHES,
+      icon: <FavoriteIcon fontSize="small" />,
+      label: "Matches",
+    },
+    {
+      route: routes.ME,
+      icon: <AccountCircleIcon fontSize="small" />,
+      label: "Profile",
+    },
+    {
+      route: routes.CHAT,
+      icon: <ChatIcon fontSize="small" />,
+      label: "Chat",
+    },
+    {
+      route: "",
+      icon: <NotificationsIcon fontSize="small" />,
+      label: "Notifications",
+    },
+  ];
+
   return (
     <MatchaNavBar
       sx={{
         display: "flex",
         ...(isMobile
           ? {
+              // Mobile styles
               flexDirection: "row",
               position: "fixed",
               bottom: 0,
               width: "100%",
-              // height: "auto",
               padding: 0,
-              justifyContent: "space-around",
             }
           : {
+              // Desktop styles
               position: "fixed",
               flexDirection: "column",
               minHeight: "100%",
@@ -58,54 +135,17 @@ export const Sidebar = () => {
           width: "100%",
         }}
       >
-        <ListItemButton
-          disableRipple
-          disableTouchRipple
-          onClick={() => navigate(routes.BROWSE)}
-          disabled={userData && !userData.dateOfBirth}
-        >
-          <ListItemIcon>
-            <SearchIcon fontSize="small" />
-          </ListItemIcon>
-          {!isMobile && <ListItemText>Browse</ListItemText>}
-        </ListItemButton>
-        <ListItemButton
-          disableRipple
-          disableTouchRipple
-          onClick={() => navigate(routes.MATCHES)}
-        >
-          <ListItemIcon>
-            <FavoriteIcon fontSize="small" />
-          </ListItemIcon>
-          {!isMobile && <ListItemText>Matches</ListItemText>}
-        </ListItemButton>
-        <ListItemButton
-          disableRipple
-          disableTouchRipple
-          onClick={() => navigate(routes.ME)}
-        >
-          <ListItemIcon>
-            <AccountCircleIcon fontSize="small" />
-          </ListItemIcon>
-          {!isMobile && <ListItemText>Profile</ListItemText>}
-        </ListItemButton>
-        <ListItemButton
-          disableRipple
-          disableTouchRipple
-          onClick={() => navigate(routes.CHAT)}
-        >
-          <ListItemIcon>
-            <ChatIcon fontSize="small" />
-          </ListItemIcon>
-          {!isMobile && <ListItemText>Chat</ListItemText>}
-        </ListItemButton>
-        {/* TODO: When clicking on Notifications show Drawer */}
-        <ListItemButton disableRipple disableTouchRipple>
-          <ListItemIcon>
-            <NotificationsIcon fontSize="small" />
-          </ListItemIcon>
-          {!isMobile && <ListItemText>Notifications</ListItemText>}
-        </ListItemButton>
+        {sidebarItems.map((item) => (
+          <SidebarButton
+            isMobile={isMobile}
+            key={item.route}
+            route={item.route}
+            icon={item.icon}
+            label={item.label}
+            disabled={item.disabled}
+            onClick={() => navigate(item.route)}
+          />
+        ))}
       </Box>
       <Box
         sx={{
@@ -115,7 +155,12 @@ export const Sidebar = () => {
       >
         {!isMobile && <Divider />}
         {/* Logout */}
-        <ListItemButton disableRipple disableTouchRipple onClick={handleLogout}>
+        <ListItemButton
+          disableRipple
+          disableTouchRipple
+          onClick={handleLogout}
+          sx={getButtonStyles(false, isMobile)}
+        >
           <ListItemIcon>
             <LogoutIcon fontSize="small" />
           </ListItemIcon>
