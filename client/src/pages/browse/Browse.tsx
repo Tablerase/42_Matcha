@@ -14,7 +14,6 @@ import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
 import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
 import { DEFAULT_SEARCH_PARAMS, MAX_AGE, MIN_AGE } from "@/utils/config";
-import { theme } from "@components/theme";
 
 export const Browse = () => {
   /* _____________________________ State ____________________________ */

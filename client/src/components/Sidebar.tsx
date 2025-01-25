@@ -8,6 +8,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import LogoutIcon from "@mui/icons-material/Logout";
 import NotificationsIcon from "@mui/icons-material/Notifications";
+import InsightsIcon from "@mui/icons-material/Insights";
 import { MatchaNavBar } from "./MatchaNavBar";
 import Box from "@mui/material/Box";
 import { useTheme, useMediaQuery } from "@mui/material";
@@ -88,6 +89,11 @@ export const Sidebar = () => {
       label: "Matches",
     },
     {
+      route: routes.INSIGHTS,
+      icon: <InsightsIcon fontSize="small" />,
+      label: "Insights",
+    },
+    {
       route: routes.ME,
       icon: <AccountCircleIcon fontSize="small" />,
       label: "Profile",
@@ -116,6 +122,15 @@ export const Sidebar = () => {
               bottom: 0,
               width: "100%",
               padding: 0,
+              overflowX: "auto", // Enable horizontal scrolling
+              overflowY: "hidden", // Prevent vertical scrolling
+              whiteSpace: "nowrap", // Prevent content wrapping
+              WebkitOverflowScrolling: "touch", // Smooth scrolling on iOS
+              scrollbarWidth: "none", // Hide scrollbar in Firefox
+              "&::-webkit-scrollbar": {
+                // Hide scrollbar in Chrome/Safari
+                display: "none",
+              },
             }
           : {
               // Desktop styles

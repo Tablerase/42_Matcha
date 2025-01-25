@@ -21,10 +21,10 @@ export const Home = () => {
         Welcome to Matcha
       </Typography>
       <Stack spacing={2} direction="row">
-        <Button variant="outlined" onClick={() => navigate(routes.LOGIN)}>
+        <Button variant="contained" onClick={() => navigate(routes.LOGIN)}>
           Log in
         </Button>
-        <Button variant="outlined" onClick={() => navigate(routes.REGISTER)}>
+        <Button variant="contained" onClick={() => navigate(routes.REGISTER)}>
           Sign up
         </Button>
       </Stack>

@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AuthProvider, ProtectedRoute } from "@utils/authContext";
 import { SnackbarProvider } from "notistack";
+import { Insights } from "@/pages/insights/Insights";
 export const queryClient = new QueryClient();
 
 export const App = () => {
@@ -36,6 +37,7 @@ export const App = () => {
                   <Route path={routes.BROWSE} element={<Browse />} />
                   <Route path={routes.ME} element={<ProfilePage />} />
                   <Route path={routes.CHAT} element={<Chat />} />
+                  <Route path={routes.INSIGHTS} element={<Insights />} />
                 </Route>
               </Routes>
             </SnackbarProvider>
