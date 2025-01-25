@@ -195,7 +195,16 @@ export const Browse = () => {
 
   return (
     <Layout>
-      <Box sx={{ width: "100%" }}>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          alignItems: "center",
+          height: "100%",
+          width: "100%",
+        }}
+      >
         <SearchBar
           browseStatus={browseStatus}
           userData={userData}
