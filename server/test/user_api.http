@@ -1,4 +1,4 @@
-@authToken = eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNjUyNTU3MiwiZXhwIjoxNzM3MTMwMzcyfQ.P_UepiWm7Y3ujq5WVv9G3TfRAkBR0fExLEvyAt15_d0
+@authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNzgyNjE5OCwiZXhwIjoxNzM4NDMwOTk4fQ.umFi9trAcvmZRucngS0GvPb3EoCK39ujvh7Ir4CNzXU
 ###
 
 GET http://localhost:8000/users
@@ -15,7 +15,7 @@ Cookie: authToken={{authToken}}
 
 ### Get all likes
 
-GET http://localhost:8000/users/1/likes
+GET http://localhost:8000/users/16/likes
 Cookie: authToken={{authToken}}
 
 ### Add like

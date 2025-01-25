@@ -88,16 +88,6 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     `;
     await pool.query(insertMsgsQuery);
 
-    // Insert data into the `views` table
-    console.log("Inserting views...");
-    const insertViewsQuery = `
-      INSERT INTO views (viewer_user_id, viewed_user_id)
-      VALUES
-        (1, 2),
-        (2, 1);
-    `;
-    await pool.query(insertViewsQuery);
-
     console.log("Fixtures completed successfully!");
   } catch (error) {
     console.error("Error inserting fixtures:", error);

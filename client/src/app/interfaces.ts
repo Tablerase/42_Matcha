@@ -154,3 +154,17 @@ export interface ErrorResponse {
   message?: string;
   status: number;
 }
+
+export interface UserView {
+  id: number;
+  viewerId: number;
+  viewedId: number;
+  viewedAt: Date;
+}
+
+export interface UserLike {
+  id: number;
+  likerId: number;
+  likedId: number;
+  likedAt: Date;
+}
