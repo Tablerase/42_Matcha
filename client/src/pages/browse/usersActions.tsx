@@ -48,16 +48,6 @@ export const useFetchUsers = (params?: UserSearchQuery) => {
   });
 };
 
-const fetchUserById = async (id: number): Promise<AxiosResponse<User, any>> => {
-  return await client.get<User>(`/users/${id}`, { withCredentials: true });
-};
-
-const fetchCurrentUser = async (): Promise<
-  AxiosResponse<UserResponse, any>
-> => {
-  return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
-};
-
 const updateUser = async (data: Partial<FormData>) => {
   const coordinates = formatCoordinates(data.location);
   const updates = {
@@ -78,19 +68,10 @@ const updateUser = async (data: Partial<FormData>) => {
   return user.data as User;
 };
 
-export const useFetchUserById = (
-  id: number
-): QueryObserverResult<User, any> => {
-  return useQuery<User, any>({
-    queryFn: async ({ queryKey }) => {
-      const userId = queryKey[1] as number;
-      const response = await fetchUserById(userId);
-      // Access the nested user data
-      const userData = response.data;
-      return userData as User;
-    },
-    queryKey: ["currentUser", id],
-  });
+const fetchCurrentUser = async (): Promise<
+  AxiosResponse<UserResponse, any>
+> => {
+  return await client.get<UserResponse>(`/users/me`, { withCredentials: true });
 };
 
 export const useFetchCurrentUser = (): QueryObserverResult<User, any> => {
