@@ -185,7 +185,6 @@ export const Insights = () => {
           <List>
             <ListItem>Insight 1</ListItem>
             <ListItem>Insight 2</ListItem>
-            <ListItem>Insight 3</ListItem>
           </List>
         </Paper>
         <Paper

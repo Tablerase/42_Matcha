@@ -48,9 +48,15 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_s
 ```
 
+### Favicon
+
+- [Tea Cup - Solar Icons](https://www.svgrepo.com/svg/527916/tea-cup)
+- [Matcha Tea mug Icon by Freepik - SVG not free](https://www.flaticon.com/free-icons/tea-mug)
+
 ### Loading
 
 - [Codepen - Tea cup loading](https://codepen.io/oviedofer97/pen/dyNzQeX)
 
 ### Notifications
+
 - https://notistack.com/features/customization#custom-variant-(typescript)
