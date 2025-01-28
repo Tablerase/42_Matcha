@@ -40,6 +40,18 @@ export const getUserLikes = async (
 ): Promise<void> => {
   try {
     const userId = parseInt(req.params.id);
+    if (!userId) {
+      handleBadRequestResponse(res, "userId is required");
+      return;
+    }
+    if (req?.user?.id !== userId) {
+      handleForbiddenResponse(
+        res,
+        "You are not authorized to view this user's likes"
+      );
+      return;
+    }
+
     const likes = await likeModel.getUserLikes(userId!);
     res.status(200).json({ status: 200, data: likes });
   } catch (error) {

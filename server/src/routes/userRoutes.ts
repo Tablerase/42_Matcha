@@ -5,6 +5,7 @@ import * as TagViews from "@views/tagViews";
 import * as LikeViews from "@views/likeViews";
 import * as MatchViews from "@views/matchViews";
 import * as ImageViews from "@views/imageViews";
+import * as ViewsViews from "@views/viewViews";
 import {
   getUserBlockedUsers,
   blockUser,
@@ -39,6 +40,8 @@ router.get("/:id/liked", LikeViews.checkUserLiked);
 router.get("/:id/likes", LikeViews.getUserLikes);
 router.post("/:id/likes", LikeViews.addUserLike);
 router.delete("/:id/likes", LikeViews.deleteUserLike);
+
+router.get("/:id/views", ViewsViews.getUserViewes);
 
 router.get("/:id/matches", MatchViews.getUserMatches);
 router.delete("/:id/matches", MatchViews.deleteUserMatch);

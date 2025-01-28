@@ -16,12 +16,17 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { ReactElement, useState } from "react";
 import { useAuth } from "@/utils/authContext";
 import { useLikes, useViews, useFetchUserById } from "./insightsHooks";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserLike, UserView } from "@/app/interfaces";
+
+// Future improvements:
+// - Add a "Load more" button to fetch more likes/views when there are too many
+// - Use profile images instead of icons in the list
 
 interface InsightsListProps {
   Icon: ReactElement;
@@ -93,6 +98,8 @@ const InsightsItem = ({
             secondary={
               "likedAt" in item && item.likedAt instanceof Date
                 ? format(item.likedAt)
+                : "viewedAt" in item && item.viewedAt instanceof Date
+                ? format(item.viewedAt)
                 : "No date available"
             }
           ></ListItemText>
@@ -120,6 +127,9 @@ const InsightsItem = ({
 };
 
 const InsightsList = ({ Icon, ListItems }: InsightsListProps) => {
+  if (ListItems === undefined || ListItems.length === 0) {
+    return <Typography>No data available</Typography>;
+  }
   if ((ListItems[0] as UserLike).likedAt !== undefined) {
     ListItems = ListItems as UserLike[];
   } else {
@@ -174,25 +184,26 @@ export const Insights = () => {
     );
   }
 
-  if (userDataSuccess && likesSuccess) {
+  if (userDataSuccess && likesSuccess && viewsSuccess) {
     content = (
       <>
         <Paper
           elevation={3}
           sx={{ padding: "16px", width: { xs: "90%", md: "auto" } }}
         >
-          <Typography variant="h4">Views</Typography>
-          <List>
-            <ListItem>Insight 1</ListItem>
-            <ListItem>Insight 2</ListItem>
-          </List>
+          <Typography variant="h4" sx={{ textAlign: "center" }}>
+            Likes
+          </Typography>
+          <InsightsList Icon={<FavoriteIcon />} ListItems={likes} />
         </Paper>
         <Paper
           elevation={3}
           sx={{ padding: "16px", width: { xs: "90%", md: "auto" } }}
         >
-          <Typography variant="h4">Likes</Typography>
-          <InsightsList Icon={<FavoriteIcon />} ListItems={likes} />
+          <Typography variant="h4" sx={{ textAlign: "center" }}>
+            Views
+          </Typography>
+          <InsightsList Icon={<VisibilityIcon />} ListItems={views} />
         </Paper>
       </>
     );
@@ -205,7 +216,10 @@ export const Insights = () => {
           display: "flex",
           flexDirection: { xs: "column", md: "row" }, // Column on mobile, row on desktop
           justifyContent: "center",
-          alignItems: "center",
+          alignItems: {
+            xs: "center",
+            md: "flex-start",
+          },
           height: "100%",
           marginTop: "24px",
           gap: {

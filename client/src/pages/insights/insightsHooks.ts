@@ -11,7 +11,6 @@ export const useFetchUserById = (id: number) => {
     queryFn: async ({ queryKey }) => {
       const userId = queryKey[1] as number;
       const response = await fetchUserById(userId);
-      // Access the nested user data
       const user = response.data.data;
       return {
         id: user.id,
@@ -32,8 +31,19 @@ export const useFetchUserById = (id: number) => {
   });
 };
 
+/* __________________________________ Views __________________________________ */
+
+interface ApiViewResponse {
+  id: number;
+  viewer_user_id: number;
+  viewed_user_id: number;
+  view_count: number;
+  last_viewed_at: string;
+  created_at: string;
+}
+
 const fetchUserViews = async (id: number) => {
-  return await client.get<UserView[]>(`/users/${id}/views`, {
+  return await client.get(`/users/${id}/views`, {
     withCredentials: true,
   });
 };
@@ -42,11 +52,19 @@ export const useViews = (id: number) => {
   return useQuery<UserView[], any>({
     queryFn: async () => {
       const response = await fetchUserViews(id);
-      return response.data;
+      const data = response.data.data.map((view: ApiViewResponse) => ({
+        id: view.id,
+        viewerId: view.viewer_user_id,
+        viewedId: view.viewed_user_id,
+        viewedAt: new Date(view.last_viewed_at),
+      })) as UserView[];
+      return data;
     },
     queryKey: ["views", id],
   });
 };
+
+/* __________________________________ Likes __________________________________ */
 
 interface ApiLikeResponse {
   id: number;
