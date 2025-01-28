@@ -25,6 +25,10 @@ class ViewModel {
   }
 
   async addUserView(userId: number, viewedUserId: number): Promise<boolean> {
+    // Future improvement:
+    // - improve the logic to prevent spamming views
+    // (current time check is not enough - buggy double request at exact same time with debug tools)
+
     const lastViewTime = await this.getLastViewTime(userId, viewedUserId);
 
     if (lastViewTime) {
