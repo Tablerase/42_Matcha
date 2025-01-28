@@ -16,6 +16,7 @@ import { ProfilePictures } from "@/components/ProfilePictures";
 import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
 import { FameLinearProgress } from "@/components/FameLinearProgress";
+import { client } from "@/utils/axios";
 
 export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   if (!user.dateOfBirth) {
@@ -43,6 +44,16 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
       />
     );
   }
+
+  // Add a view to the user's profile or Update the view
+  if (me === false && user.id) {
+    try {
+      client.post(`/users/${user.id}/views/`);
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   return (
     <>
       <Stack spacing={3}>

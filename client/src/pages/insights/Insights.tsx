@@ -162,13 +162,13 @@ export const Insights = () => {
     isLoading: likesLoading,
     isSuccess: likesSuccess,
     error: likesErrors,
-  } = useLikes(userData?.id ?? 0);
+  } = useLikes(userData?.id);
   const {
     data: views,
     isLoading: viewsLoading,
     isSuccess: viewsSuccess,
     error: viewsErrors,
-  } = useViews(userData?.id ?? 0);
+  } = useViews(userData?.id);
 
   /* _____________________________ Render ____________________________ */
   let content;

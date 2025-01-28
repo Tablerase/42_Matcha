@@ -41,7 +41,8 @@ router.get("/:id/likes", LikeViews.getUserLikes);
 router.post("/:id/likes", LikeViews.addUserLike);
 router.delete("/:id/likes", LikeViews.deleteUserLike);
 
-router.get("/:id/views", ViewsViews.getUserViewes);
+router.get("/:id/views", ViewsViews.getUserViews);
+router.post("/:id/views", ViewsViews.addUserView);
 
 router.get("/:id/matches", MatchViews.getUserMatches);
 router.delete("/:id/matches", MatchViews.deleteUserMatch);

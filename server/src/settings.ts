@@ -154,10 +154,11 @@ async function seed() {
         id SERIAL PRIMARY KEY,
         viewer_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         viewed_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        view_count INTEGER DEFAULT 1,
-        last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(viewer_user_id, viewed_user_id)
+        view_count INTEGER DEFAULT 1 NOT NULL CHECK (view_count > 0),
+        last_viewed_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        UNIQUE(viewer_user_id, viewed_user_id),
+        CHECK (viewer_user_id != viewed_user_id)
       );
     `;
     await pool.query(createViewsTableQuery);
@@ -167,8 +168,9 @@ async function seed() {
         id SERIAL PRIMARY KEY, 
         liker_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
         liked_user_id INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        UNIQUE(liker_user_id, liked_user_id)
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
+        UNIQUE(liker_user_id, liked_user_id),
+        CHECK (liker_user_id != liked_user_id)
       );
     `;
     await pool.query(createLikesTableQuery);

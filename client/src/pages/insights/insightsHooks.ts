@@ -43,15 +43,18 @@ interface ApiViewResponse {
 }
 
 const fetchUserViews = async (id: number) => {
+  if (!id || id === 0 || id === undefined) {
+    return { data: { data: [] } };
+  }
   return await client.get(`/users/${id}/views`, {
     withCredentials: true,
   });
 };
 
-export const useViews = (id: number) => {
+export const useViews = (id: number | undefined) => {
   return useQuery<UserView[], any>({
     queryFn: async () => {
-      const response = await fetchUserViews(id);
+      const response = await fetchUserViews(id!);
       const data = response.data.data.map((view: ApiViewResponse) => ({
         id: view.id,
         viewerId: view.viewer_user_id,
@@ -74,15 +77,18 @@ interface ApiLikeResponse {
 }
 
 const fetchUserLikes = async (id: number) => {
+  if (!id || id === 0 || id === undefined) {
+    return { data: { data: [] } };
+  }
   return await client.get(`/users/${id}/likes`, {
     withCredentials: true,
   });
 };
 
-export const useLikes = (id: number) => {
+export const useLikes = (id: number | undefined) => {
   return useQuery<UserLike[], any>({
     queryFn: async () => {
-      const response = await fetchUserLikes(id);
+      const response = await fetchUserLikes(id!);
       const data = response.data.data.map((like: ApiLikeResponse) => ({
         id: like.id,
         likerId: like.liker_user_id,

@@ -14,7 +14,7 @@ const app: Application = express();
 
 // Middleware with proper typing
 app.use(cookieParser());
-app.use(express.json({ limit: '1mb' })); // for pic upload
+app.use(express.json({ limit: "1mb" })); // for pic upload
 app.use(bodyParser.json() as RequestHandler);
 app.use(
   bodyParser.urlencoded({
