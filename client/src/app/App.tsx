@@ -5,6 +5,7 @@ import { Signup } from "@pages/auth/Signup";
 import { Login } from "@pages/auth/Login";
 import { Matches } from "@pages/browse/Matches";
 import { Browse } from "@pages/browse/Browse";
+import { Notifications } from "@pages/notifications/Notifications";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
 import { Chat } from "@pages/chat/Chat";
 import { ThemeProvider } from "@emotion/react";
@@ -38,6 +39,10 @@ export const App = () => {
                   <Route path={routes.ME} element={<ProfilePage />} />
                   <Route path={routes.CHAT} element={<Chat />} />
                   <Route path={routes.INSIGHTS} element={<Insights />} />
+                  <Route
+                    path={routes.NOTIFICATIONS}
+                    element={<Notifications />}
+                  />
                 </Route>
               </Routes>
             </SnackbarProvider>

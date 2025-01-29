@@ -8,4 +8,5 @@ export const routes = {
   CHAT: "/chat",
   INSIGHTS: "/insights",
   MATCHES: "/matches",
+  NOTIFICATIONS: "/notifications",
 };

@@ -104,7 +104,7 @@ export const Sidebar = () => {
       label: "Chat",
     },
     {
-      route: "",
+      route: routes.NOTIFICATIONS,
       icon: <NotificationsIcon fontSize="small" />,
       label: "Notifications",
     },

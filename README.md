@@ -38,25 +38,32 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 
 - [React Leaflet](https://react-leaflet.js.org/)
 
+## Notifications
+
+### Socket notif
+
+- https://medium.com/@hirenchavda141/from-scratch-to-real-time-building-a-notification-system-with-node-js-typescript-and-socket-io-2aa869dece40
+
+### UI notif
+
+- https://notistack.com/features/customization#custom-variant-(typescript)
+
+### Database notif
+
+- https://tannguyenit95.medium.com/designing-a-notification-system-1da83ca971bc
+
 ## Resources
 
 ### Images
 
-- [Unsplash](https://unsplash.com/)
-
-```http
-https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_s
-```
+- [OpenLicence Image Sharing - Unsplash](https://unsplash.com/)
+- [Unsplash - teacup filled with matcha tea](https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_s)
 
 ### Favicon
 
-- [Tea Cup - Solar Icons](https://www.svgrepo.com/svg/527916/tea-cup)
+- [Tea Cup by Solar Icons](https://www.svgrepo.com/svg/527916/tea-cup)
 - [Matcha Tea mug Icon by Freepik - SVG not free](https://www.flaticon.com/free-icons/tea-mug)
 
 ### Loading
 
-- [Codepen - Tea cup loading](https://codepen.io/oviedofer97/pen/dyNzQeX)
-
-### Notifications
-
-- https://notistack.com/features/customization#custom-variant-(typescript)
+- [Codepen - Tea cup loading by oviedofer97](https://codepen.io/oviedofer97/pen/dyNzQeX)
