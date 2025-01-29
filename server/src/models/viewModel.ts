@@ -25,27 +25,8 @@ class ViewModel {
   }
 
   async addUserView(userId: number, viewedUserId: number): Promise<boolean> {
-    const lastViewTime = await this.getLastViewTime(userId, viewedUserId);
-
-    if (lastViewTime) {
-      const timeDiff = Date.now() - lastViewTime.getTime();
-      if (timeDiff < 60000) {
-        // 60000ms = 1 minute
-        return false;
-      }
-    }
-
-    // const query = {
-    //   text: `
-    //     INSERT INTO views (viewer_user_id, viewed_user_id, view_count, last_viewed_at)
-    //     VALUES ($1, $2, 1, NOW())
-    //     ON CONFLICT (viewer_user_id, viewed_user_id)
-    //     DO UPDATE SET
-    //       view_count = views.view_count + 1,
-    //       last_viewed_at = NOW()
-    //   `,
-    //   values: [userId, viewedUserId],
-    // };
+    // Future improvement:
+    // Add a rate limit to prevent a user from viewing another user's profile too frequently
 
     // Optimized query to prevent too many updates of view_count and last_viewed_at for a short period of time
     const query = {
