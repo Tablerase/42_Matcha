@@ -4,7 +4,11 @@ import { Navigate, Outlet } from "react-router-dom";
 import { client } from "./axios";
 import { Tag, User } from "@/app/interfaces";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
-import { useFetchAllTags, useFetchCurrentUser } from "@/pages/browse/usersActions";
+import {
+  useFetchAllTags,
+  useFetchCurrentUser,
+} from "@/pages/browse/usersActions";
+import { socket, SOCKET_EVENTS } from "./socket";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -22,7 +26,12 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-  const {data: userData, isLoading: userDataLoading, isError, isSuccess} = useFetchCurrentUser();
+  const {
+    data: userData,
+    isLoading: userDataLoading,
+    isError,
+    isSuccess,
+  } = useFetchCurrentUser();
   const { data: tags, isLoading: tagLoading } = useFetchAllTags();
 
   const checkAuthStatus = async () => {
@@ -34,8 +43,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
       if (response.status === 200) {
         if (response.data.isAuthenticated === true) {
-          console.log("User is authenticated");
+          console.log("User is authenticated", response.data);
           setIsAuthenticated(true);
+          if (response.data.userId) {
+            const userRoom = `user_${response.data.userId}_${socket.id}`;
+            console.log("Joining user room: ", userRoom);
+            socket.emit(SOCKET_EVENTS.JOIN, userRoom);
+          }
         } else {
           console.log("User not authenticated: " + response.data.message);
           setIsAuthenticated(false);
@@ -68,7 +82,16 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isAuthenticated, login, logout, isLoading, userData, isError, isSuccess, tags }}
+      value={{
+        isAuthenticated,
+        login,
+        logout,
+        isLoading,
+        userData,
+        isError,
+        isSuccess,
+        tags,
+      }}
     >
       {children}
     </AuthContext.Provider>

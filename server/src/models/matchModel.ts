@@ -24,8 +24,12 @@ class MatchModel {
     return result.rows;
   }
 
-  async checkForMatch(likerUserId: number, likedUserId: number): Promise<void> {
+  async checkForMatch(
+    likerUserId: number,
+    likedUserId: number
+  ): Promise<boolean> {
     // TODO: Better check
+
     // Check if the liked user has also liked the liker user
     const query = {
       text: `SELECT (liker_user_id, liked_user_id) FROM likes WHERE liker_user_id = $1 AND liked_user_id = $2`,
@@ -35,8 +39,10 @@ class MatchModel {
     // If the liked user has also liked the liker user, create a match
     if (result.rows.length > 0) {
       await this.addUserMatch(likerUserId, likedUserId);
+      return true;
       // await this.addUserMatch(likedUserId, likerUserId);
     }
+    return false;
   }
 
   async removeUserMatch(userId: number, matchedUserId: number): Promise<any> {

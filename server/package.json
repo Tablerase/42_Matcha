@@ -26,6 +26,7 @@
     "jwt-decode": "^4.0.0",
     "module-alias": "^2.2.3",
     "pg": "^8.13.1",
+    "socket.io": "^4.8.1",
     "tsconfig-paths": "^4.2.0",
     "zod": "^3.24.1"
   },
@@ -42,6 +43,7 @@
     "typescript": "^5.7.2"
   },
   "_moduleAliases": {
+    "@src": "dist/src",
     "@routes": "dist/src/routes",
     "@models": "dist/src/models",
     "@views": "dist/src/views",

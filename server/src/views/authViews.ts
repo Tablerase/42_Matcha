@@ -1,6 +1,6 @@
 import { Request, Response } from "express";
 import { User } from "@interfaces/userInterface";
-import { user as userModel } from "@models/userModel";
+import { user, user as userModel } from "@models/userModel";
 import { auth, auth as authModel } from "@models/authModel";
 import { createAccessToken, createRefreshToken } from "@utils/jwt";
 import { validatePassword } from "@utils/bcrypt";
@@ -128,6 +128,7 @@ export const checkUser = async (req: Request, res: Response): Promise<void> => {
     res.status(200).json({
       isAuthenticated: true,
       message: "User is authenticated",
+      userId: decoded.id,
       // user: user,
     });
   } catch (err) {

@@ -7,6 +7,8 @@ import {
 } from "@utils/errorHandler";
 import { likeModel } from "@models/likeModel";
 import { matchModel } from "@models/matchModel";
+import { NotificationPayload, SOCKET_EVENTS } from "@interfaces/socketEvents";
+import { io } from "@src/server";
 
 export const checkUserLiked = async (
   req: Request,
@@ -76,7 +78,32 @@ export const addUserLike = async (
     }
 
     await likeModel.addUserLike(likerUserId!, likedUserId);
-    await matchModel.checkForMatch(likerUserId!, likedUserId);
+    const match = await matchModel.checkForMatch(likerUserId!, likedUserId);
+    if (match) {
+      const notification: NotificationPayload = {
+        type: "MATCH_NEW",
+        message: "You have a new match!",
+        fromUserId: likerUserId!,
+        toUserId: likedUserId,
+        createAt: new Date(),
+      };
+      io.to(`user_${likedUserId}`).emit(
+        SOCKET_EVENTS.NOTIFICATION,
+        notification
+      );
+    } else {
+      const notification: NotificationPayload = {
+        type: "LIKE_NEW",
+        message: "You have a new like!",
+        fromUserId: likerUserId!,
+        toUserId: likedUserId,
+        createAt: new Date(),
+      };
+      io.to(`user_${likedUserId}`).emit(
+        SOCKET_EVENTS.NOTIFICATION,
+        notification
+      );
+    }
 
     res.status(201).json({ status: 201, message: "Like added" });
   } catch (error) {

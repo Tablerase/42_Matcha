@@ -54,6 +54,10 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 
 ## Resources
 
+### Sockets
+
+- [Socket.io Documentation](https://socket.io/docs/v4/)
+
 ### Images
 
 - [OpenLicence Image Sharing - Unsplash](https://unsplash.com/)

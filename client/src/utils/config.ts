@@ -1,5 +1,11 @@
 import { UserSearchQuery } from "@app/interfaces";
 
+/* ___________________________________ Server ___________________________________ */
+
+export const SERVER_URL = "http://localhost:8000";
+
+/* ________________________________ Query Params ________________________________ */
+
 export const MIN_AGE = 18;
 export const MAX_AGE = 90;
 

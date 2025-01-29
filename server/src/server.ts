@@ -9,8 +9,31 @@ import userRoutes from "@routes/userRoutes";
 import { authenticateToken } from "./middlewares/auth";
 import tagsRoutes from "@routes/tagsRoutes";
 import { SERVER_PORT, FRONTEND_ORIGIN } from "./settings";
+import { createServer } from "http";
+import SocketIOServer from "socket.io";
+import { SOCKET_EVENTS } from "./interfaces/socketEvents";
+import jwt from "jsonwebtoken";
+import { JWT_SECRET_KEY } from "./settings";
+import { initializeSocket } from "./socket";
 
+/* ________________________________ Server Setup ________________________________ */
 const app: Application = express();
+app.use(
+  cors({
+    origin: FRONTEND_ORIGIN,
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    exposedHeaders: ["Set-Cookie"],
+  })
+);
+const httpServer = createServer(app);
+
+/* ________________________________ Socket.io ________________________________ */
+
+const io = initializeSocket(httpServer);
+export { io };
+
+/* ________________________________ Middleware ________________________________ */
 
 // Middleware with proper typing
 app.use(cookieParser());
@@ -21,14 +44,6 @@ app.use(
     limit: "1mb",
     extended: true,
   }) as RequestHandler
-);
-app.use(
-  cors({
-    origin: FRONTEND_ORIGIN,
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
-    exposedHeaders: ["Set-Cookie"],
-  })
 );
 
 // Error handling middleware
@@ -57,7 +72,7 @@ app.use(authenticateToken as RequestHandler, protectedRoutes);
 app.use(errorHandler);
 
 // Start server
-app.listen(SERVER_PORT, (): void => {
+httpServer.listen(SERVER_PORT, (): void => {
   console.log(`Server running on port ${SERVER_PORT}`);
 });
 
