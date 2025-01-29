@@ -16,7 +16,14 @@ export const UserList = ({ users }: { users: User[] }) => {
     <Box sx={{ flexGrow: 1, p: 2 }}>
       <Grid container spacing={2}>
         {users.map((user) => (
-          <Grid key={user.id} size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid
+            key={user.id}
+            size={{
+              xs: 12,
+              sm: users.length > 2 ? 6 : 12,
+              md: users.length > 2 ? 4 : 12,
+            }}
+          >
             <UserCard user={user} />
           </Grid>
         ))}
