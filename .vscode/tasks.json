@@ -34,6 +34,14 @@
       "problemMatcher": [],
       "label": "npm: start - client",
       "detail": "craco start"
+    },
+    {
+      "type": "npm",
+      "script": "seedInsights",
+      "path": "server",
+      "problemMatcher": [],
+      "label": "npm: seedInsights - server",
+      "detail": "ts-node src/seedInsights.ts"
     }
   ]
 }
