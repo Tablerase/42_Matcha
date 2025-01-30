@@ -5,6 +5,7 @@ export const SOCKET_EVENTS = {
   DISCONNECT: "disconnect",
   JOIN: "join",
   // Chats events
+  MESSAGE: "message",
   MESSAGE_NEW: "newMessage",
   // Matching events
   MATCH_NEW: "newMatch",

@@ -1,16 +1,18 @@
-import { Server } from "socket.io";
+import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "http";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import { FRONTEND_ORIGIN, JWT_SECRET_KEY } from "@settings";
 import { SOCKET_EVENTS } from "@interfaces/socketEvents";
 import { Request, Response, NextFunction } from "express";
+import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
+import { time } from "console";
 
 export const initializeSocket = (httpServer: HttpServer) => {
+  /* ________________________________ Socket Setup ________________________________ */
   const io = new Server(httpServer, {
     cors: {
       origin: FRONTEND_ORIGIN,
-      methods: ["GET", "POST"],
       credentials: true,
     },
   });
@@ -18,50 +20,32 @@ export const initializeSocket = (httpServer: HttpServer) => {
   // Add middleware to parse cookies
   io.engine.use(cookieParser());
 
-  // Add middleware to check auth token
-  io.engine.use((req: Request, res: Response, next: NextFunction) => {
-    const authToken = req.cookies?.authToken;
-    if (!authToken) {
-      return next(new Error("No auth token found"));
-    }
-
-    try {
-      const decoded = jwt.verify(authToken, JWT_SECRET_KEY) as { id: number };
-      if (!decoded.id) {
-        return next(new Error("Invalid token"));
-      }
-      next();
-    } catch (error) {
-      return next(new Error("Invalid token"));
-    }
-  });
+  // Add middleware to authenticate token
+  io.engine.use(authenticateSocketToken);
 
   // Socket.IO connection handling
-  io.on(SOCKET_EVENTS.CONNECT, (socket) => {
+  io.on(SOCKET_EVENTS.CONNECT, (socket: Socket, req: Request) => {
     console.log("Client connected:", socket.id);
 
-    // Get auth token from cookie
-    const authToken = socket.handshake.headers.cookie
-      ?.split("authToken=")[1]
-      ?.split(";")[0];
+    /* ________________________________ Socket Data ________________________________ */
 
+    // Get auth token from cookie
+    const cookies = socket.handshake.headers.cookie?.toString();
+    const authToken = cookies
+      ?.split(";")
+      .find((c) => c.trim().startsWith("authToken="))
+      ?.split("=")[1];
     if (!authToken) {
       socket.emit("error", { message: "No auth token found" });
-      socket.disconnect();
       return;
     }
+    // Add user id to socket data
+    socket.data.user = (jwt.decode(authToken) as { id: number }).id;
 
     // Listen for client joining their own room
     socket.on(SOCKET_EVENTS.JOIN, async (room: string) => {
       try {
-        const decoded = jwt.verify(authToken, JWT_SECRET_KEY) as { id: number };
-
-        if (!decoded.id) {
-          socket.emit("error", { message: "Invalid token" });
-          return;
-        }
-
-        const userRoom = `user_${decoded.id}_${socket.id}`;
+        const userRoom = `user_${socket.data.user}_${socket.id}`;
         // Check basic room name format
         if (room !== userRoom) {
           socket.emit("error", { message: "Invalid room name" });
@@ -76,12 +60,22 @@ export const initializeSocket = (httpServer: HttpServer) => {
         }
 
         await socket.join(userRoom);
-        console.log(`User ${decoded.id} joined room ${userRoom}`);
+        console.log("User joined room:", userRoom);
+        // const response = socket
+        // .to(userRoom)
+        // .emit(SOCKET_EVENTS.MESSAGE, { message: "Welcome to the room" });
+        console.log("Rooms", socket.rooms);
+        const response = socket.emit(SOCKET_EVENTS.MESSAGE, {
+          message: "Welcome to the room",
+        });
+        console.log("Response:", response);
       } catch (error) {
         console.error("Socket join error:", error);
         socket.emit("error", { message: "Failed to join room" });
       }
     });
+
+    /* ________________________________ Socket Events ________________________________ */
 
     socket.on(SOCKET_EVENTS.DISCONNECT, () => {
       console.log("Client disconnected:", socket.id);

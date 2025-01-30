@@ -20,7 +20,7 @@ export const Notifications = () => {
   }
 
   if (dataIsSuccess) {
-    if (socket && socket.active) {
+    if (socket && socket.connected) {
       content = (
         <Typography variant="h4" sx={{ textAlign: "center" }}>
           Connected to server

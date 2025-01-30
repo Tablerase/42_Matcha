@@ -10,6 +10,7 @@ export const SOCKET_EVENTS = {
   DISCONNECT: "disconnect",
   JOIN: "join",
   // Chats events
+  MESSAGE: "message",
   MESSAGE_NEW: "newMessage",
   // Matching events
   MATCH_NEW: "newMatch",
@@ -40,6 +41,11 @@ export const initializeSocket = (userId: number) => {
     console.log("Joining user room: ", userRoom);
     socket.emit(SOCKET_EVENTS.JOIN, userRoom);
   });
+
+  socket.on(SOCKET_EVENTS.MESSAGE, (payload: NotificationPayload) => {
+    console.log("Socket: Message received", payload);
+  });
+
   socket.on(SOCKET_EVENTS.DISCONNECT, () => {
     console.log("Socket: Disconnected from server");
   });

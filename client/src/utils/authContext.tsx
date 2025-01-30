@@ -6,7 +6,7 @@ import {
   useCallback,
 } from "react";
 import { routes } from "../utils/routes";
-import { Navigate, Outlet } from "react-router-dom";
+import { Navigate, Outlet, useNavigate } from "react-router-dom";
 import { client } from "./axios";
 import { Tag, User } from "@/app/interfaces";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
@@ -16,6 +16,8 @@ import {
 } from "@/pages/browse/usersActions";
 import { Socket } from "socket.io-client";
 import { initializeSocket } from "./socket";
+import { log } from "console";
+import { useLogout } from "@/pages/auth/authActions";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -79,7 +81,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
     } catch (error) {
       console.error("Error checking auth status:", error);
-      setIsAuthenticated(false);
+      logout();
     } finally {
       setIsLoading(false);
     }
@@ -92,6 +94,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     setIsAuthenticated(false);
+    if (socket && socket.connected) {
+      socket.disconnect();
+    }
     setSocket(null);
   };
 

@@ -7,15 +7,15 @@ dotenv.config();
 
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
+export const FRONTEND_ORIGIN =
+  process.env.FRONTEND_URL || "http://localhost:3000";
 export const SERVER_PORT = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
 // TODO: Change the default value of token expiration time
-export const ACCESSTOKEN_EXPIRES_IN =
-  process.env.ACCESS_TOKEN_EXPIRES_IN || "15min";
-export const REFRESHTOKEN_EXPIRES_IN =
-  process.env.REFRESH_TOKEN_EXPIRES_IN || "7d";
-export const FRONTEND_ORIGIN =
-  process.env.FRONTEND_URL || "http://localhost:3000";
+export const ACCESSTOKEN_EXPIRES_IN: number =
+  parseInt(process.env.ACCESS_TOKEN_EXPIRES_IN!) || 15; // in minutes
+export const REFRESHTOKEN_EXPIRES_IN: number =
+  parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN!) || 7; // in days
 
 const db_config = {
   user: process.env.POSTGRES_USER as string,

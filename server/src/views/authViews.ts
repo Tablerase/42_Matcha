@@ -4,7 +4,7 @@ import { user, user as userModel } from "@models/userModel";
 import { auth, auth as authModel } from "@models/authModel";
 import { createAccessToken, createRefreshToken } from "@utils/jwt";
 import { validatePassword } from "@utils/bcrypt";
-import { NODE_ENV, JWT_SECRET_KEY } from "@settings";
+import { NODE_ENV, JWT_SECRET_KEY, REFRESHTOKEN_EXPIRES_IN } from "@settings";
 import jwt from "jsonwebtoken";
 
 const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
@@ -12,9 +12,11 @@ const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
   await authModel.createRefreshToken({ id: user.id, token: refreshToken });
   req.res?.cookie("authToken", refreshToken, {
     httpOnly: true,
+    sameSite: "none",
+    secure: true,
     path: "/",
-    maxAge: 60 * 60 * 24 * 100,
-    expires: new Date(Date.now() + 60 * 60 * 24 * 100),
+    maxAge: REFRESHTOKEN_EXPIRES_IN * 60 * 1000,
+    expires: new Date(Date.now() + REFRESHTOKEN_EXPIRES_IN * 60 * 1000),
   });
 };
 
@@ -70,15 +72,15 @@ export const logoutUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    const token = req.cookies.authToken;
+    // const token = req.cookies.authToken;
 
-    if (!token) {
-      res.status(401).json({
-        status: 401,
-        message: "Unauthorized",
-      });
-      return;
-    }
+    // if (!token) {
+    //   res.status(401).json({
+    //     status: 401,
+    //     message: "Unauthorized",
+    //   });
+    //   return;
+    // }
 
     res.clearCookie("authToken", {
       httpOnly: true,

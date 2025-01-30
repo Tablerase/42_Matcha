@@ -13,7 +13,7 @@ export const createAccessToken = (user: Partial<User>): string => {
       email: user.email,
     },
     JWT_SECRET_KEY,
-    { expiresIn: ACCESSTOKEN_EXPIRES_IN }
+    { expiresIn: ACCESSTOKEN_EXPIRES_IN * 60 }
   );
 };
 
@@ -24,7 +24,7 @@ export const createRefreshToken = (user: Partial<User>): string => {
       email: user.email,
     },
     JWT_SECRET_KEY,
-    { expiresIn: REFRESHTOKEN_EXPIRES_IN }
+    { expiresIn: REFRESHTOKEN_EXPIRES_IN * 24 * 60 * 60 }
   );
 };
 
