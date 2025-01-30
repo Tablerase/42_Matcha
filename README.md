@@ -57,6 +57,7 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 ### Sockets
 
 - [Socket.io Documentation](https://socket.io/docs/v4/)
+- [Socket.io - Middleware](https://socket.io/docs/v4/middlewares/)
 
 ### Images
 

@@ -1,4 +1,10 @@
-import { createContext, useState, useContext, useEffect } from "react";
+import {
+  createContext,
+  useState,
+  useContext,
+  useEffect,
+  useCallback,
+} from "react";
 import { routes } from "../utils/routes";
 import { Navigate, Outlet } from "react-router-dom";
 import { client } from "./axios";
@@ -8,7 +14,8 @@ import {
   useFetchAllTags,
   useFetchCurrentUser,
 } from "@/pages/browse/usersActions";
-import { socket, SOCKET_EVENTS } from "./socket";
+import { Socket } from "socket.io-client";
+import { initializeSocket } from "./socket";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -16,6 +23,7 @@ interface AuthContextType {
   isError: boolean;
   isSuccess: boolean;
   userData?: User;
+  socket: Socket | null;
   tags?: Tag[];
   login: () => void;
   logout: () => void;
@@ -26,6 +34,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [socket, setSocket] = useState<Socket | null>(null);
   const {
     data: userData,
     isLoading: userDataLoading,
@@ -33,6 +42,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     isSuccess,
   } = useFetchCurrentUser();
   const { data: tags, isLoading: tagLoading } = useFetchAllTags();
+
+  const establishSocketConnection = useCallback(
+    (userId: number) => {
+      if (!socket) {
+        const newSocket = initializeSocket(userId);
+        setSocket(newSocket);
+
+        return () => {
+          newSocket.disconnect();
+          setSocket(null);
+        };
+      }
+    },
+    [socket]
+  );
 
   const checkAuthStatus = async () => {
     setIsLoading(true);
@@ -46,9 +70,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("User is authenticated", response.data);
           setIsAuthenticated(true);
           if (response.data.userId) {
-            const userRoom = `user_${response.data.userId}_${socket.id}`;
-            console.log("Joining user room: ", userRoom);
-            socket.emit(SOCKET_EVENTS.JOIN, userRoom);
+            establishSocketConnection(response.data.userId);
           }
         } else {
           console.log("User not authenticated: " + response.data.message);
@@ -70,6 +92,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const logout = async () => {
     setIsAuthenticated(false);
+    setSocket(null);
   };
 
   useEffect(() => {
@@ -88,6 +111,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         logout,
         isLoading,
         userData,
+        socket,
         isError,
         isSuccess,
         tags,

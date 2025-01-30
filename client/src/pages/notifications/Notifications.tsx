@@ -2,29 +2,31 @@ import { Layout } from "@/components/Layout";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { Typography, Box } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
-import { socket, SOCKET_EVENTS } from "@/utils/socket";
 
 export const Notifications = () => {
   const {
     userData,
-    isLoading: userDataLoading,
-    isSuccess: userDataSuccess,
-    isError: userDataError,
+    socket,
+    isLoading: dataIsLoading,
+    isSuccess: dataIsSuccess,
+    isError: dataIsError,
   } = useAuth();
 
   /* ______________________________ Render ______________________________ */
   let content;
 
-  if (socket.active) {
-    content = (
-      <Typography variant="h4" sx={{ textAlign: "center" }}>
-        Connected to server
-      </Typography>
-    );
+  if (dataIsLoading) {
+    content = <LoadingCup />;
   }
 
-  if (userDataLoading) {
-    content = <LoadingCup />;
+  if (dataIsSuccess) {
+    if (socket && socket.active) {
+      content = (
+        <Typography variant="h4" sx={{ textAlign: "center" }}>
+          Connected to server
+        </Typography>
+      );
+    }
   }
 
   return (

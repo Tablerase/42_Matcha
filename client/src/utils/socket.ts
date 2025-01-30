@@ -28,13 +28,25 @@ export interface NotificationPayload {
 
 /* ________________________________ Socket.io ________________________________ */
 
-export const socket = io(SERVER_URL, {
-  withCredentials: true,
-});
+export const initializeSocket = (userId: number) => {
+  const socket = io(SERVER_URL, {
+    withCredentials: true,
+  });
 
-socket.on(SOCKET_EVENTS.CONNECT, () => {
-  console.log("Socket: Connected to server");
-});
-socket.on(SOCKET_EVENTS.DISCONNECT, () => {
-  console.log("Socket: Disconnected from server");
-});
+  socket.on(SOCKET_EVENTS.CONNECT, () => {
+    console.log("Socket: Connected to server");
+
+    const userRoom = `user_${userId}_${socket.id}`;
+    console.log("Joining user room: ", userRoom);
+    socket.emit(SOCKET_EVENTS.JOIN, userRoom);
+  });
+  socket.on(SOCKET_EVENTS.DISCONNECT, () => {
+    console.log("Socket: Disconnected from server");
+  });
+
+  socket.on(SOCKET_EVENTS.NOTIFICATION, (payload: NotificationPayload) => {
+    console.log("Socket: Notification", payload);
+  });
+
+  return socket;
+};

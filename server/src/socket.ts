@@ -4,6 +4,7 @@ import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import { FRONTEND_ORIGIN, JWT_SECRET_KEY } from "@settings";
 import { SOCKET_EVENTS } from "@interfaces/socketEvents";
+import { Request, Response, NextFunction } from "express";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   const io = new Server(httpServer, {
@@ -16,6 +17,24 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
   // Add middleware to parse cookies
   io.engine.use(cookieParser());
+
+  // Add middleware to check auth token
+  io.engine.use((req: Request, res: Response, next: NextFunction) => {
+    const authToken = req.cookies?.authToken;
+    if (!authToken) {
+      return next(new Error("No auth token found"));
+    }
+
+    try {
+      const decoded = jwt.verify(authToken, JWT_SECRET_KEY) as { id: number };
+      if (!decoded.id) {
+        return next(new Error("Invalid token"));
+      }
+      next();
+    } catch (error) {
+      return next(new Error("Invalid token"));
+    }
+  });
 
   // Socket.IO connection handling
   io.on(SOCKET_EVENTS.CONNECT, (socket) => {
