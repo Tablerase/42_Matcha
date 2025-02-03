@@ -1,4 +1,5 @@
 import { io } from "socket.io-client";
+import { enqueueSnackbar } from "notistack";
 import { SERVER_URL } from "@/utils/config";
 
 /* ______________________________ Socket Events ______________________________ */
@@ -37,8 +38,7 @@ export const initializeSocket = (userId: number) => {
   socket.on(SOCKET_EVENTS.CONNECT, () => {
     console.log("Socket: Connected to server");
 
-    const userRoom = `user_${userId}_${socket.id}`;
-    console.log("Joining user room: ", userRoom);
+    const userRoom = `user_${userId}`;
     socket.emit(SOCKET_EVENTS.JOIN, userRoom);
   });
 
@@ -52,6 +52,9 @@ export const initializeSocket = (userId: number) => {
 
   socket.on(SOCKET_EVENTS.NOTIFICATION, (payload: NotificationPayload) => {
     console.log("Socket: Notification", payload);
+    enqueueSnackbar(payload.message, {
+      variant: "info",
+    });
   });
 
   return socket;

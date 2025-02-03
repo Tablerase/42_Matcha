@@ -45,8 +45,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
     // Listen for client joining their own room
     socket.on(SOCKET_EVENTS.JOIN, async (room: string) => {
       try {
-        const userRoom = `user_${socket.data.user}_${socket.id}`;
-        // Check basic room name format
+        const userRoom = `user_${socket.data.user}`;
+        // Check basic room name format based on user id
         if (room !== userRoom) {
           socket.emit("error", { message: "Invalid room name" });
           return;
@@ -54,21 +54,14 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
         // Check if user already in room
         const rooms = Array.from(socket.rooms);
-        console.log("Rooms:", rooms);
         if (rooms.includes(userRoom)) {
           return;
         }
 
         await socket.join(userRoom);
-        console.log("User joined room:", userRoom);
-        // const response = socket
-        // .to(userRoom)
-        // .emit(SOCKET_EVENTS.MESSAGE, { message: "Welcome to the room" });
-        console.log("Rooms", socket.rooms);
-        const response = socket.emit(SOCKET_EVENTS.MESSAGE, {
-          message: "Welcome to the room",
+        socket.emit(SOCKET_EVENTS.MESSAGE, {
+          message: "Welcome to the server - user : " + socket.data.user,
         });
-        console.log("Response:", response);
       } catch (error) {
         console.error("Socket join error:", error);
         socket.emit("error", { message: "Failed to join room" });
@@ -80,6 +73,13 @@ export const initializeSocket = (httpServer: HttpServer) => {
     socket.on(SOCKET_EVENTS.DISCONNECT, () => {
       console.log("Client disconnected:", socket.id);
     });
+  });
+
+  /* ________________________________ Socket Adapter ________________________________ */
+
+  // Monitor room joins
+  io.of("/").adapter.on("join-room", (room, id) => {
+    console.log(`Socket: ${id} joined room: ${room}`);
   });
 
   return io;

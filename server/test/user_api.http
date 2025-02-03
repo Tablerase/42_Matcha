@@ -1,4 +1,4 @@
-@authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTYsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSIsImlhdCI6MTczNzgyNjE5OCwiZXhwIjoxNzM4NDMwOTk4fQ.umFi9trAcvmZRucngS0GvPb3EoCK39ujvh7Ir4CNzXU
+@authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoic2VydmVyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4NTg5Njg5LCJleHAiOjE3MzkxOTQ0ODl9.2z3tzoW-EW22ynJJRFgDtiIBcuCSAV-fCS_NQQDdIz4
 ###
 
 GET http://localhost:8000/users
@@ -10,7 +10,7 @@ Cookie: authToken={{authToken}}
 
 ### Check if user likes another user
 
-GET http://localhost:8000/users/1/liked
+GET http://localhost:8000/users/16/liked
 Cookie: authToken={{authToken}}
 
 ### Get all likes
@@ -20,12 +20,12 @@ Cookie: authToken={{authToken}}
 
 ### Add like
 
-POST http://localhost:8000/users/1/likes
+POST http://localhost:8000/users/16/likes
 Cookie: authToken={{authToken}}
 
 ### Remove like
 
-DELETE http://localhost:8000/users/2/likes
+DELETE http://localhost:8000/users/16/likes
 Cookie: authToken={{authToken}}
 
 ###

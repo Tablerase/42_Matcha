@@ -79,31 +79,25 @@ export const addUserLike = async (
 
     await likeModel.addUserLike(likerUserId!, likedUserId);
     const match = await matchModel.checkForMatch(likerUserId!, likedUserId);
+    let notification: NotificationPayload;
     if (match) {
-      const notification: NotificationPayload = {
+      notification = {
         type: "MATCH_NEW",
         message: "You have a new match!",
         fromUserId: likerUserId!,
         toUserId: likedUserId,
         createAt: new Date(),
       };
-      io.to(`user_${likedUserId}`).emit(
-        SOCKET_EVENTS.NOTIFICATION,
-        notification
-      );
     } else {
-      const notification: NotificationPayload = {
+      notification = {
         type: "LIKE_NEW",
         message: "You have a new like!",
         fromUserId: likerUserId!,
         toUserId: likedUserId,
         createAt: new Date(),
       };
-      io.to(`user_${likedUserId}`).emit(
-        SOCKET_EVENTS.NOTIFICATION,
-        notification
-      );
     }
+    io.to(`user_${likedUserId}`).emit(SOCKET_EVENTS.NOTIFICATION, notification);
 
     res.status(201).json({ status: 201, message: "Like added" });
   } catch (error) {
