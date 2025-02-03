@@ -4,6 +4,7 @@ export const SOCKET_EVENTS = {
   CONNECT: "connect",
   DISCONNECT: "disconnect",
   JOIN: "join",
+  ERROR: "error",
   // Chats events
   MESSAGE: "message",
   MESSAGE_NEW: "newMessage",
@@ -15,6 +16,7 @@ export const SOCKET_EVENTS = {
 };
 export interface NotificationPayload {
   type: keyof typeof SOCKET_EVENTS;
+  ui_variant?: "default" | "success" | "info" | "warning" | "error";
   message: string;
   fromUserId: number;
   toUserId: number;

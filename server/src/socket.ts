@@ -25,7 +25,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
   // Socket.IO connection handling
   io.on(SOCKET_EVENTS.CONNECT, (socket: Socket, req: Request) => {
-    console.log("Client connected:", socket.id);
+    console.log("[Socket] Client connected:", socket.id);
 
     /* ________________________________ Socket Data ________________________________ */
 
@@ -63,7 +63,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
           message: "Welcome to the server - user : " + socket.data.user,
         });
       } catch (error) {
-        console.error("Socket join error:", error);
+        console.error("[Socket] Socket join error:", error);
         socket.emit("error", { message: "Failed to join room" });
       }
     });
@@ -71,7 +71,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
     /* ________________________________ Socket Events ________________________________ */
 
     socket.on(SOCKET_EVENTS.DISCONNECT, () => {
-      console.log("Client disconnected:", socket.id);
+      console.log("[Socket] Client disconnected:", socket.id);
     });
   });
 
@@ -79,7 +79,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
   // Monitor room joins
   io.of("/").adapter.on("join-room", (room, id) => {
-    console.log(`Socket: ${id} joined room: ${room}`);
+    console.log(`[Socket] ${id} joined room: ${room}`);
   });
 
   return io;

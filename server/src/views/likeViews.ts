@@ -83,6 +83,7 @@ export const addUserLike = async (
     if (match) {
       notification = {
         type: "MATCH_NEW",
+        ui_variant: "success",
         message: "You have a new match!",
         fromUserId: likerUserId!,
         toUserId: likedUserId,
@@ -91,6 +92,7 @@ export const addUserLike = async (
     } else {
       notification = {
         type: "LIKE_NEW",
+        ui_variant: "info",
         message: "You have a new like!",
         fromUserId: likerUserId!,
         toUserId: likedUserId,
