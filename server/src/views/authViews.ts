@@ -10,13 +10,15 @@ import jwt from "jsonwebtoken";
 const setRefreshTokenCookie = async (user: Partial<User>, req: Request) => {
   const refreshToken = createRefreshToken(user);
   await authModel.createRefreshToken({ id: user.id, token: refreshToken });
+  const refreshTokenExpiresInMilliseconds =
+    REFRESHTOKEN_EXPIRES_IN * 24 * 60 * 60 * 1000;
   req.res?.cookie("authToken", refreshToken, {
     httpOnly: true,
     sameSite: "none",
     secure: true,
     path: "/",
-    maxAge: REFRESHTOKEN_EXPIRES_IN * 60 * 1000,
-    expires: new Date(Date.now() + REFRESHTOKEN_EXPIRES_IN * 60 * 1000),
+    maxAge: refreshTokenExpiresInMilliseconds,
+    expires: new Date(Date.now() + refreshTokenExpiresInMilliseconds),
   });
 };
 

@@ -13,7 +13,7 @@ export const SERVER_PORT = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
 // TODO: Change the default value of token expiration time
 export const ACCESSTOKEN_EXPIRES_IN: number =
-  parseInt(process.env.ACCESS_TOKEN_EXPIRES_IN!) || 15; // in minutes
+  parseInt(process.env.ACCESS_TOKEN_EXPIRES_IN!) || 60; // in minutes
 export const REFRESHTOKEN_EXPIRES_IN: number =
   parseInt(process.env.REFRESH_TOKEN_EXPIRES_IN!) || 7; // in days
 
