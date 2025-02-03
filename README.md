@@ -40,6 +40,80 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 
 ## Notifications
 
+### Diagrams
+
+#### Diagram Notif Flow
+
+```mermaid
+sequenceDiagram
+    participant C as Client
+    participant S as Server
+    participant DB as Database
+    participant U as User Room
+
+    Note over C,U: Message Flow
+    C->>+S: Send message/like
+    S->>+DB: Save notification
+    DB-->>-S: Confirm save
+    S->>+U: Emit to user room
+    U-->>-S: Delivery confirmed
+    S-->>-C: Acknowledge receipt
+
+    Note over C,U: Read Status Update
+    C->>+S: Mark as read
+    S->>+DB: Update status
+    DB-->>-S: Confirm update
+    S-->>-C: Confirm change
+```
+
+#### Diagram Database
+
+```mermaid
+erDiagram
+    NOTIFICATION_TYPES ||--o{ NOTIFICATION_OBJECTS : defines
+    NOTIFICATION_OBJECTS ||--o{ USER_NOTIFICATIONS : contains
+    NOTIFICATION_OBJECTS ||--o{ NOTIFICATION_ACTORS : tracks
+    USERS ||--o{ USER_NOTIFICATIONS : receives
+    USERS ||--o{ NOTIFICATION_ACTORS : performs
+
+    NOTIFICATION_TYPES {
+        int id PK
+        string type_name
+        string description
+    }
+
+    NOTIFICATION_OBJECTS {
+        bigint id PK
+        int entity_type_id FK
+        bigint entity_id
+        jsonb content
+        timestamp created_at
+        string status
+    }
+
+    USER_NOTIFICATIONS {
+        bigint id PK
+        bigint notification_object_id FK
+        bigint user_id FK
+        boolean is_read
+        timestamp read_at
+        timestamp created_at
+    }
+
+    NOTIFICATION_ACTORS {
+        bigint id PK
+        bigint notification_object_id FK
+        bigint actor_id FK
+        timestamp created_at
+    }
+
+    USERS {
+        bigint id PK
+        string username
+        string email
+    }
+```
+
 ### Socket notif
 
 - https://medium.com/@hirenchavda141/from-scratch-to-real-time-building-a-notification-system-with-node-js-typescript-and-socket-io-2aa869dece40
