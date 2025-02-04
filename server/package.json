@@ -4,9 +4,10 @@
   "description": "",
   "main": "src/server.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run copy-sql",
+    "copy-sql": "copyfiles -u 1 \"src/**/*.sql\" dist/src",
     "start": "node -r module-alias/register dist/src/server.js",
-    "re": "rm -rf ./dist && tsc && npm run start",
+    "re": "rm -rf ./dist && npm run build && npm run start",
     "seed": "ts-node src/seed.ts",
     "seedInsights": "ts-node src/seedInsights.ts",
     "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts"
@@ -38,6 +39,7 @@
     "@types/node": "^22.10.2",
     "@types/pg": "^8.11.10",
     "concurrently": "^9.1.0",
+    "copyfiles": "^2.4.1",
     "nodemon": "^3.1.9",
     "ts-node": "^10.9.1",
     "typescript": "^5.7.2"

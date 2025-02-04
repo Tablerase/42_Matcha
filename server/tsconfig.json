@@ -22,5 +22,8 @@
     }
   },
   "include": ["src/**/*", "settings.ts"],
-  "exclude": ["node_modules", "dist"]
+  "exclude": ["node_modules", "dist"],
+  "copyfiles": {
+    "include": ["src/**/*.sql"]
+  }
 }

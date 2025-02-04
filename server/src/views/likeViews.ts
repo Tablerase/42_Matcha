@@ -7,7 +7,11 @@ import {
 } from "@utils/errorHandler";
 import { likeModel } from "@models/likeModel";
 import { matchModel } from "@models/matchModel";
-import { NotificationPayload, SOCKET_EVENTS } from "@interfaces/socketEvents";
+import { SOCKET_EVENTS } from "@interfaces/socketEvents";
+import {
+  NotificationPayload,
+  NotificationType,
+} from "@interfaces/notificationInterface";
 import { io } from "@src/server";
 
 export const checkUserLiked = async (
@@ -82,7 +86,7 @@ export const addUserLike = async (
     let notification: NotificationPayload;
     if (match) {
       notification = {
-        type: "MATCH_NEW",
+        type: NotificationType.MATCH,
         ui_variant: "success",
         message: "You have a new match!",
         fromUserId: likerUserId!,
@@ -91,7 +95,7 @@ export const addUserLike = async (
       };
     } else {
       notification = {
-        type: "LIKE_NEW",
+        type: NotificationType.LIKE,
         ui_variant: "info",
         message: "You have a new like!",
         fromUserId: likerUserId!,

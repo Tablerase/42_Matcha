@@ -7,18 +7,9 @@ export const SOCKET_EVENTS = {
   ERROR: "error",
   // Chats events
   MESSAGE: "message",
-  MESSAGE_NEW: "newMessage",
   // Matching events
-  MATCH_NEW: "newMatch",
-  LIKE_NEW: "newLike",
-  LIKE_DELETE: "newUnlike", // If user are already matched
-  VIEW_PROFILE: "viewProfile",
+  MATCH: "match",
+  LIKE_NEW: "like",
+  LIKE_DELETE: "unlike", // If user are already matched
+  VIEW: "view",
 };
-export interface NotificationPayload {
-  type: keyof typeof SOCKET_EVENTS;
-  ui_variant?: "default" | "success" | "info" | "warning" | "error";
-  message: string;
-  fromUserId: number;
-  toUserId: number;
-  createAt: Date;
-}

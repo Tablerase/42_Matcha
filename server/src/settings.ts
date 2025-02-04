@@ -1,7 +1,9 @@
 import { Pool, QueryResult } from "pg";
 import dotenv from "dotenv";
+import { promises as fs } from "fs";
 import { truncate } from "fs";
 import { validTags } from "./interfaces/tagInterface";
+import path from "path";
 
 dotenv.config();
 
@@ -11,7 +13,6 @@ export const FRONTEND_ORIGIN =
   process.env.FRONTEND_URL || "http://localhost:3000";
 export const SERVER_PORT = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
-// TODO: Change the default value of token expiration time
 export const ACCESSTOKEN_EXPIRES_IN: number =
   parseInt(process.env.ACCESS_TOKEN_EXPIRES_IN!) || 60; // in minutes
 export const REFRESHTOKEN_EXPIRES_IN: number =
@@ -196,7 +197,7 @@ async function seed() {
       );
     `;
     await pool.query(createChatQuery);
-
+    //
     /*MESSAGES TABLE*/
     const createMsgQuery = `
         CREATE TABLE IF NOT EXISTS msgs (
@@ -242,6 +243,13 @@ async function seed() {
         );
     `;
     await pool.query(createRefreshTokensQuery);
+
+    /* _______________________ Notifcations Table _______________________ */
+    const notificationsSchema = await fs.readFile(
+      path.join(__dirname, "sql/notifications.sql"),
+      "utf-8"
+    );
+    await pool.query(notificationsSchema);
   } catch (err) {
     console.error("Error seeding the database:", err);
   } finally {

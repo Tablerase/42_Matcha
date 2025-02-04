@@ -70,40 +70,24 @@ sequenceDiagram
 
 ```mermaid
 erDiagram
-    NOTIFICATION_TYPES ||--o{ NOTIFICATION_OBJECTS : defines
-    NOTIFICATION_OBJECTS ||--o{ USER_NOTIFICATIONS : contains
-    NOTIFICATION_OBJECTS ||--o{ NOTIFICATION_ACTORS : tracks
-    USERS ||--o{ USER_NOTIFICATIONS : receives
-    USERS ||--o{ NOTIFICATION_ACTORS : performs
-
-    NOTIFICATION_TYPES {
-        int id PK
-        string type_name
-        string description
-    }
+    NOTIFICATION_OBJECTS ||--o{ NOTIFICATION_NOTIFIERS : contains
+    USERS ||--o{ NOTIFICATION_NOTIFIERS : "receives<br />sends"
 
     NOTIFICATION_OBJECTS {
         bigint id PK
-        int entity_type_id FK
-        bigint entity_id
+        notification_type type_name
         jsonb content
         timestamp created_at
-        string status
     }
 
-    USER_NOTIFICATIONS {
+    NOTIFICATION_NOTIFIERS {
         bigint id PK
+        bigint to_user_id FK
+        bigint from_user_id FK
         bigint notification_object_id FK
-        bigint user_id FK
         boolean is_read
+        notification_status status
         timestamp read_at
-        timestamp created_at
-    }
-
-    NOTIFICATION_ACTORS {
-        bigint id PK
-        bigint notification_object_id FK
-        bigint actor_id FK
         timestamp created_at
     }
 
@@ -122,7 +106,7 @@ erDiagram
 
 - https://notistack.com/features/customization#custom-variant-(typescript)
 
-### Database notif
+### Database notif (scalable - not used)
 
 - https://tannguyenit95.medium.com/designing-a-notification-system-1da83ca971bc
 
