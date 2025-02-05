@@ -1,5 +1,4 @@
 import { SortUser, User, Tag, Order } from "@/app/interfaces";
-import { D } from "@tanstack/react-query-devtools/build/legacy/ReactQueryDevtools-Cn7cKi7o";
 
 const calculateCommonTags = (
   currentUserTags: Tag[],

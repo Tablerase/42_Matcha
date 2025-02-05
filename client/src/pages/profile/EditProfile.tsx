@@ -12,17 +12,23 @@ import { SelectChangeEvent } from "@mui/material/Select";
 import { Tag, UserUpdateFormProps } from "@/app/interfaces";
 import { EditProfileProps } from "@/app/interfaces";
 import { theme } from "@components/theme";
-import { useAuth } from "@/utils/authContext";
+// import { useAuth } from "@/utils/authContext";
+import { useFetchAllTags } from "../browse/usersActions";
+import LoadingCup from "@/components/LoadingCup/LoadingCup";
 
 export const EditProfile = ({
   user,
   userTags,
   setEditMode,
 }: EditProfileProps) => {
-  const { tags } = useAuth();
+  const { data: tags, isLoading: tagsIsLoading } = useFetchAllTags();
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const [dateOfBirth, setDateOfBirth] = useState<string>("");
   const [interests, setInterests] = useState<Tag[]>(userTags ?? []);
+
+  if (tagsIsLoading) {
+    return <LoadingCup />;
+  }
 
   const handleChangeTags = (event: SelectChangeEvent<string[]>) => {
     const {

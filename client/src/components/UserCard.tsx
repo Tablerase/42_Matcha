@@ -16,7 +16,7 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingCup from "./LoadingCup/LoadingCup";
 import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
-import { deepPurple, grey } from "@mui/material/colors";
+import { grey } from "@mui/material/colors";
 
 export const UserCard = ({ user }: UserCardProps) => {
   const { data: profilePic, isLoading: profilePicIsLoading } =

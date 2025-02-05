@@ -1,4 +1,8 @@
-import { useFetchUsers } from "./usersActions";
+import {
+  useFetchAllTags,
+  useFetchCurrentUser,
+  useFetchUsers,
+} from "./usersActions";
 import {
   UserSearchQuery,
   UsersSortParams,
@@ -7,21 +11,21 @@ import {
 } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination, AppBar, Tabs, Tab, Box } from "@mui/material";
-import { useAuth } from "@/utils/authContext";
+// import { useAuth } from "@/utils/authContext";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
 import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
-import { DEFAULT_SEARCH_PARAMS, MAX_AGE, MIN_AGE } from "@/utils/config";
+import { DEFAULT_SEARCH_PARAMS } from "@/utils/config";
 
 export const Browse = () => {
   /* _____________________________ State ____________________________ */
   // State
   const [browseStatus, setBrowseStatus] = useState(true);
   const [tabValue, setTabValue] = useState(0);
-  const { userData, isLoading: userDataLoading } = useAuth();
-  const { tags, isLoading: tagLoading } = useAuth();
+  const { data: userData, isLoading: userDataLoading } = useFetchCurrentUser();
+  const { data: tags, isLoading: tagLoading } = useFetchAllTags();
   // Search and sort state
   const [searchParams, setSearchParams] = useState<UserSearchQuery>({
     // ...DEFAULT_SEARCH_PARAMS,

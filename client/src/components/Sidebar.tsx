@@ -15,8 +15,9 @@ import { useTheme, useMediaQuery } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { routes } from "@/utils/routes";
 import { useLogout } from "@/pages/auth/authActions";
-import { useAuth } from "@/utils/authContext";
+// import { useAuth } from "@/utils/authContext";
 import { theme } from "./theme";
+import { useFetchCurrentUser } from "@/pages/browse/usersActions";
 
 interface SidebarButtonProps {
   isMobile: boolean;
@@ -70,7 +71,7 @@ export const Sidebar = () => {
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
   const navigate = useNavigate();
   const logout = useLogout();
-  const { userData } = useAuth();
+  const { data: userData } = useFetchCurrentUser();
 
   const handleLogout = () => {
     logout();

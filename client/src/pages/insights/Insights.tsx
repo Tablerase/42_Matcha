@@ -1,10 +1,8 @@
-import { format } from "timeago.js";
 import { Layout } from "@/components/Layout";
 import { Profile } from "../profile/Profile";
 import {
   Avatar,
   Box,
-  Divider,
   List,
   ListItem,
   ListItemAvatar,
@@ -19,14 +17,45 @@ import {
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import { ReactElement, useState } from "react";
-import { useAuth } from "@/utils/authContext";
+// import { useAuth } from "@/utils/authContext";
 import { useLikes, useViews, useFetchUserById } from "./insightsHooks";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserLike, UserView } from "@/app/interfaces";
+import { useFetchCurrentUser } from "../browse/usersActions";
 
 // Future improvements:
 // - Add a "Load more" button to fetch more likes/views when there are too many
 // - Use profile images instead of icons in the list
+
+const format = (date: Date) => {
+  // Time ago format
+  const timeAgo = new Date(date).getTime();
+  const now = new Date().getTime();
+  const diff = now - timeAgo;
+  const seconds = diff / 1000;
+  const minutes = seconds / 60;
+  const hours = minutes / 60;
+  const days = hours / 24;
+  const months = days / 30;
+  const years = months / 12;
+
+  if (seconds < 60) {
+    return `${Math.floor(seconds)} seconds ago`;
+  }
+  if (minutes < 60) {
+    return `${Math.floor(minutes)} minutes ago`;
+  }
+  if (hours < 24) {
+    return `${Math.floor(hours)} hours ago`;
+  }
+  if (days < 30) {
+    return `${Math.floor(days)} days ago`;
+  }
+  if (months < 12) {
+    return `${Math.floor(months)} months ago`;
+  }
+  return `${Math.floor(years)} years ago`;
+};
 
 interface InsightsListProps {
   Icon: ReactElement;
@@ -152,11 +181,11 @@ const InsightsList = ({ Icon, ListItems }: InsightsListProps) => {
 
 export const Insights = () => {
   const {
-    userData,
+    data: userData,
     isLoading: userDataLoading,
     isSuccess: userDataSuccess,
     isError: userDataError,
-  } = useAuth();
+  } = useFetchCurrentUser();
   const {
     data: likes,
     isLoading: likesLoading,
@@ -165,9 +194,9 @@ export const Insights = () => {
   } = useLikes(userData?.id);
   const {
     data: views,
-    isLoading: viewsLoading,
+    // isLoading: viewsLoading,
     isSuccess: viewsSuccess,
-    error: viewsErrors,
+    // error: viewsErrors,
   } = useViews(userData?.id);
 
   /* _____________________________ Render ____________________________ */

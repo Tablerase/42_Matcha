@@ -6,27 +6,25 @@ import {
   useCallback,
 } from "react";
 import { routes } from "../utils/routes";
-import { Navigate, Outlet, useNavigate } from "react-router-dom";
+import { Navigate, Outlet } from "react-router-dom";
 import { client } from "./axios";
-import { Tag, User } from "@/app/interfaces";
+// import { Tag, User } from "@/app/interfaces";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
-import {
-  useFetchAllTags,
-  useFetchCurrentUser,
-} from "@/pages/browse/usersActions";
+// import {
+//   useFetchAllTags,
+//   useFetchCurrentUser,
+// } from "@/pages/browse/usersActions";
 import { Socket } from "socket.io-client";
 import { initializeSocket } from "./socket";
-import { log } from "console";
-import { useLogout } from "@/pages/auth/authActions";
 
 interface AuthContextType {
   isAuthenticated: boolean;
   isLoading: boolean;
-  isError: boolean;
-  isSuccess: boolean;
-  userData?: User;
+  // isError: boolean;
+  // isSuccess: boolean;
+  // userData?: User;
   socket: Socket | null;
-  tags?: Tag[];
+  // tags?: Tag[];
   login: () => void;
   logout: () => void;
 }
@@ -37,13 +35,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [socket, setSocket] = useState<Socket | null>(null);
-  const {
-    data: userData,
-    isLoading: userDataLoading,
-    isError,
-    isSuccess,
-  } = useFetchCurrentUser();
-  const { data: tags, isLoading: tagLoading } = useFetchAllTags();
+  // const {
+  //   data: userData,
+  //   isLoading: userDataLoading,
+  //   isError,
+  //   isSuccess,
+  // } = useFetchCurrentUser();
+  // const { data: tags, isLoading: tagLoading } = useFetchAllTags();
 
   const establishSocketConnection = useCallback(
     (userId: number) => {
@@ -115,11 +113,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         isLoading,
-        userData,
+        // userData,
         socket,
-        isError,
-        isSuccess,
-        tags,
+        // isError,
+        // isSuccess,
+        // tags,
       }}
     >
       {children}

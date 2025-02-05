@@ -23,7 +23,7 @@ export const Profile = ({
   const {
     data: images,
     isLoading: imagesIsLoading,
-    isError: imagesIsError,
+    // isError: imagesIsError,
     isSuccess: imagesIsSuccess,
   } = useFetchUserImages(user?.id);
   let content;
