@@ -15,6 +15,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import { AuthProvider, ProtectedRoute } from "@utils/authContext";
 import { SnackbarProvider } from "notistack";
+import { PayloadProvider } from "@/utils/payloadProvider";
 import { Insights } from "@/pages/insights/Insights";
 export const queryClient = new QueryClient();
 
@@ -25,27 +26,29 @@ export const App = () => {
         <BrowserRouter>
           <ThemeProvider theme={theme}>
             <CssBaseline />
-            <SnackbarProvider>
-              <Routes>
-                {/* Public routes */}
-                <Route path="/" element={<Home />} />
-                <Route path={routes.REGISTER} element={<Signup />} />
-                <Route path={routes.LOGIN} element={<Login />} />
+            <PayloadProvider>
+              <SnackbarProvider>
+                <Routes>
+                  {/* Public routes */}
+                  <Route path="/" element={<Home />} />
+                  <Route path={routes.REGISTER} element={<Signup />} />
+                  <Route path={routes.LOGIN} element={<Login />} />
 
-                {/* Protected routes */}
-                <Route element={<ProtectedRoute />}>
-                  <Route path={routes.MATCHES} element={<Matches />} />
-                  <Route path={routes.BROWSE} element={<Browse />} />
-                  <Route path={routes.ME} element={<ProfilePage />} />
-                  <Route path={routes.CHAT} element={<Chat />} />
-                  <Route path={routes.INSIGHTS} element={<Insights />} />
-                  <Route
-                    path={routes.NOTIFICATIONS}
-                    element={<Notifications />}
-                  />
-                </Route>
-              </Routes>
-            </SnackbarProvider>
+                  {/* Protected routes */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route path={routes.MATCHES} element={<Matches />} />
+                    <Route path={routes.BROWSE} element={<Browse />} />
+                    <Route path={routes.ME} element={<ProfilePage />} />
+                    <Route path={routes.CHAT} element={<Chat />} />
+                    <Route path={routes.INSIGHTS} element={<Insights />} />
+                    <Route
+                      path={routes.NOTIFICATIONS}
+                      element={<Notifications />}
+                    />
+                  </Route>
+                </Routes>
+              </SnackbarProvider>
+            </PayloadProvider>
           </ThemeProvider>
         </BrowserRouter>
       </AuthProvider>

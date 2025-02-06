@@ -3,8 +3,13 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { Typography, Box } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
 import { useFetchCurrentUser } from "../browse/usersActions";
+import { useState } from "react";
+import { NotificationInterface } from "@/utils/socket";
 
 export const Notifications = () => {
+  const [notifications, setNotifications] = useState<NotificationInterface[]>(
+    []
+  );
   const { socket, isLoading: dataIsLoading } = useAuth();
   const {
     data: userData,

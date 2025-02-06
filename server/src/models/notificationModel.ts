@@ -78,6 +78,18 @@ class NotificationModel {
     return result.rows;
   }
 
+  async updateNotification(notificationId: number[]): Promise<any[]> {
+    const query = {
+      text: `UPDATE notification_recipients
+          SET status = 'SENT'::notification_status
+          WHERE id = ANY($1::integer[])
+          RETURNING notification_recipients.*`,
+      values: [notificationId],
+    };
+    const result = await pool.query(query);
+    return result.rows;
+  }
+
   async deleteNotification(notificationId: number): Promise<any[]> {
     // TODO check if the notification object is connected to multiple recipients
     // if so, delete only the notif recipient

@@ -44,10 +44,9 @@ export const addNotification = async (
           .emitWithAck(SOCKET_EVENTS.NOTIFICATION, notificationPayload);
         // Update notification status to sent
         if (response && notif.id) {
-          const response = await notificationModel.markNotificationAsRead([
+          const response = await notificationModel.updateNotification([
             notif.id,
           ]);
-          console.log("Notification marked as read:", response);
         }
       } catch (error) {
         console.log(

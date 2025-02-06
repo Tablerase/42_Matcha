@@ -110,6 +110,10 @@ erDiagram
 
 - https://tannguyenit95.medium.com/designing-a-notification-system-1da83ca971bc
 
+## Chat
+
+- https://dev.to/novu/building-a-chat-app-with-socketio-and-react-2edj
+
 ## Resources
 
 ### Sockets

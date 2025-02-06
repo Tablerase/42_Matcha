@@ -41,11 +41,12 @@ export const initializeSocket = (httpServer: HttpServer) => {
     }
     // Add user id to socket data
     socket.data.user = (jwt.decode(authToken) as { id: number }).id;
+    socket.data.userRoom = `user_${socket.data.user}`;
 
     // Listen for client joining their own room
     socket.on(SOCKET_EVENTS.JOIN, async (room: string) => {
       try {
-        const userRoom = `user_${socket.data.user}`;
+        const userRoom = socket.data.userRoom;
         // Check basic room name format based on user id
         if (room !== userRoom) {
           socket.emit("error", { message: "Invalid room name" });
@@ -69,6 +70,10 @@ export const initializeSocket = (httpServer: HttpServer) => {
     });
 
     /* ________________________________ Socket Events ________________________________ */
+
+    socket.on(SOCKET_EVENTS.NOTIFICATION, (data) => {
+      console.log("[Socket] Notification received:", data);
+    });
 
     socket.on(SOCKET_EVENTS.DISCONNECT, () => {
       console.log("[Socket] Client disconnected:", socket.id);
