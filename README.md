@@ -70,8 +70,8 @@ sequenceDiagram
 
 ```mermaid
 erDiagram
-    NOTIFICATION_OBJECTS ||--o{ NOTIFICATION_NOTIFIERS : contains
-    USERS ||--o{ NOTIFICATION_NOTIFIERS : "receives<br />sends"
+    NOTIFICATION_OBJECTS ||-    NOTIFICATION_RECIPIENTS { contains
+    USERS ||-    NOTIFICATION_RECIPIENTS { "receives<br />sends"
 
     NOTIFICATION_OBJECTS {
         bigint id PK
@@ -80,7 +80,7 @@ erDiagram
         timestamp created_at
     }
 
-    NOTIFICATION_NOTIFIERS {
+    NOTIFICATION_RECIPIENTS {
         bigint id PK
         bigint to_user_id FK
         bigint from_user_id FK

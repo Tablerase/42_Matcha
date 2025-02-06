@@ -10,7 +10,7 @@
     "re": "rm -rf ./dist && npm run build && npm run start",
     "seed": "ts-node src/seed.ts",
     "seedInsights": "ts-node src/seedInsights.ts",
-    "dev": "nodemon --exec ts-node -r tsconfig-paths/register src/server.ts"
+    "dev": "nodemon"
   },
   "keywords": [],
   "author": "",

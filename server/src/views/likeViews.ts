@@ -9,10 +9,14 @@ import { likeModel } from "@models/likeModel";
 import { matchModel } from "@models/matchModel";
 import { SOCKET_EVENTS } from "@interfaces/socketEvents";
 import {
+  NotificationInterface,
   NotificationPayload,
+  NotificationStatus,
   NotificationType,
 } from "@interfaces/notificationInterface";
 import { io } from "@src/server";
+import { user } from "@src/models/userModel";
+import { notificationModel } from "@src/models/notificationModel";
 
 export const checkUserLiked = async (
   req: Request,
@@ -72,7 +76,7 @@ export const addUserLike = async (
   try {
     const likerUserId = req?.user?.id;
     const likedUserId = parseInt(req.params.id);
-    if (!likedUserId) {
+    if (!likedUserId || !likerUserId) {
       handleBadRequestResponse(res, "likedUserId is required");
       return;
     }
@@ -81,29 +85,42 @@ export const addUserLike = async (
       return;
     }
 
-    await likeModel.addUserLike(likerUserId!, likedUserId);
-    const match = await matchModel.checkForMatch(likerUserId!, likedUserId);
-    let notification: NotificationPayload;
+    const like = await likeModel.addUserLike(likerUserId, likedUserId);
+    const match = await matchModel.checkForMatch(likerUserId, likedUserId);
+    let notification_load: NotificationPayload;
+    let notification: NotificationInterface;
     if (match) {
-      notification = {
+      notification_load = {
         type: NotificationType.MATCH,
         ui_variant: "success",
         message: "You have a new match!",
-        fromUserId: likerUserId!,
+        fromUserId: likerUserId,
         toUserId: likedUserId,
         createAt: new Date(),
       };
-    } else {
+    } else if (like.length === 1) {
+      // notification_load = {
+      //   type: NotificationType.LIKE,
+      //   ui_variant: "info",
+      //   message: "You have a new like!",
+      //   fromUserId: likerUserId!,
+      //   toUserId: likedUserId,
+      //   createAt: new Date(),
+      // };
       notification = {
         type: NotificationType.LIKE,
-        ui_variant: "info",
-        message: "You have a new like!",
-        fromUserId: likerUserId!,
-        toUserId: likedUserId,
-        createAt: new Date(),
+        content: { message: "You have a new like!" },
+        toUserID: likedUserId,
+        fromUserID: likerUserId,
+        isRead: false,
+        status: NotificationStatus.PENDING,
       };
+      const result = await notificationModel.createNotification(notification, [
+        likedUserId,
+        likerUserId,
+      ]);
     }
-    io.to(`user_${likedUserId}`).emit(SOCKET_EVENTS.NOTIFICATION, notification);
+    // io.to(`user_${likedUserId}`).emit(SOCKET_EVENTS.NOTIFICATION, notification);
 
     res.status(201).json({ status: 201, message: "Like added" });
   } catch (error) {

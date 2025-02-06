@@ -10,23 +10,28 @@ export interface NotificationPayload {
 }
 
 export enum NotificationType {
-  LIKE = "like",
-  UNLIKE = "unlike",
-  MATCH = "match",
-  MESSAGE = "message",
-  VIEW = "view",
+  LIKE = SOCKET_EVENTS.LIKE,
+  UNLIKE = SOCKET_EVENTS.UNLIKE,
+  MATCH = SOCKET_EVENTS.MATCH,
+  MESSAGE = SOCKET_EVENTS.MESSAGE,
+  VIEW = SOCKET_EVENTS.VIEW,
 }
 
-export interface Notification {
-  id: number;
-  type: keyof typeof NotificationType;
-  content: JSON;
+export interface NotificationContent {
+  message: string;
+  // Possibly add more fields here
+}
+
+export interface NotificationInterface {
+  id?: number;
+  type: NotificationType;
+  content: NotificationContent;
   toUserID: number;
   fromUserID: number;
   isRead: boolean;
   status: NotificationStatus;
   readAt?: Date;
-  createdAt: Date;
+  createdAt?: Date;
 }
 
 export enum NotificationStatus {

@@ -24,7 +24,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
   io.engine.use(authenticateSocketToken);
 
   // Socket.IO connection handling
-  io.on(SOCKET_EVENTS.CONNECT, (socket: Socket, req: Request) => {
+  io.on(SOCKET_EVENTS.CONNECT, (socket: Socket) => {
     console.log("[Socket] Client connected:", socket.id);
 
     /* ________________________________ Socket Data ________________________________ */
