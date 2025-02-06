@@ -53,8 +53,8 @@ export const initializeSocket = (httpServer: HttpServer) => {
         }
 
         // Check if user already in room
-        const rooms = Array.from(socket.rooms);
-        if (rooms.includes(userRoom)) {
+        const rooms = io.sockets.adapter.rooms;
+        if (rooms.get(userRoom)) {
           return;
         }
 

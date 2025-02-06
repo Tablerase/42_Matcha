@@ -6,6 +6,7 @@ export interface NotificationPayload {
   message: string;
   fromUserId: number;
   toUserId: number;
+  isRead: boolean;
   createAt: Date;
 }
 
@@ -25,11 +26,12 @@ export interface NotificationContent {
 export interface NotificationInterface {
   id?: number;
   type: NotificationType;
+  ui_variant?: "default" | "success" | "info" | "warning" | "error";
   content: NotificationContent;
   toUserID: number;
   fromUserID: number;
-  isRead: boolean;
-  status: NotificationStatus;
+  isRead?: boolean;
+  status?: NotificationStatus;
   readAt?: Date;
   createdAt?: Date;
 }

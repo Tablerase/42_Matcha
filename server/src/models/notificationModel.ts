@@ -1,6 +1,14 @@
 import { QueryResult } from "pg";
+import { io } from "@src/server";
+import { SOCKET_EVENTS } from "@interfaces/socketEvents";
 import { pool } from "../settings";
-import { NotificationInterface } from "@src/interfaces/notificationInterface";
+import {
+  NotificationInterface,
+  NotificationPayload,
+  NotificationStatus,
+  NotificationType,
+} from "@src/interfaces/notificationInterface";
+import { Server } from "socket.io";
 
 class NotificationModel {
   async getNotifications(userId: number): Promise<any[]> {
@@ -18,8 +26,7 @@ class NotificationModel {
   async createNotification(
     notification: NotificationInterface,
     userIds: number[]
-  ): Promise<any[]> {
-    // TODO: Implement the multiple recipients creation connected to the same notification object
+  ): Promise<NotificationInterface[]> {
     const query = {
       text: `
         WITH notif_object AS (
@@ -30,7 +37,7 @@ class NotificationModel {
         INSERT INTO notification_recipients (to_user_id, from_user_id, notification_object_id, status)
         SELECT unnest($3::integer[]), $4, id, 'PENDING'
         FROM notif_object
-        RETURNING notification_object_id
+        RETURNING notification_recipients.*
       `,
       values: [
         notification.type,
@@ -40,15 +47,31 @@ class NotificationModel {
       ],
     };
     const result = await pool.query(query);
-    return result.rows;
+    const resultNotifications: NotificationInterface[] = result.rows.map(
+      (row) => {
+        return {
+          id: row.id,
+          type: notification.type as NotificationType,
+          ui_variant: notification.ui_variant,
+          content: notification.content,
+          toUserID: row.to_user_id,
+          fromUserID: row.from_user_id,
+          status: row.status as NotificationStatus,
+          isRead: row.is_read as boolean,
+          readAt: row.read_at as Date,
+          createdAt: row.created_at as Date,
+        };
+      }
+    );
+    return resultNotifications;
   }
 
-  async markNotificationAsRead(notificationId: number): Promise<any[]> {
+  async markNotificationAsRead(notificationId: number[]): Promise<any[]> {
     const query = {
       text: `UPDATE notification_recipients
-          SET status = 'READ'
-          WHERE notification_object_id = $1
-          RETURNING *`,
+          SET status = 'SENT'::notification_status, is_read = true, read_at = NOW()
+          WHERE id = ANY($1::integer[])
+          RETURNING notification_recipients.*`,
       values: [notificationId],
     };
     const result = await pool.query(query);
@@ -61,7 +84,7 @@ class NotificationModel {
     // if not, delete the notification object as well
     const query = {
       text: `DELETE FROM notification_recipients
-          WHERE notification_object_id = $1
+          WHERE id = $1
           RETURNING *`,
       values: [notificationId],
     };

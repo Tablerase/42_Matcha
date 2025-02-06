@@ -27,7 +27,9 @@ class LikeModel {
             SELECT $1, $2
             WHERE NOT EXISTS (
               SELECT 1 FROM likes WHERE liker_user_id = $1 AND liked_user_id = $2
-            )`,
+            )
+            RETURNING *
+            `,
       values: [likerUserId, likedUserId],
     };
     const result: QueryResult = await pool.query(query);

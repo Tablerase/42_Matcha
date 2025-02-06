@@ -15,6 +15,7 @@ import { SOCKET_EVENTS } from "./interfaces/socketEvents";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "./settings";
 import { initializeSocket } from "./socket";
+import exp from "constants";
 
 /* ________________________________ Server Setup ________________________________ */
 const app: Application = express();

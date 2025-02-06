@@ -3,31 +3,62 @@ import { enqueueSnackbar } from "notistack";
 import { SERVER_URL } from "@/utils/config";
 
 /* ______________________________ Socket Events ______________________________ */
-
-export const SOCKET_EVENTS = {
+export enum SOCKET_EVENTS {
   // System events
-  NOTIFICATION: "notification",
-  CONNECT: "connect",
-  DISCONNECT: "disconnect",
-  JOIN: "join",
-  ERROR: "error",
+  NOTIFICATION = "notification",
+  CONNECT = "connect",
+  DISCONNECT = "disconnect",
+  JOIN = "join",
+  ERROR = "error",
   // Chats events
-  MESSAGE: "message",
-  MESSAGE_NEW: "newMessage",
+  MESSAGE = "message",
   // Matching events
-  MATCH_NEW: "newMatch",
-  LIKE_NEW: "newLike",
-  LIKE_DELETE: "newUnlike", // If user are already matched
-  VIEW_PROFILE: "viewProfile",
-};
+  MATCH = "match",
+  LIKE = "like",
+  UNLIKE = "unlike", // If user are already matched
+  VIEW = "view",
+}
 
 export interface NotificationPayload {
-  type: keyof typeof SOCKET_EVENTS;
+  type: NotificationType;
   ui_variant?: "default" | "success" | "info" | "warning" | "error";
   message: string;
   fromUserId: number;
   toUserId: number;
+  isRead: boolean;
   createAt: Date;
+}
+
+export enum NotificationType {
+  LIKE = SOCKET_EVENTS.LIKE,
+  UNLIKE = SOCKET_EVENTS.UNLIKE,
+  MATCH = SOCKET_EVENTS.MATCH,
+  MESSAGE = SOCKET_EVENTS.MESSAGE,
+  VIEW = SOCKET_EVENTS.VIEW,
+}
+
+export interface NotificationContent {
+  message: string;
+  // Possibly add more fields here
+}
+
+export interface NotificationInterface {
+  id?: number;
+  type: NotificationType;
+  ui_variant?: "default" | "success" | "info" | "warning" | "error";
+  content: NotificationContent;
+  toUserID: number;
+  fromUserID: number;
+  isRead?: boolean;
+  status?: NotificationStatus;
+  readAt?: Date;
+  createdAt?: Date;
+}
+
+export enum NotificationStatus {
+  PENDING = "PENDING",
+  SENT = "SENT",
+  FAILED = "FAILED",
 }
 
 /* ________________________________ Socket.io ________________________________ */
@@ -52,12 +83,16 @@ export const initializeSocket = (userId: number) => {
     console.log("Socket: Disconnected from server");
   });
 
-  socket.on(SOCKET_EVENTS.NOTIFICATION, (payload: NotificationPayload) => {
-    console.log("Socket: Notification", payload);
-    enqueueSnackbar(payload.message, {
-      variant: payload.ui_variant || "default",
-    });
-  });
+  socket.on(
+    SOCKET_EVENTS.NOTIFICATION,
+    (payload: NotificationPayload, callback) => {
+      console.log("Socket: Notification", payload);
+      enqueueSnackbar(payload.message, {
+        variant: payload.ui_variant || "default",
+      });
+      callback("Notification received");
+    }
+  );
 
   return socket;
 };
