@@ -52,6 +52,7 @@ export const PayloadProvider = ({
   } = useAuth();
 
   useEffect(() => {
+    console.log("Socket: PayloadProvider", socket);
     if (
       authIsLoading ||
       isAuth === false ||
@@ -61,6 +62,7 @@ export const PayloadProvider = ({
       return;
     // Fetch notifications
     if (!socket) return;
+    console.log("Socket: before fetch notifications");
     socket.emit(
       SOCKET_EVENTS.NOTIFICATIONS_FETCH,
       (data: NotificationInterface[]) => {
@@ -77,8 +79,8 @@ export const PayloadProvider = ({
     socket.on(
       SOCKET_EVENTS.NOTIFICATION_NEW,
       (payload: NotificationInterface, callback) => {
-        callback("Notification received");
         console.log("Socket: Notification", payload);
+        callback("Notification received");
         enqueueSnackbar(payload.content.message, {
           variant: payload.ui_variant || "default",
         });
