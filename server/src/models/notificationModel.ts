@@ -25,7 +25,6 @@ class NotificationModel {
         return {
           id: row.id,
           type: row.type as NotificationType,
-          ui_variant: row.ui_variant,
           content: row.content,
           toUserID: row.to_user_id,
           fromUserID: row.from_user_id,

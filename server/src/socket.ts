@@ -80,7 +80,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       const notifications = await notificationModel.getNotifications(
         socket.data.user
       );
-      console.log("[Socket] Notifications fetched:", notifications);
+      console.log("[Socket] Notifications fetched");
       // Emit notifications to client
       socket.emit(SOCKET_EVENTS.NOTIFICATIONS, notifications);
     });

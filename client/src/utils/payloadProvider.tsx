@@ -7,14 +7,18 @@ import {
 } from "react";
 import { useAuth } from "@utils/authContext";
 import { enqueueSnackbar } from "notistack";
-import { NotificationPayload, SOCKET_EVENTS } from "@utils/socket";
+import {
+  NotificationInterface,
+  NotificationPayload,
+  SOCKET_EVENTS,
+} from "@utils/socket";
 import { Socket } from "socket.io-client";
 import { initializeSocket } from "./socket";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { useFetchCurrentUser } from "@/pages/browse/usersActions";
 
 interface payloadInterface {
-  notifications: NotificationPayload[];
+  notifications: NotificationInterface[];
   notifMarkAsRead: (id: number) => void;
   notifDelete: (id: number) => void;
   notifClear: () => void;
@@ -38,7 +42,9 @@ export const PayloadProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
+  const [notifications, setNotifications] = useState<NotificationInterface[]>(
+    []
+  );
   const {
     isAuthenticated: isAuth,
     isLoading: authIsLoading,
@@ -57,12 +63,12 @@ export const PayloadProvider = ({
     if (!socket) return;
     socket.emit(
       SOCKET_EVENTS.NOTIFICATIONS_FETCH,
-      (data: NotificationPayload[]) => {
+      (data: NotificationInterface[]) => {
         console.log("Socket: Notifications Fetch", data);
         setNotifications(data);
       }
     );
-    socket.on(SOCKET_EVENTS.NOTIFICATIONS, (data: NotificationPayload[]) => {
+    socket.on(SOCKET_EVENTS.NOTIFICATIONS, (data: NotificationInterface[]) => {
       console.log("Socket: Notifications", data);
       setNotifications(data);
     });
@@ -70,10 +76,10 @@ export const PayloadProvider = ({
     // Register event listeners
     socket.on(
       SOCKET_EVENTS.NOTIFICATION_NEW,
-      (payload: NotificationPayload, callback) => {
+      (payload: NotificationInterface, callback) => {
         callback("Notification received");
         console.log("Socket: Notification", payload);
-        enqueueSnackbar(payload.message, {
+        enqueueSnackbar(payload.content.message, {
           variant: payload.ui_variant || "default",
         });
         setNotifications((prev) => [...prev, payload]);

@@ -27,9 +27,9 @@ export const Notifications = () => {
     content = (
       <>
         <Typography variant="h4">Notifications</Typography>
-        {notifications.map((notification: NotificationPayload) => (
+        {notifications.map((notification: NotificationInterface) => (
           <div key={notification.id}>
-            <Typography>{notification.message}</Typography>
+            <Typography>{notification.content.message}</Typography>
             <button onClick={() => notifMarkAsRead(notification.id)}>
               Mark as read
             </button>

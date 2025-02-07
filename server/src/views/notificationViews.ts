@@ -16,23 +16,23 @@ export const addNotification = async (
 
   // Emit notification to users if any exist
   if (notifs.length > 0) {
-    const notificationPayload: NotificationPayload = {
+    const notificationPayload: NotificationInterface = {
       id: 0,
       type: notification.type,
       ui_variant: notification.ui_variant,
-      message: notification.content.message,
-      toUserId: 0,
-      fromUserId: notification.fromUserID,
+      content: notification.content,
+      toUserID: 0,
+      fromUserID: notification.fromUserID,
       isRead: false,
-      createAt: new Date(),
+      createdAt: new Date(),
     };
 
     for (const notif of notifs) {
       // Update payload with recipient specific data
-      notificationPayload.id = notif.id ?? 0;
-      notificationPayload.toUserId = notif.toUserID;
-      notificationPayload.isRead = notif.isRead ?? false;
-      notificationPayload.createAt = notif.createdAt ?? new Date();
+      notificationPayload.id = notif.id;
+      notificationPayload.toUserID = notif.toUserID;
+      notificationPayload.isRead = notif.isRead;
+      notificationPayload.createdAt = notif.createdAt;
 
       try {
         const userRoom = `user_${notif.toUserID}`;
@@ -42,7 +42,7 @@ export const addNotification = async (
         }
         const response = await io
           .to(userRoom)
-          .timeout(1000)
+          .timeout(500)
           .emitWithAck(SOCKET_EVENTS.NOTIFICATION_NEW, notificationPayload);
         // Update notification status to sent
         if (response && notif.id) {

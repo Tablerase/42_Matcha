@@ -50,7 +50,7 @@ export interface NotificationContent {
 }
 
 export interface NotificationInterface {
-  id?: number;
+  id: number;
   type: NotificationType;
   ui_variant?: "default" | "success" | "info" | "warning" | "error";
   content: NotificationContent;

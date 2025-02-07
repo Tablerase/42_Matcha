@@ -120,6 +120,7 @@ erDiagram
 
 - [Socket.io Documentation](https://socket.io/docs/v4/)
 - [Socket.io - Middleware](https://socket.io/docs/v4/middlewares/)
+- [Socket.io with React](https://dev.to/bravemaster619/how-to-use-socket-io-client-correctly-in-react-app-o65)
 
 ### Images
 
