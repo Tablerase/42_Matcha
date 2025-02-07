@@ -1,10 +1,16 @@
 export enum SOCKET_EVENTS {
   // System events
-  NOTIFICATION = "notification",
   CONNECT = "connect",
   DISCONNECT = "disconnect",
   JOIN = "join",
   ERROR = "error",
+  // Notification events
+  NOTIFICATION_NEW = "notificationNew",
+  NOTIFICATIONS_FETCH = "notificationFetch",
+  NOTIFICATIONS = "notifications",
+  NOTIFICATIONS_CLEAR = "notificationsClear",
+  NOTIFICATION_DELETE = "notificationDelete",
+  NOTIFICATION_READ = "notificationRead",
   // Chats events
   MESSAGE = "message",
   // Matching events

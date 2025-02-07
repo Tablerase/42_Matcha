@@ -4,34 +4,41 @@ import { Typography, Box } from "@mui/material";
 import { useAuth } from "@/utils/authContext";
 import { useFetchCurrentUser } from "../browse/usersActions";
 import { useState } from "react";
-import { NotificationInterface } from "@/utils/socket";
+import { NotificationInterface, NotificationPayload } from "@/utils/socket";
+import { usePayload } from "@/utils/payloadProvider";
 
 export const Notifications = () => {
-  const [notifications, setNotifications] = useState<NotificationInterface[]>(
-    []
-  );
-  const { socket, isLoading: dataIsLoading } = useAuth();
   const {
     data: userData,
     isSuccess: userIsSuccess,
     isLoading: userIsLoading,
   } = useFetchCurrentUser();
+  const { notifications, notifMarkAsRead, notifDelete, notifClear } =
+    usePayload();
 
   /* ______________________________ Render ______________________________ */
   let content;
 
-  if (dataIsLoading || userIsLoading) {
+  if (notifications && userIsLoading) {
     content = <LoadingCup />;
   }
 
-  if (userIsSuccess) {
-    if (socket && socket.connected) {
-      content = (
-        <Typography variant="h4" sx={{ textAlign: "center" }}>
-          Connected to server
-        </Typography>
-      );
-    }
+  if (userIsSuccess && notifications.length > 0) {
+    content = (
+      <>
+        <Typography variant="h4">Notifications</Typography>
+        {notifications.map((notification: NotificationPayload) => (
+          <div key={notification.id}>
+            <Typography>{notification.message}</Typography>
+            <button onClick={() => notifMarkAsRead(notification.id)}>
+              Mark as read
+            </button>
+            <button onClick={() => notifDelete(notification.id)}>Delete</button>
+          </div>
+        ))}
+        <button onClick={() => notifClear()}>Clear all</button>
+      </>
+    );
   }
 
   return (

@@ -5,11 +5,17 @@ import { SERVER_URL } from "@/utils/config";
 /* ______________________________ Socket Events ______________________________ */
 export enum SOCKET_EVENTS {
   // System events
-  NOTIFICATION = "notification",
   CONNECT = "connect",
   DISCONNECT = "disconnect",
   JOIN = "join",
   ERROR = "error",
+  // Notification events
+  NOTIFICATION_NEW = "notificationNew",
+  NOTIFICATIONS_FETCH = "notificationFetch",
+  NOTIFICATIONS = "notifications",
+  NOTIFICATIONS_CLEAR = "notificationsClear",
+  NOTIFICATION_DELETE = "notificationDelete",
+  NOTIFICATION_READ = "notificationRead",
   // Chats events
   MESSAGE = "message",
   // Matching events
@@ -20,6 +26,7 @@ export enum SOCKET_EVENTS {
 }
 
 export interface NotificationPayload {
+  id: number;
   type: NotificationType;
   ui_variant?: "default" | "success" | "info" | "warning" | "error";
   message: string;
@@ -82,17 +89,6 @@ export const initializeSocket = (userId: number) => {
   socket.on(SOCKET_EVENTS.DISCONNECT, () => {
     console.log("Socket: Disconnected from server");
   });
-
-  socket.on(
-    SOCKET_EVENTS.NOTIFICATION,
-    (payload: NotificationPayload, callback) => {
-      console.log("Socket: Notification", payload);
-      enqueueSnackbar(payload.message, {
-        variant: payload.ui_variant || "default",
-      });
-      callback("Notification received");
-    }
-  );
 
   return socket;
 };

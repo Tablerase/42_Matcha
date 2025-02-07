@@ -1,9 +1,23 @@
-import { createContext, useContext, useState } from "react";
-import { NotificationInterface } from "./socket";
+import {
+  useCallback,
+  createContext,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+import { useAuth } from "@utils/authContext";
+import { enqueueSnackbar } from "notistack";
+import { NotificationPayload, SOCKET_EVENTS } from "@utils/socket";
+import { Socket } from "socket.io-client";
+import { initializeSocket } from "./socket";
+import LoadingCup from "@/components/LoadingCup/LoadingCup";
+import { useFetchCurrentUser } from "@/pages/browse/usersActions";
 
 interface payloadInterface {
-  notifications: NotificationInterface[];
-  setNotifications: (notifications: NotificationInterface[]) => void;
+  notifications: NotificationPayload[];
+  notifMarkAsRead: (id: number) => void;
+  notifDelete: (id: number) => void;
+  notifClear: () => void;
 }
 
 // Create a context to store the payload
@@ -24,12 +38,85 @@ export const PayloadProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [notifications, setNotifications] = useState<NotificationInterface[]>(
-    []
-  );
+  const [notifications, setNotifications] = useState<NotificationPayload[]>([]);
+  const {
+    isAuthenticated: isAuth,
+    isLoading: authIsLoading,
+    socket,
+  } = useAuth();
+
+  useEffect(() => {
+    if (
+      authIsLoading ||
+      isAuth === false ||
+      socket === null ||
+      socket === undefined
+    )
+      return;
+    // Fetch notifications
+    if (!socket) return;
+    socket.emit(
+      SOCKET_EVENTS.NOTIFICATIONS_FETCH,
+      (data: NotificationPayload[]) => {
+        console.log("Socket: Notifications Fetch", data);
+        setNotifications(data);
+      }
+    );
+    socket.on(SOCKET_EVENTS.NOTIFICATIONS, (data: NotificationPayload[]) => {
+      console.log("Socket: Notifications", data);
+      setNotifications(data);
+    });
+
+    // Register event listeners
+    socket.on(
+      SOCKET_EVENTS.NOTIFICATION_NEW,
+      (payload: NotificationPayload, callback) => {
+        callback("Notification received");
+        console.log("Socket: Notification", payload);
+        enqueueSnackbar(payload.message, {
+          variant: payload.ui_variant || "default",
+        });
+        setNotifications((prev) => [...prev, payload]);
+      }
+    );
+
+    return () => {
+      socket.off(SOCKET_EVENTS.NOTIFICATIONS);
+      socket.off(SOCKET_EVENTS.NOTIFICATION_NEW);
+    };
+  }, [isAuth, authIsLoading, socket]);
+
+  const notifMarkAsRead = (id: number) => {
+    if (!socket) return;
+    socket.emit(SOCKET_EVENTS.NOTIFICATION_READ, id);
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === id ? { ...notif, isRead: true } : notif
+      )
+    );
+  };
+
+  const notifDelete = (id: number) => {
+    if (!socket) return;
+    socket.emit(SOCKET_EVENTS.NOTIFICATION_DELETE, id);
+    setNotifications((prev) => prev.filter((notif) => notif.id !== id));
+  };
+
+  const notifClear = () => {
+    if (!socket) return;
+    socket.emit(SOCKET_EVENTS.NOTIFICATIONS_CLEAR);
+    setNotifications([]);
+  };
 
   return (
-    <PayloadContext.Provider value={{ notifications, setNotifications }}>
+    <PayloadContext.Provider
+      value={{
+        notifications,
+        notifMarkAsRead,
+        notifDelete,
+        notifClear,
+      }}
+    >
       {children}
     </PayloadContext.Provider>
   );

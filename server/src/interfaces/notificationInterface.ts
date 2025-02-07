@@ -1,6 +1,7 @@
-import { SOCKET_EVENTS } from "@interfaces/socketEvents";
+import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
 
 export interface NotificationPayload {
+  id: number;
   type: NotificationType;
   ui_variant?: "default" | "success" | "info" | "warning" | "error";
   message: string;

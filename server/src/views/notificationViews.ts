@@ -2,7 +2,7 @@ import { NotificationInterface } from "@interfaces/notificationInterface";
 import { notificationModel } from "@src/models/notificationModel";
 import { io } from "@src/server";
 import { NotificationPayload } from "@interfaces/notificationInterface";
-import { SOCKET_EVENTS } from "@src/interfaces/socketEvents";
+import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
 
 export const addNotification = async (
   notification: NotificationInterface,
@@ -17,6 +17,7 @@ export const addNotification = async (
   // Emit notification to users if any exist
   if (notifs.length > 0) {
     const notificationPayload: NotificationPayload = {
+      id: 0,
       type: notification.type,
       ui_variant: notification.ui_variant,
       message: notification.content.message,
@@ -28,6 +29,7 @@ export const addNotification = async (
 
     for (const notif of notifs) {
       // Update payload with recipient specific data
+      notificationPayload.id = notif.id ?? 0;
       notificationPayload.toUserId = notif.toUserID;
       notificationPayload.isRead = notif.isRead ?? false;
       notificationPayload.createAt = notif.createdAt ?? new Date();
@@ -41,7 +43,7 @@ export const addNotification = async (
         const response = await io
           .to(userRoom)
           .timeout(1000)
-          .emitWithAck(SOCKET_EVENTS.NOTIFICATION, notificationPayload);
+          .emitWithAck(SOCKET_EVENTS.NOTIFICATION_NEW, notificationPayload);
         // Update notification status to sent
         if (response && notif.id) {
           const response = await notificationModel.updateNotification([

@@ -11,7 +11,7 @@ import tagsRoutes from "@routes/tagsRoutes";
 import { SERVER_PORT, FRONTEND_ORIGIN } from "./settings";
 import { createServer } from "http";
 import SocketIOServer from "socket.io";
-import { SOCKET_EVENTS } from "./interfaces/socketEvents";
+import { SOCKET_EVENTS } from "./interfaces/socketEventsInterface";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "./settings";
 import { initializeSocket } from "./socket";

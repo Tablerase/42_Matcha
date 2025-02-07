@@ -3,10 +3,10 @@ import { Server as HttpServer } from "http";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import { FRONTEND_ORIGIN, JWT_SECRET_KEY } from "@settings";
-import { SOCKET_EVENTS } from "@interfaces/socketEvents";
+import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
 import { Request, Response, NextFunction } from "express";
 import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
-import { time } from "console";
+import { notificationModel } from "@src/models/notificationModel";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   /* ________________________________ Socket Setup ________________________________ */
@@ -71,11 +71,21 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     /* ________________________________ Socket Events ________________________________ */
 
-    socket.on(SOCKET_EVENTS.NOTIFICATION, (data) => {
-      console.log("[Socket] Notification received:", data);
+    socket.on(SOCKET_EVENTS.NOTIFICATIONS_FETCH, async (data) => {
+      console.log(
+        "[Socket] Fetching notifications for user:",
+        socket.data.user
+      );
+      // Fetch notifications from database
+      const notifications = await notificationModel.getNotifications(
+        socket.data.user
+      );
+      console.log("[Socket] Notifications fetched:", notifications);
+      // Emit notifications to client
+      socket.emit(SOCKET_EVENTS.NOTIFICATIONS, notifications);
     });
 
-    socket.on(SOCKET_EVENTS.DISCONNECT, () => {
+    socket.on(SOCKET_EVENTS.DISCONNECT, async () => {
       console.log("[Socket] Client disconnected:", socket.id);
     });
   });

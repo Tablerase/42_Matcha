@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 import { io } from "@src/server";
-import { SOCKET_EVENTS } from "@interfaces/socketEvents";
+import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
 import { pool } from "../settings";
 import {
   NotificationInterface,
@@ -11,16 +11,32 @@ import {
 import { Server } from "socket.io";
 
 class NotificationModel {
-  async getNotifications(userId: number): Promise<any[]> {
+  async getNotifications(userId: number): Promise<NotificationInterface[]> {
     const query = {
       text: `SELECT * 
           FROM notification_recipients AS nr 
           JOIN notification_objects AS no ON nr.notification_object_id = no.id
-          WHERE nr.notifier_id = $1`,
+          WHERE nr.to_user_id = $1`,
       values: [userId],
     };
-    const result: QueryResult = await pool.query(query);
-    return result.rows;
+    const result = await pool.query(query);
+    const resultNotifications: NotificationInterface[] = result.rows.map(
+      (row) => {
+        return {
+          id: row.id,
+          type: row.type as NotificationType,
+          ui_variant: row.ui_variant,
+          content: row.content,
+          toUserID: row.to_user_id,
+          fromUserID: row.from_user_id,
+          status: row.status as NotificationStatus,
+          isRead: row.is_read as boolean,
+          readAt: row.read_at as Date,
+          createdAt: row.created_at as Date,
+        };
+      }
+    );
+    return resultNotifications;
   }
 
   async createNotification(
