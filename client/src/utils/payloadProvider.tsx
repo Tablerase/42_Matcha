@@ -20,6 +20,7 @@ import { useFetchCurrentUser } from "@/pages/browse/usersActions";
 interface payloadInterface {
   notifications: NotificationInterface[];
   notifMarkAsRead: (id: number) => void;
+  notifMarkAsUnread: (id: number) => void;
   notifDelete: (id: number) => void;
   notifClear: () => void;
 }
@@ -52,16 +53,17 @@ export const PayloadProvider = ({
   } = useAuth();
 
   useEffect(() => {
-    console.log("Socket: PayloadProvider", socket);
     if (
       authIsLoading ||
       isAuth === false ||
       socket === null ||
       socket === undefined
-    )
+    ) {
+      console.log("Socket: PayloadProvider pre auth", socket);
       return;
+    }
+    console.log("Socket: PayloadProvider post auth", socket);
     // Fetch notifications
-    console.log("Socket: before fetch notifications");
     socket.emit(
       SOCKET_EVENTS.NOTIFICATIONS_FETCH,
       (data: NotificationInterface[]) => {
@@ -103,6 +105,16 @@ export const PayloadProvider = ({
     );
   };
 
+  const notifMarkAsUnread = (id: number) => {
+    if (!socket) return;
+    socket.emit(SOCKET_EVENTS.NOTIFICATION_UNREAD, id);
+    setNotifications((prev) =>
+      prev.map((notif) =>
+        notif.id === id ? { ...notif, isRead: false } : notif
+      )
+    );
+  };
+
   const notifDelete = (id: number) => {
     if (!socket) return;
     socket.emit(SOCKET_EVENTS.NOTIFICATION_DELETE, id);
@@ -120,6 +132,7 @@ export const PayloadProvider = ({
       value={{
         notifications,
         notifMarkAsRead,
+        notifMarkAsUnread,
         notifDelete,
         notifClear,
       }}

@@ -94,6 +94,17 @@ class NotificationModel {
     return result.rows;
   }
 
+  async markNotificationAsUnread(notificationId: number[]): Promise<any[]> {
+    const query = {
+      text: `UPDATE notification_recipients
+          SET status = 'SENT'::notification_status, is_read = false, read_at = NULL
+          WHERE id = ANY($1::integer[])
+          RETURNING notification_recipients.*`,
+      values: [notificationId],
+    };
+    const result = await pool.query(query);
+    return result.rows;
+  }
   async updateNotification(notificationId: number[]): Promise<any[]> {
     const query = {
       text: `UPDATE notification_recipients
@@ -153,6 +164,25 @@ class NotificationModel {
 
       return deleteRecipientResult.rows;
     }
+  }
+
+  async clearNotifications(userId: number): Promise<any[]> {
+    // Recover all notification recipient ids
+    const notificationRecipientIdsQuery = {
+      text: `SELECT id FROM notification_recipients
+          WHERE to_user_id = $1`,
+      values: [userId],
+    };
+    const result = await pool.query(notificationRecipientIdsQuery);
+    const notificationIds = result.rows.map((row) => row.id);
+
+    // Delete all notification recipients
+    let results: QueryResult[] = [];
+    for (const id of notificationIds) {
+      const result = await this.deleteNotification(id);
+      results.concat(result);
+    }
+    return results;
   }
 }
 

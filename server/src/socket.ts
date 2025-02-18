@@ -106,6 +106,19 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
+    socket.on(SOCKET_EVENTS.NOTIFICATION_UNREAD, async (id: number) => {
+      console.log("[Socket] Marking notification as unread:", id);
+      // Mark notification as unread in database
+      try {
+        await notificationModel.markNotificationAsUnread([id]);
+      } catch (error) {
+        console.error("[Socket] Error marking notification as unread:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to mark notification as unread",
+        });
+      }
+    });
+
     socket.on(SOCKET_EVENTS.NOTIFICATION_DELETE, async (id: number) => {
       console.log("[Socket] Deleting notification:", id);
       // Delete notification from database
@@ -115,6 +128,19 @@ export const initializeSocket = (httpServer: HttpServer) => {
         console.error("[Socket] Error deleting notification:", error);
         socket.emit(SOCKET_EVENTS.ERROR, {
           message: "Failed to delete notification",
+        });
+      }
+    });
+
+    socket.on(SOCKET_EVENTS.NOTIFICATIONS_CLEAR, async () => {
+      console.log("[Socket] Clearing all notifications");
+      // Clear all notifications from database
+      try {
+        await notificationModel.clearNotifications(socket.data.user);
+      } catch (error) {
+        console.error("[Socket] Error clearing notifications:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to clear notifications",
         });
       }
     });

@@ -67,6 +67,19 @@ class UserModel {
     }
   }
 
+  async getUsernameById(id: number): Promise<string | null> {
+    try {
+      const query = {
+        text: "SELECT username FROM users WHERE id = $1",
+        values: [id],
+      };
+      const result: QueryResult = await pool.query(query);
+      return result.rows[0]?.username || null;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
   async getUserById(id: number): Promise<User | null> {
     try {
       const query = {

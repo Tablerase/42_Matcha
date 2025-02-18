@@ -6,6 +6,12 @@ import {
   handleNotFoundResponse,
 } from "@utils/errorHandler";
 import { viewModel } from "@models/viewModel";
+import {
+  NotificationInterface,
+  NotificationType,
+} from "@src/interfaces/notificationInterface";
+import { addNotification } from "./notificationViews";
+import { user } from "@src/models/userModel";
 
 export const getUserViews = async (
   req: Request,
@@ -51,7 +57,21 @@ export const addUserView = async (
       return;
     }
 
-    await viewModel.addUserView(userId!, viewedUserId!);
+    const result = await viewModel.addUserView(userId!, viewedUserId!);
+    const viewerUsername = await user.getUsernameById(userId!);
+    if (result) {
+      let notification: NotificationInterface = {
+        type: NotificationType.VIEW,
+        content: {
+          message: `${viewerUsername} viewed your profile`,
+        },
+        fromUserID: userId!,
+        toUserID: viewedUserId!,
+        isRead: false,
+        createdAt: new Date(),
+      };
+      await addNotification(notification, [viewedUserId!]);
+    }
     res.status(201).json({ status: 201, message: "View added successfully" });
   } catch (error) {
     handleErrorResponse(res, error);

@@ -34,3 +34,8 @@ Cookie: authToken={{authToken}}
 
 DELETE http://localhost:8000/users/16/likes
 Cookie: authToken={{authToken}}
+
+### Add view
+
+POST http://localhost:8000/users/16/views
+Cookie: authToken={{authToken}}

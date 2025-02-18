@@ -13,8 +13,13 @@ export const Notifications = () => {
     isSuccess: userIsSuccess,
     isLoading: userIsLoading,
   } = useFetchCurrentUser();
-  const { notifications, notifMarkAsRead, notifDelete, notifClear } =
-    usePayload();
+  const {
+    notifications,
+    notifMarkAsRead,
+    notifMarkAsUnread,
+    notifDelete,
+    notifClear,
+  } = usePayload();
 
   /* ______________________________ Render ______________________________ */
   let content;
@@ -31,8 +36,8 @@ export const Notifications = () => {
           <div key={notification.id}>
             <Typography>{notification.content.message}</Typography>
             {notification.isRead ? (
-              <button onClick={() => notifMarkAsRead(notification.id)} disabled>
-                Mark as read
+              <button onClick={() => notifMarkAsUnread(notification.id)}>
+                Mark as unread
               </button>
             ) : (
               <button onClick={() => notifMarkAsRead(notification.id)}>

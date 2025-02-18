@@ -17,6 +17,7 @@ export enum SOCKET_EVENTS {
   NOTIFICATIONS_CLEAR = "notificationsClear",
   NOTIFICATION_DELETE = "notificationDelete",
   NOTIFICATION_READ = "notificationRead",
+  NOTIFICATION_UNREAD = "notificationUnread",
   // Chats events
   MESSAGE = "message",
   // Matching events
