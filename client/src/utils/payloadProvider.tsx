@@ -61,7 +61,6 @@ export const PayloadProvider = ({
     )
       return;
     // Fetch notifications
-    if (!socket) return;
     console.log("Socket: before fetch notifications");
     socket.emit(
       SOCKET_EVENTS.NOTIFICATIONS_FETCH,

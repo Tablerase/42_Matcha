@@ -43,6 +43,7 @@ export const addNotification = async (
           );
           return;
         }
+        console.log(io.sockets.adapter.rooms);
         const response = await io
           .to(userRoom)
           .timeout(5000)

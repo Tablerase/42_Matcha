@@ -8,6 +8,7 @@ export enum SOCKET_EVENTS {
   CONNECT = "connect",
   DISCONNECT = "disconnect",
   JOIN = "join",
+  JOIN_ERROR = "joinError",
   ERROR = "error",
   // Notification events
   NOTIFICATION_NEW = "notificationNew",
@@ -80,6 +81,10 @@ export const initializeSocket = (userId: number) => {
 
     const userRoom = `user_${userId}`;
     socket.emit(SOCKET_EVENTS.JOIN, userRoom);
+    socket.on(SOCKET_EVENTS.JOIN_ERROR, (error: string) => {
+      console.log("Socket: Join Error", error);
+      socket.disconnect();
+    });
   });
 
   socket.on(SOCKET_EVENTS.MESSAGE, (payload: NotificationPayload) => {

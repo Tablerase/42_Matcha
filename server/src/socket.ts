@@ -36,7 +36,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       .find((c) => c.trim().startsWith("authToken="))
       ?.split("=")[1];
     if (!authToken) {
-      socket.emit("error", { message: "No auth token found" });
+      socket.emit(SOCKET_EVENTS.ERROR, { message: "No auth token found" });
       return;
     }
     // Add user id to socket data
@@ -49,13 +49,14 @@ export const initializeSocket = (httpServer: HttpServer) => {
         const userRoom = socket.data.userRoom;
         // Check basic room name format based on user id
         if (room !== userRoom) {
-          socket.emit("error", { message: "Invalid room name" });
+          socket.emit(SOCKET_EVENTS.ERROR, { message: "Invalid room name" });
           return;
         }
 
         // Check if user already in room
         const rooms = io.sockets.adapter.rooms;
         if (rooms.get(userRoom)) {
+          socket.emit(SOCKET_EVENTS.JOIN_ERROR, { message: "Already in room" });
           return;
         }
 
@@ -65,7 +66,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
         });
       } catch (error) {
         console.error("[Socket] Socket join error:", error);
-        socket.emit("error", { message: "Failed to join room" });
+        socket.emit(SOCKET_EVENTS.ERROR, { message: "Failed to join room" });
       }
     });
 
@@ -77,24 +78,45 @@ export const initializeSocket = (httpServer: HttpServer) => {
         socket.data.user
       );
       // Fetch notifications from database
-      const notifications = await notificationModel.getNotifications(
-        socket.data.user
-      );
-      console.log("[Socket] Notifications fetched");
-      // Emit notifications to client
-      socket.emit(SOCKET_EVENTS.NOTIFICATIONS, notifications);
+      try {
+        const notifications = await notificationModel.getNotifications(
+          socket.data.user
+        );
+        console.log("[Socket] Notifications fetched");
+        // Emit notifications to client
+        socket.emit(SOCKET_EVENTS.NOTIFICATIONS, notifications);
+      } catch (error) {
+        console.error("[Socket] Error fetching notifications:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to fetch notifications",
+        });
+      }
     });
 
     socket.on(SOCKET_EVENTS.NOTIFICATION_READ, async (id: number) => {
       console.log("[Socket] Marking notification as read:", id);
       // Mark notification as read in database
-      await notificationModel.markNotificationAsRead([id]);
+      try {
+        await notificationModel.markNotificationAsRead([id]);
+      } catch (error) {
+        console.error("[Socket] Error marking notification as read:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to mark notification as read",
+        });
+      }
     });
 
     socket.on(SOCKET_EVENTS.NOTIFICATION_DELETE, async (id: number) => {
       console.log("[Socket] Deleting notification:", id);
       // Delete notification from database
-      await notificationModel.deleteNotification(id);
+      try {
+        await notificationModel.deleteNotification(id);
+      } catch (error) {
+        console.error("[Socket] Error deleting notification:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to delete notification",
+        });
+      }
     });
 
     socket.on(SOCKET_EVENTS.DISCONNECT, async () => {

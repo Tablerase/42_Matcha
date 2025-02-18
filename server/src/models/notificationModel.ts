@@ -9,6 +9,7 @@ import {
   NotificationType,
 } from "@src/interfaces/notificationInterface";
 import { Server } from "socket.io";
+import { text } from "body-parser";
 
 class NotificationModel {
   async getNotifications(userId: number): Promise<NotificationInterface[]> {
@@ -107,16 +108,51 @@ class NotificationModel {
 
   async deleteNotification(notificationId: number): Promise<any[]> {
     // TODO check if the notification object is connected to multiple recipients
-    // if so, delete only the notif recipient
-    // if not, delete the notification object as well
-    const query = {
-      text: `DELETE FROM notification_recipients
-          WHERE id = $1
-          RETURNING *`,
+    const checkQuery = {
+      text: `SELECT COUNT(*) FROM notification_recipients
+          WHERE notification_object_id = (SELECT notification_object_id FROM notification_recipients WHERE id = $1)`,
       values: [notificationId],
     };
-    const result = await pool.query(query);
-    return result.rows;
+    const checkResult = await pool.query(checkQuery);
+    const count = checkResult.rows[0].count;
+
+    if (count > 1) {
+      // If the notification object is connected to multiple recipients, only delete the recipient
+      const query = {
+        text: `DELETE FROM notification_recipients
+            WHERE id = $1
+            RETURNING *`,
+        values: [notificationId],
+      };
+      const result = await pool.query(query);
+      return result.rows;
+    } else {
+      // If the notification object is connected to only one recipient, delete the recipient and the notification object
+      const query = {
+        text: `SELECT notification_object_id FROM notification_recipients WHERE id = $1`,
+        values: [notificationId],
+      };
+      const result = await pool.query(query);
+      const objectId = result.rows[0].notification_object_id;
+
+      // Delete the recipient
+      const deleteRecipientQuery = {
+        text: `DELETE FROM notification_recipients
+            WHERE id = $1
+            RETURNING *`,
+        values: [notificationId],
+      };
+      const deleteRecipientResult = await pool.query(deleteRecipientQuery);
+
+      // Delete the notification object
+      const deleteObjectQuery = {
+        text: `DELETE FROM notification_objects WHERE id = $1`,
+        values: [objectId],
+      };
+      const deleteObjectResult = await pool.query(deleteObjectQuery);
+
+      return deleteRecipientResult.rows;
+    }
   }
 }
 
