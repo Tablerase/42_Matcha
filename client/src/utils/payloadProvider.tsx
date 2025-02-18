@@ -88,11 +88,6 @@ export const PayloadProvider = ({
         setNotifications((prev) => [...prev, payload]);
       }
     );
-
-    return () => {
-      socket.off(SOCKET_EVENTS.NOTIFICATIONS);
-      socket.off(SOCKET_EVENTS.NOTIFICATION_NEW);
-    };
   }, [isAuth, authIsLoading, socket]);
 
   const notifMarkAsRead = (id: number) => {

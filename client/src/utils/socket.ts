@@ -6,6 +6,7 @@ import { SERVER_URL } from "@/utils/config";
 export enum SOCKET_EVENTS {
   // System events
   CONNECT = "connect",
+  CONNECT_ERROR = "connect_error",
   DISCONNECT = "disconnect",
   JOIN = "join",
   JOIN_ERROR = "joinError",

@@ -15,7 +15,7 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 //   useFetchCurrentUser,
 // } from "@/pages/browse/usersActions";
 import { Socket } from "socket.io-client";
-import { initializeSocket } from "./socket";
+import { initializeSocket, SOCKET_EVENTS } from "./socket";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -45,17 +45,34 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const establishSocketConnection = useCallback(
     (userId: number) => {
-      if (!socket) {
-        const newSocket = initializeSocket(userId);
-        setSocket(newSocket);
+      if (!socket && isAuthenticated) {
+        try {
+          const newSocket = initializeSocket(userId);
 
-        return () => {
-          newSocket.disconnect();
+          newSocket.on(SOCKET_EVENTS.CONNECT, () => {
+            console.log("Socket connected successfully");
+            setSocket(newSocket);
+          });
+
+          newSocket.on(SOCKET_EVENTS.CONNECT_ERROR, (error) => {
+            console.error("Socket connection error:", error);
+            setSocket(null);
+          });
+
+          newSocket.on(SOCKET_EVENTS.DISCONNECT, () => {
+            console.log("Socket disconnected");
+            setSocket(null);
+          });
+
+          // Attempt to connect
+          newSocket.connect();
+        } catch (error) {
+          console.error("Error initializing socket:", error);
           setSocket(null);
-        };
+        }
       }
     },
-    [socket]
+    [socket, isAuthenticated]
   );
 
   const checkAuthStatus = async () => {
@@ -70,11 +87,18 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           console.log("User is authenticated", response.data);
           setIsAuthenticated(true);
           if (response.data.userId) {
-            establishSocketConnection(response.data.userId);
+            // Only establish connection if we don't already have one
+            if (!socket) {
+              establishSocketConnection(response.data.userId);
+            }
           }
         } else {
           console.log("User not authenticated: " + response.data.message);
           setIsAuthenticated(false);
+          if (socket) {
+            socket.disconnect();
+            setSocket(null);
+          }
         }
       }
     } catch (error) {
@@ -101,6 +125,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   useEffect(() => {
     checkAuthStatus();
   }, []);
+
+  useEffect(() => {
+    // Connect socket when authenticated
+    if (isAuthenticated) {
+      checkAuthStatus();
+    }
+
+    // Cleanup function
+    return () => {
+      if (socket) {
+        socket.disconnect();
+        setSocket(null);
+      }
+    };
+  }, [isAuthenticated]); // Only re-run when authentication status changes
 
   if (isLoading) {
     return <LoadingCup />;
