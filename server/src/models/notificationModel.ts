@@ -118,7 +118,7 @@ class NotificationModel {
   }
 
   async deleteNotification(notificationId: number): Promise<any[]> {
-    // TODO check if the notification object is connected to multiple recipients
+    // check if the notification object is connected to multiple recipients
     const checkQuery = {
       text: `SELECT COUNT(*) FROM notification_recipients
           WHERE notification_object_id = (SELECT notification_object_id FROM notification_recipients WHERE id = $1)`,

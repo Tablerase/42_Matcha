@@ -22,7 +22,6 @@ const router: Router = express.Router();
 // Search routes
 router.get("/search", validateUserSearchQuery, UserSearchView.searchUsers);
 
-// TODO: add validators everywhere where needed
 router.get("/", UserViews.getUsers);
 router.get("/me", UserViews.getCurrentUser);
 router.get("/:id", UserViews.getUserById);

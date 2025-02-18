@@ -41,7 +41,7 @@ export const addNotification = async (
           console.log(
             `[Socket] User_${notif.toUserID} is offline, skipping notification`
           );
-          return;
+          continue;
         }
         console.log(io.sockets.adapter.rooms);
         const response = await io

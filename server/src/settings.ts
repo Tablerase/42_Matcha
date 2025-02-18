@@ -120,11 +120,6 @@ async function seed() {
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;
-    //TODO: add complex data types to users:
-    /**
-     * pictures
-     * chats
-     */
 
     await pool.query(createTableQuery);
 

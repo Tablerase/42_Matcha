@@ -17,7 +17,6 @@ router.post("/logout", logoutUser);
 
 router.get("/check", checkUser);
 
-// TODO: Implement these routes
 // router.post('/forgot-password', validateEmail, forgotPassword);
 // router.post('/refresh-token', validateRefreshToken, refreshToken);
 

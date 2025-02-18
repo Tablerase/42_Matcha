@@ -28,7 +28,7 @@ class MatchModel {
     likerUserId: number,
     likedUserId: number
   ): Promise<boolean> {
-    // TODO: Better check
+    // Maybe: Better check if the user has already liked the other user
 
     // Check if the liked user has also liked the liker user
     const query = {
@@ -40,14 +40,13 @@ class MatchModel {
     if (result.rows.length > 0) {
       await this.addUserMatch(likerUserId, likedUserId);
       return true;
-      // await this.addUserMatch(likedUserId, likerUserId);
     }
     return false;
   }
 
   async removeUserMatch(userId: number, matchedUserId: number): Promise<any> {
     const query = {
-      text: `DELETE FROM matches WHERE user_id1 = $1 AND matched_user_id1 = $2`,
+      text: `DELETE FROM matches WHERE (user_id1 = $1 AND user_id2 = $2) OR (user_id1 = $2 AND user_id2 = $1)`,
       values: [userId, matchedUserId],
     };
     const result: QueryResult = await pool.query(query);

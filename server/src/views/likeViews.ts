@@ -14,6 +14,7 @@ import {
   NotificationType,
 } from "@interfaces/notificationInterface";
 import { addNotification } from "./notificationViews";
+import { user } from "@src/models/userModel";
 
 export const checkUserLiked = async (
   req: Request,
