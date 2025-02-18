@@ -85,6 +85,18 @@ export const initializeSocket = (httpServer: HttpServer) => {
       socket.emit(SOCKET_EVENTS.NOTIFICATIONS, notifications);
     });
 
+    socket.on(SOCKET_EVENTS.NOTIFICATION_READ, async (id: number) => {
+      console.log("[Socket] Marking notification as read:", id);
+      // Mark notification as read in database
+      await notificationModel.markNotificationAsRead([id]);
+    });
+
+    socket.on(SOCKET_EVENTS.NOTIFICATION_DELETE, async (id: number) => {
+      console.log("[Socket] Deleting notification:", id);
+      // Delete notification from database
+      await notificationModel.deleteNotification(id);
+    });
+
     socket.on(SOCKET_EVENTS.DISCONNECT, async () => {
       console.log("[Socket] Client disconnected:", socket.id);
     });

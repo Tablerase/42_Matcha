@@ -23,16 +23,23 @@ export const Notifications = () => {
     content = <LoadingCup />;
   }
 
-  if (userIsSuccess && notifications.length > 0) {
+  if (userIsSuccess) {
     content = (
       <>
         <Typography variant="h4">Notifications</Typography>
         {notifications.map((notification: NotificationInterface) => (
           <div key={notification.id}>
             <Typography>{notification.content.message}</Typography>
-            <button onClick={() => notifMarkAsRead(notification.id)}>
-              Mark as read
-            </button>
+            {notification.isRead ? (
+              <button onClick={() => notifMarkAsRead(notification.id)} disabled>
+                Mark as read
+              </button>
+            ) : (
+              <button onClick={() => notifMarkAsRead(notification.id)}>
+                Mark as read
+              </button>
+            )}
+
             <button onClick={() => notifDelete(notification.id)}>Delete</button>
           </div>
         ))}

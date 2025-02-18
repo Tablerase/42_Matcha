@@ -38,11 +38,14 @@ export const addNotification = async (
         const userRoom = `user_${notif.toUserID}`;
         if (!io.sockets.adapter.rooms.has(userRoom)) {
           // User is offline
-          continue;
+          console.log(
+            `[Socket] User_${notif.toUserID} is offline, skipping notification`
+          );
+          return;
         }
         const response = await io
           .to(userRoom)
-          .timeout(500)
+          .timeout(5000)
           .emitWithAck(SOCKET_EVENTS.NOTIFICATION_NEW, notificationPayload);
         // Update notification status to sent
         if (response && notif.id) {

@@ -1,6 +1,7 @@
 ###
 
-@authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MTcsImVtYWlsIjoic2VydmVyQGV4YW1wbGUuY29tIiwiaWF0IjoxNzM4OTQyOTk0LCJleHAiOjE3Mzk1NDc3OTR9.ChSYdiWFBFnZrtGKl28_WhFlUJvp5k4RKsIWKq4EH4E
+@authToken=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZW1haWwiOiJzZXJ2ZXJAZXhhbXBsZS5jb20iLCJpYXQiOjE3Mzk4NzYzNDksImV4cCI6MTc0MDQ4MTE0OX0.Hs7uVxskV8pvD2trnDW7BxvrZGWnHWKCYGjUn3srVYw
+
 ###
 
 POST http://localhost:8000/auth/login
@@ -33,4 +34,3 @@ Cookie: authToken={{authToken}}
 
 DELETE http://localhost:8000/users/16/likes
 Cookie: authToken={{authToken}}
-

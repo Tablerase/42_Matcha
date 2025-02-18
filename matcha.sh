@@ -65,7 +65,7 @@ header () {
     echo "
 ⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀  ⣀⣀⣀⣀⣀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀ 
 ⠀⠀⠀⠀⠀⠀⣀⡤⠤⠒⠒⠋⠉⠉⠉ ⠀⠀⠀⠉⠉⠉⠙⠒⠒⠢⢄⠀⠀⠀⠀⠀⠀⠀ Project: ${TITLE_COLOR}${PROJECT_NAME}${RESET}
-⠀⠀⠀⠀⠀⣾⣿⠀⠀⠀⠀⣀⣀⣀⣀⣤⣴⣦⣄⣀⣀⣀⣀⠀⠀⠀⠀⢹⠀⠀⠀⠀⠀⠀ Author: ${AUTHOR_COLOR}${AUTHOR}${RESET}
+⠀⠀⠀⠀⠀⣾⣿⠀⠀⠀⠀⣀⣀⣀⣀⣤⣴⣦⣄⣀⣀⣀⣀⠀⠀⠀⠀⢹⠀⠀⠀⠀⠀⠀ Author: ${AUTHOR_COLOR}${AUTHORS}${RESET}
 ⠀⠀⠀⠀⠀⣿⣿⣿⠷⠾⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⠶⠚⠀⠀⠀⠀⠀⠀⠀
 ⠀⠀⠀⠀⠀⢿⣿⡏⠀⠀⠀⠀⠀⠀⠈⠉⠉⠉⠉⠉⠉⠀⠀⠀⠀⠀⠀⠀⣸⠛⠻⣷⠀⠀ Path: ${BASE_COLOR}${PROJECT_PATH}${RESET}
 ⠀⠀⠀⠀⠀⠸⣿⣧⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⠀⢀⠃⠀⢠⣿⠇⠀ Branch: ${BASE_COLOR}${GIT_BRANCH}${RESET}
@@ -80,7 +80,7 @@ header () {
 # ____________________ Variables ____________________ #
 
 # Variables
-AUTHOR="rcutte, atonkopi"
+AUTHORS="rcutte, atonkopi"
 PROJECT_NAME="MATCHA"
 VERSION="1.0"
 PROJECT_PATH="$(cd "$(dirname "$0")" && pwd)"
