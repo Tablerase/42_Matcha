@@ -11,13 +11,14 @@ import NotificationsIcon from "@mui/icons-material/Notifications";
 import InsightsIcon from "@mui/icons-material/Insights";
 import { MatchaNavBar } from "./MatchaNavBar";
 import Box from "@mui/material/Box";
-import { useTheme, useMediaQuery } from "@mui/material";
+import { useTheme, useMediaQuery, Badge } from "@mui/material";
 import { useNavigate, useLocation } from "react-router-dom";
 import { routes } from "@/utils/routes";
 import { useLogout } from "@/pages/auth/authActions";
 // import { useAuth } from "@/utils/authContext";
 import { theme } from "./theme";
 import { useFetchCurrentUser } from "@/pages/browse/usersActions";
+import { usePayload } from "@/utils/payloadProvider";
 
 interface SidebarButtonProps {
   isMobile: boolean;
@@ -72,6 +73,7 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const logout = useLogout();
   const { data: userData } = useFetchCurrentUser();
+  const { notifications } = usePayload();
 
   const handleLogout = () => {
     logout();
@@ -106,7 +108,20 @@ export const Sidebar = () => {
     },
     {
       route: routes.NOTIFICATIONS,
-      icon: <NotificationsIcon fontSize="small" />,
+      icon: (
+        <>
+          <Badge
+            badgeContent={
+              notifications.filter((n) => n.isRead === false).length
+            }
+            color="secondary"
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            aria-label="notifications"
+          >
+            <NotificationsIcon fontSize="small" />
+          </Badge>
+        </>
+      ),
       label: "Notifications",
     },
   ];
