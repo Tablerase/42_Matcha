@@ -37,7 +37,8 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
         ('Karen', 'Black', 'karenblack', 'karenblack@example.com', 'hashedpassword', 'female', '{"male", "other", "female"}', '1997-12-12', 'Bio of Karen', POINT(34.0522, -118.2437), 130, NOW()),
         ('Leo', 'Green', 'leogreen', 'leogreen@example.com', 'hashedpassword', 'male', '{"female"}', '1999-01-01', 'Bio of Leo', POINT(51.5074, -0.1278), 140, NOW()),
         ('Mia', 'Blue', 'miablue', 'miablue@example.com', 'hashedpassword', 'female', '{"male"}', '1993-02-02', 'Bio of Mia', POINT(35.6895, 139.6917), 150, NOW()),
-        ('Test', 'User', 'test', 'test@test.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Test', POINT(48.853119, 2.349494), 20, NOW())
+        ('Test', 'User', 'test', 'test@test.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Test', POINT(48.853119, 2.349494), 20, NOW()),
+        ('Server', 'User', 'server', 'server@test.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Server', POINT(48.853119, 2.349494), 20, NOW())
         ;
     `;
     await pool.query(insertUsersQuery);
@@ -76,7 +77,7 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     const insertChatsQuery = `
       INSERT INTO chats (user_1, user_2, deleted_by)
       VALUES
-        (1, 2, '{}');
+        (16, 2, '{}');
     `;
     await pool.query(insertChatsQuery);
 

@@ -115,28 +115,6 @@ export const Notifications = () => {
         </Paper>
       </>
     );
-    // content = (
-    //   <>
-    //     <Typography variant="h4">Notifications</Typography>
-    //     {notifications.map((notification: NotificationInterface) => (
-    //       <div key={notification.id}>
-    //         <Typography>{notification.content.message}</Typography>
-    //         {notification.isRead ? (
-    //           <button onClick={() => notifMarkAsUnread(notification.id)}>
-    //             Mark as unread
-    //           </button>
-    //         ) : (
-    //           <button onClick={() => notifMarkAsRead(notification.id)}>
-    //             Mark as read
-    //           </button>
-    //         )}
-
-    //         <button onClick={() => notifDelete(notification.id)}>Delete</button>
-    //       </div>
-    //     ))}
-    //     <button onClick={() => notifClear()}>Clear all</button>
-    //   </>
-    // );
   }
 
   return (

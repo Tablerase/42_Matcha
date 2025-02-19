@@ -186,8 +186,9 @@ async function seed() {
     const createChatQuery = `
      CREATE TABLE IF NOT EXISTS chats (
         id SERIAL PRIMARY KEY,
-        user_1 INT REFERENCES users(id) ON DELETE CASCADE,
-        user_2 INT REFERENCES users(id) ON DELETE CASCADE,
+        user1_id INT REFERENCES users(id) ON DELETE CASCADE,
+        user2_id INT REFERENCES users(id) ON DELETE CASCADE,
+        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         deleted_by INT[]
       );
     `;
@@ -195,11 +196,11 @@ async function seed() {
     //
     /*MESSAGES TABLE*/
     const createMsgQuery = `
-        CREATE TABLE IF NOT EXISTS msgs (
+        CREATE TABLE IF NOT EXISTS messages (
         id SERIAL PRIMARY KEY,
-        content VARCHAR(100) NOT NULL,
+        content VARCHAR(1000) NOT NULL,
         chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
-        sender_id INT REFERENCES users(id) ON DELETE CASCADE,
+        from_user_id INT REFERENCES users(id) ON DELETE CASCADE,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
       );
     `;

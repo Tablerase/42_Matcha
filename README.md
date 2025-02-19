@@ -42,7 +42,7 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 
 ### Diagrams
 
-#### Diagram Notif Flow
+#### Diagram Notif/Chat Flow
 
 ```mermaid
 sequenceDiagram
@@ -70,8 +70,8 @@ sequenceDiagram
 
 ```mermaid
 erDiagram
-    NOTIFICATION_OBJECTS ||-    NOTIFICATION_RECIPIENTS { contains
-    USERS ||-    NOTIFICATION_RECIPIENTS { "receives<br />sends"
+    NOTIFICATION_OBJECTS ||--|{ NOTIFICATION_RECIPIENTS : "contains"
+    USERS ||--|{ NOTIFICATION_RECIPIENTS : "receives<br />sends"
 
     NOTIFICATION_OBJECTS {
         bigint id PK
@@ -113,6 +113,39 @@ erDiagram
 ## Chat
 
 - https://dev.to/novu/building-a-chat-app-with-socketio-and-react-2edj
+- https://socket.io/get-started/private-messaging-part-1/
+
+### Diagram Database
+
+```mermaid
+erDiagram
+    USERS ||--|{ CHATS : "participates in"
+    CHATS ||--|{ MESSAGES : "contains"
+    USERS ||--|{ MESSAGES : "sends"
+
+    CHATS {
+        bigint id PK
+        bigint user1_id FK
+        bigint user2_id FK
+        timestamp created_at
+        bigint[] deleted_by
+    }
+
+    MESSAGES {
+        bigint id PK
+        bigint chat_id FK
+        bigint from_user_id FK
+        string content
+        timestamp created_at
+    }
+
+    USERS {
+        bigint id PK
+        string username
+        string email
+    }
+
+```
 
 ## Resources
 

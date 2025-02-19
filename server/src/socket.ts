@@ -7,6 +7,7 @@ import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
 import { Request, Response, NextFunction } from "express";
 import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
 import { notificationModel } from "@src/models/notificationModel";
+import { chatModel } from "@src/models/chatModel";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   /* ________________________________ Socket Setup ________________________________ */
@@ -70,7 +71,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
       }
     });
 
-    /* ________________________________ Socket Events ________________________________ */
+    /* ________________________ Notification Events _______________________ */
 
     socket.on(SOCKET_EVENTS.NOTIFICATIONS_FETCH, async (data) => {
       console.log(
@@ -141,6 +142,24 @@ export const initializeSocket = (httpServer: HttpServer) => {
         console.error("[Socket] Error clearing notifications:", error);
         socket.emit(SOCKET_EVENTS.ERROR, {
           message: "Failed to clear notifications",
+        });
+      }
+    });
+
+    /* ____________________________ Chat Events ___________________________ */
+
+    socket.on(SOCKET_EVENTS.CHAT_FETCH, async () => {
+      console.log(
+        "[Socket] Fetching chat messages for user:",
+        socket.data.user
+      );
+      // Fetch chat messages from database
+      try {
+        await chatModel.getChatMessages(socket.data.user);
+      } catch (error) {
+        console.error("[Socket] Error fetching chat messages:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to fetch chat messages",
         });
       }
     });

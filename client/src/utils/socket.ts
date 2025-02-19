@@ -20,6 +20,7 @@ export enum SOCKET_EVENTS {
   NOTIFICATION_READ = "notificationRead",
   NOTIFICATION_UNREAD = "notificationUnread",
   // Chats events
+  CHAT_FETCH = "chatFetch",
   MESSAGE = "message",
   // Matching events
   MATCH = "match",
@@ -69,6 +70,22 @@ export enum NotificationStatus {
   PENDING = "PENDING",
   SENT = "SENT",
   FAILED = "FAILED",
+}
+
+export interface Message {
+  id: number;
+  content: string;
+  fromUserId: number;
+  createdAt: Date;
+}
+
+export interface Chat {
+  id: number;
+  messages: Message[];
+  user1Id: number;
+  user2Id: number;
+  createdAt: Date;
+  deletedBy: number[];
 }
 
 /* ________________________________ Socket.io ________________________________ */

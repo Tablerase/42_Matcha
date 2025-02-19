@@ -15,6 +15,7 @@ export enum SOCKET_EVENTS {
   NOTIFICATION_READ = "notificationRead",
   NOTIFICATION_UNREAD = "notificationUnread",
   // Chats events
+  CHAT_FETCH = "chatFetch",
   MESSAGE = "message",
   // Matching events
   MATCH = "match",

@@ -9,6 +9,8 @@ import { useAuth } from "@utils/authContext";
 import { enqueueSnackbar } from "notistack";
 import {
   NotificationInterface,
+  Chat,
+  Message,
   NotificationPayload,
   SOCKET_EVENTS,
 } from "@utils/socket";
@@ -46,6 +48,7 @@ export const PayloadProvider = ({
   const [notifications, setNotifications] = useState<NotificationInterface[]>(
     []
   );
+  const [chats, setChats] = useState<Chat[]>([]);
   const {
     isAuthenticated: isAuth,
     isLoading: authIsLoading,
@@ -63,6 +66,7 @@ export const PayloadProvider = ({
       return;
     }
     console.log("Socket: PayloadProvider post auth", socket);
+    // ____________________________ NOTIFICATIONS ____________________________
     // Fetch notifications
     socket.emit(
       SOCKET_EVENTS.NOTIFICATIONS_FETCH,
@@ -76,7 +80,7 @@ export const PayloadProvider = ({
       setNotifications(data);
     });
 
-    // Register event listeners
+    // Notifications event listeners
     socket.on(
       SOCKET_EVENTS.NOTIFICATION_NEW,
       (payload: NotificationInterface, callback) => {
@@ -88,6 +92,13 @@ export const PayloadProvider = ({
         setNotifications((prev) => [...prev, payload]);
       }
     );
+
+    // _________________________________ CHAT ________________________________
+    // Fetch chat messages
+    socket.emit(SOCKET_EVENTS.CHAT_FETCH, (data: Chat[]) => {
+      console.log("Socket: Chat Fetch", data);
+      setChats(data);
+    });
   }, [isAuth, authIsLoading, socket]);
 
   const notifMarkAsRead = (id: number) => {
