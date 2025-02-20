@@ -182,30 +182,6 @@ async function seed() {
     `;
     await pool.query(createBlockedTableQuery);
 
-    /*CHAT TABLE*/
-    const createChatQuery = `
-     CREATE TABLE IF NOT EXISTS chats (
-        id SERIAL PRIMARY KEY,
-        user1_id INT REFERENCES users(id) ON DELETE CASCADE,
-        user2_id INT REFERENCES users(id) ON DELETE CASCADE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        deleted_by INT[]
-      );
-    `;
-    await pool.query(createChatQuery);
-    //
-    /*MESSAGES TABLE*/
-    const createMsgQuery = `
-        CREATE TABLE IF NOT EXISTS messages (
-        id SERIAL PRIMARY KEY,
-        content VARCHAR(1000) NOT NULL,
-        chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
-        from_user_id INT REFERENCES users(id) ON DELETE CASCADE,
-        created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-      );
-    `;
-    await pool.query(createMsgQuery);
-
     /*REPORTED USERS TABLE*/
     const createReportedUsersQuery = `
         CREATE TABLE IF NOT EXISTS reported_users (
@@ -239,6 +215,13 @@ async function seed() {
         );
     `;
     await pool.query(createRefreshTokensQuery);
+
+    /* __________________________ Chats Table ___________________________ */
+    const chatsSchema = await fs.readFile(
+      path.join(__dirname, "sql/chats.sql"),
+      "utf-8"
+    );
+    await pool.query(chatsSchema);
 
     /* _______________________ Notifcations Table _______________________ */
     const notificationsSchema = await fs.readFile(

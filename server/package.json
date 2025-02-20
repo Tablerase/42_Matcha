@@ -6,8 +6,8 @@
   "scripts": {
     "build": "tsc && npm run copy-sql",
     "copy-sql": "copyfiles -u 1 \"src/**/*.sql\" dist/src",
-    "start": "node -r module-alias/register dist/src/server.js",
-    "re": "rm -rf ./dist && npm run build && npm run start",
+    "start": "npm run build && node -r module-alias/register dist/src/server.js",
+    "re": "rm -rf ./dist && npm run start",
     "seed": "ts-node src/seed.ts",
     "seedInsights": "ts-node src/seedInsights.ts",
     "dev": "nodemon"
