@@ -87,6 +87,11 @@ export const UserCard = ({ user }: UserCardProps) => {
   const id = open ? "profile-popover" : undefined;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    try {
+      client.post(`/users/${user.id}/views/`);
+    } catch (error) {
+      console.error(error);
+    }
     setAnchorEl(event.currentTarget);
   };
 

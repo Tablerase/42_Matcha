@@ -59,8 +59,12 @@ class ViewModel {
       values: [userId, viewedUserId],
     };
 
-    await pool.query(query);
-    return true;
+    const result = await pool.query(query);
+    if (result.rowCount === 0) {
+      return false;
+    } else {
+      return true;
+    }
   }
 }
 
