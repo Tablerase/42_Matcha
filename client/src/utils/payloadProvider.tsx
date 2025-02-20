@@ -9,7 +9,7 @@ import { useAuth } from "@utils/authContext";
 import { enqueueSnackbar } from "notistack";
 import {
   NotificationInterface,
-  Chat,
+  ChatInterface,
   Message,
   NotificationPayload,
   SOCKET_EVENTS,
@@ -18,8 +18,10 @@ import { Socket } from "socket.io-client";
 import { initializeSocket } from "./socket";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { useFetchCurrentUser } from "@/pages/browse/usersActions";
+import { set } from "date-fns";
 
 interface payloadInterface {
+  chats: ChatInterface[];
   notifications: NotificationInterface[];
   notifMarkAsRead: (id: number) => void;
   notifMarkAsUnread: (id: number) => void;
@@ -48,7 +50,7 @@ export const PayloadProvider = ({
   const [notifications, setNotifications] = useState<NotificationInterface[]>(
     []
   );
-  const [chats, setChats] = useState<Chat[]>([]);
+  const [chats, setChats] = useState<ChatInterface[]>([]);
   const {
     isAuthenticated: isAuth,
     isLoading: authIsLoading,
@@ -68,17 +70,20 @@ export const PayloadProvider = ({
     console.log("Socket: PayloadProvider post auth", socket);
     // ____________________________ NOTIFICATIONS ____________________________
     // Fetch notifications
-    socket.emit(
-      SOCKET_EVENTS.NOTIFICATIONS_FETCH,
-      (data: NotificationInterface[]) => {
-        console.log("Socket: Notifications Fetch", data);
-        setNotifications(data);
-      }
-    );
-    socket.on(SOCKET_EVENTS.NOTIFICATIONS, (data: NotificationInterface[]) => {
-      console.log("Socket: Notifications", data);
-      setNotifications(data);
-    });
+    socket
+      .timeout(5000)
+      .emit(
+        SOCKET_EVENTS.NOTIFICATIONS_FETCH,
+        (err: any, data: NotificationInterface[]) => {
+          if (err) {
+            console.error("Socket: Notifications Fetch Error", err);
+            setNotifications([]);
+            return;
+          }
+          console.log("Socket: Notifications Fetch", data);
+          setNotifications(data);
+        }
+      );
 
     // Notifications event listeners
     socket.on(
@@ -95,10 +100,17 @@ export const PayloadProvider = ({
 
     // _________________________________ CHAT ________________________________
     // Fetch chat messages
-    socket.emit(SOCKET_EVENTS.CHAT_FETCH, (data: Chat[]) => {
-      console.log("Socket: Chat Fetch", data);
-      setChats(data);
-    });
+    socket
+      .timeout(5000)
+      .emit(SOCKET_EVENTS.CHATS_FETCH, (err: any, data: ChatInterface[]) => {
+        if (err) {
+          console.error("Socket: Chat Fetch Error", err);
+          setChats([]);
+          return;
+        }
+        console.log("Socket: Chat Fetch", data);
+        setChats(data);
+      });
   }, [isAuth, authIsLoading, socket]);
 
   const notifMarkAsRead = (id: number) => {
@@ -136,6 +148,7 @@ export const PayloadProvider = ({
   return (
     <PayloadContext.Provider
       value={{
+        chats,
         notifications,
         notifMarkAsRead,
         notifMarkAsUnread,

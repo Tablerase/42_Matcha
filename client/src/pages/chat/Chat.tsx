@@ -1,6 +1,7 @@
 import { theme } from "@/components/theme";
+import { usePayload } from "@/utils/payloadProvider";
+import { ChatInterface } from "@/utils/socket";
 import { Layout } from "@components/Layout";
-import { ChatBubble } from "@mui/icons-material";
 import ForumIcon from "@mui/icons-material/Forum";
 import {
   Avatar,
@@ -26,13 +27,13 @@ export const ChatDrawer = ({
 
   let drawerList = (
     <List>
-      {chats.map((chat: any) => (
+      {chats.map((chat: ChatInterface) => (
         <ListItem key={chat.id}>
           <ListItemAvatar>
             {/* User profic pic */}
             <Avatar />
           </ListItemAvatar>
-          <ListItemText primary={chat.username} />
+          <ListItemText primary={chat.user1Id} />
         </ListItem>
       ))}
     </List>
@@ -78,30 +79,13 @@ export const ChatDrawer = ({
 };
 
 export const Chat = () => {
+  const { chats } = usePayload();
+  // TODO: Add active chat session
+  // const [activeChat, setActiveChat] = useState<number | null>(null);
+  // TODO: recover current user id
+  // const { user } = useAuth();
+  // TODO: recover users from the different chats (to display their names, profile pics, etc.)
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const chats = [
-    {
-      id: 1,
-      username: "John Doe",
-    },
-    {
-      id: 2,
-      username: "Jane Doe",
-    },
-  ];
-  const conversations = [
-    {
-      id: 1,
-      name: "John Doe",
-      lastMessage: "Hello, how are you?",
-    },
-    {
-      id: 2,
-      name: "Jane Doe",
-      lastMessage: "I'm good, thank you!",
-    },
-  ];
 
   let content;
 

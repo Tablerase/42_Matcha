@@ -16,7 +16,6 @@ import { ProfilePictures } from "@/components/ProfilePictures";
 import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
 import { FameLinearProgress } from "@/components/FameLinearProgress";
-import { client } from "@/utils/axios";
 
 export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   if (!user.dateOfBirth) {

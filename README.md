@@ -153,7 +153,9 @@ erDiagram
 
 - [Socket.io Documentation](https://socket.io/docs/v4/)
 - [Socket.io - Middleware](https://socket.io/docs/v4/middlewares/)
+- [Socket.io - Emit cheatsheet](https://socket.io/docs/v4/emit-cheatsheet/)
 - [Socket.io with React](https://dev.to/bravemaster619/how-to-use-socket-io-client-correctly-in-react-app-o65)
+  - [Emitting events](https://socket.io/docs/v4/emitting-events/)
 
 ### Images
 

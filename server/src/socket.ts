@@ -8,6 +8,7 @@ import { Request, Response, NextFunction } from "express";
 import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
 import { notificationModel } from "@src/models/notificationModel";
 import { chatModel } from "@src/models/chatModel";
+import { Chat } from "./interfaces/chatInterface";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   /* ________________________________ Socket Setup ________________________________ */
@@ -73,7 +74,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     /* ________________________ Notification Events _______________________ */
 
-    socket.on(SOCKET_EVENTS.NOTIFICATIONS_FETCH, async (data) => {
+    socket.on(SOCKET_EVENTS.NOTIFICATIONS_FETCH, async (callback) => {
       console.log(
         "[Socket] Fetching notifications for user:",
         socket.data.user
@@ -84,8 +85,7 @@ export const initializeSocket = (httpServer: HttpServer) => {
           socket.data.user
         );
         console.log("[Socket] Notifications fetched");
-        // Emit notifications to client
-        socket.emit(SOCKET_EVENTS.NOTIFICATIONS, notifications);
+        callback(notifications);
       } catch (error) {
         console.error("[Socket] Error fetching notifications:", error);
         socket.emit(SOCKET_EVENTS.ERROR, {
@@ -148,19 +148,21 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     /* ____________________________ Chat Events ___________________________ */
 
-    socket.on(SOCKET_EVENTS.CHAT_FETCH, async () => {
+    socket.on(SOCKET_EVENTS.CHATS_FETCH, async (callback) => {
       console.log(
         "[Socket] Fetching chat messages for user:",
         socket.data.user
       );
       // Fetch chat messages from database
       try {
-        await chatModel.getChatMessages(socket.data.user);
+        const chats = await chatModel.getChatMessages(socket.data.user);
+        callback(chats);
       } catch (error) {
         console.error("[Socket] Error fetching chat messages:", error);
         socket.emit(SOCKET_EVENTS.ERROR, {
           message: "Failed to fetch chat messages",
         });
+        callback([]);
       }
     });
 

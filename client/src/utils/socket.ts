@@ -20,7 +20,8 @@ export enum SOCKET_EVENTS {
   NOTIFICATION_READ = "notificationRead",
   NOTIFICATION_UNREAD = "notificationUnread",
   // Chats events
-  CHAT_FETCH = "chatFetch",
+  CHATS_FETCH = "chatsFetch",
+  CHATS = "chats",
   MESSAGE = "message",
   // Matching events
   MATCH = "match",
@@ -79,7 +80,7 @@ export interface Message {
   createdAt: Date;
 }
 
-export interface Chat {
+export interface ChatInterface {
   id: number;
   messages: Message[];
   user1Id: number;

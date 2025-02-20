@@ -9,13 +9,12 @@ export enum SOCKET_EVENTS {
   // Notification events
   NOTIFICATION_NEW = "notificationNew",
   NOTIFICATIONS_FETCH = "notificationFetch",
-  NOTIFICATIONS = "notifications",
   NOTIFICATIONS_CLEAR = "notificationsClear",
   NOTIFICATION_DELETE = "notificationDelete",
   NOTIFICATION_READ = "notificationRead",
   NOTIFICATION_UNREAD = "notificationUnread",
   // Chats events
-  CHAT_FETCH = "chatFetch",
+  CHATS_FETCH = "chatsFetch",
   MESSAGE = "message",
   // Matching events
   MATCH = "match",
