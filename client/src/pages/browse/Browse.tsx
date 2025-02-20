@@ -155,7 +155,6 @@ export const Browse = () => {
       const offset = (page - 1) * itemsPerPage;
       const endOffset = offset + itemsPerPage;
       setDisplayedUsers(sortedUsers.slice(offset, endOffset));
-      // setDisplayedUsers(users.slice(offset, endOffset));
     }
   }, [page, users, sortedUsers]);
   const handlePageChange = (
@@ -176,7 +175,7 @@ export const Browse = () => {
       <>
         <UserList users={displayedUsers} />
         <Pagination
-          count={Math.ceil(users.length / itemsPerPage)}
+          count={Math.ceil(sortedUsers.length / itemsPerPage)}
           page={page}
           onChange={handlePageChange}
           style={{ marginTop: "16px" }}
