@@ -149,6 +149,10 @@ erDiagram
 
 ## Resources
 
+### React
+
+https://react.dev/learn/typescript#typescript-with-react-components
+
 ### Sockets
 
 - [Socket.io Documentation](https://socket.io/docs/v4/)

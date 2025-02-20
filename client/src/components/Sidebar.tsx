@@ -135,6 +135,7 @@ export const Sidebar = () => {
               // Mobile styles
               flexDirection: "row",
               position: "fixed",
+              zIndex: 10,
               bottom: 0,
               width: "100%",
               padding: 0,

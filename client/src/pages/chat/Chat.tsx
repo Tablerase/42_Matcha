@@ -1,4 +1,5 @@
 import { theme } from "@/components/theme";
+import { useAuth } from "@/utils/authContext";
 import { usePayload } from "@/utils/payloadProvider";
 import { ChatInterface } from "@/utils/socket";
 import { Layout } from "@components/Layout";
@@ -10,31 +11,81 @@ import {
   List,
   ListItem,
   ListItemAvatar,
+  ListItemButton,
   ListItemText,
+  Paper,
+  Skeleton,
   Typography,
 } from "@mui/material";
 import { Box, useMediaQuery } from "@mui/system";
 import { useState } from "react";
+import {
+  useFetchCurrentUser,
+  useFetchUserProfilePic,
+} from "../browse/usersActions";
+import { User } from "@/app/interfaces";
+import LoadingCup from "@/components/LoadingCup/LoadingCup";
+import { useFetchUserById } from "../insights/insightsHooks";
+
+const ChatDrawerItem = ({
+  chat,
+  chatUser,
+  activeChat,
+  setActiveChat,
+}: {
+  chat: ChatInterface;
+  chatUser: number;
+  activeChat: number | null;
+  setActiveChat: (chatId: number) => void;
+}): React.JSX.Element => {
+  const { data: user, isLoading: userLoading } = useFetchUserById(chatUser);
+  const { data: picture, isLoading: pictureLoading } =
+    useFetchUserProfilePic(chatUser);
+
+  if (userLoading || pictureLoading) {
+    return <Skeleton variant="rectangular" width="100%" height="64px" />;
+  }
+
+  return (
+    <ListItemButton
+      onClick={() => setActiveChat(chat.id)}
+      selected={activeChat === chat.id}
+    >
+      <ListItemAvatar>
+        <Avatar alt={user?.username} src={picture?.url} />
+      </ListItemAvatar>
+      <ListItemText primary={user?.username} />
+    </ListItemButton>
+  );
+};
 
 export const ChatDrawer = ({
   isMobile,
   chats,
+  currentUser,
+  activeChat,
+  setActiveChat,
 }: {
   isMobile: boolean;
-  chats: any;
+  chats: ChatInterface[];
+  currentUser: User;
+  activeChat: number | null;
+  setActiveChat: (chatId: number) => void;
 }) => {
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   let drawerList = (
     <List>
       {chats.map((chat: ChatInterface) => (
-        <ListItem key={chat.id}>
-          <ListItemAvatar>
-            {/* User profic pic */}
-            <Avatar />
-          </ListItemAvatar>
-          <ListItemText primary={chat.user1Id} />
-        </ListItem>
+        <ChatDrawerItem
+          key={chat.id}
+          chat={chat}
+          chatUser={
+            chat.user1Id === currentUser.id ? chat.user2Id : chat.user1Id
+          }
+          activeChat={activeChat}
+          setActiveChat={setActiveChat}
+        />
       ))}
     </List>
   );
@@ -64,10 +115,7 @@ export const ChatDrawer = ({
         onClose={() => setDrawerOpen(false)}
         ModalProps={{ keepMounted: true }}
         sx={{
-          width: "300px",
-          flexShrink: 0,
-          height: "100%",
-          zIndex: -1,
+          zIndex: 1,
         }}
       >
         {drawerList}
@@ -80,20 +128,49 @@ export const ChatDrawer = ({
 
 export const Chat = () => {
   const { chats } = usePayload();
-  // TODO: Add active chat session
-  // const [activeChat, setActiveChat] = useState<number | null>(null);
-  // TODO: recover current user id
-  // const { user } = useAuth();
-  // TODO: recover users from the different chats (to display their names, profile pics, etc.)
+  const [activeChat, setActiveChat] = useState<number | null>(null);
+  const {
+    data: userData,
+    isLoading: userDataLoading,
+    isSuccess: userDataIsSuccess,
+  } = useFetchCurrentUser();
+
   const isMobile = useMediaQuery(theme.breakpoints.down("sm"));
 
   let content;
+  if (userDataLoading) {
+    content = <LoadingCup />;
+  }
 
-  content = (
-    <>
-      <ChatDrawer isMobile={isMobile} chats={chats} />
-    </>
-  );
+  // TODO: Create an empty chat when match is made
+  // TODO: Create event listener for new chat messages
+  // TODO: Add chat messages and create a chat component
+  if (userDataIsSuccess && userData && chats) {
+    if (chats.length === 0) {
+      content = (
+        <Typography variant="h4" textAlign={"center"}>
+          No chats yet
+        </Typography>
+      );
+    } else {
+      content = (
+        <>
+          <ChatDrawer
+            isMobile={isMobile}
+            chats={chats}
+            currentUser={userData}
+            activeChat={activeChat}
+            setActiveChat={setActiveChat}
+          />
+          {activeChat ? (
+            <Typography variant="h4">Chat {activeChat} active</Typography>
+          ) : (
+            <Typography variant="h4">Select a chat</Typography>
+          )}
+        </>
+      );
+    }
+  }
 
   return (
     <Layout>
