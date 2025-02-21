@@ -2,6 +2,7 @@ import { Image } from "./interfaces/imageInterface";
 import { Gender } from "./interfaces/userInterface";
 import { image } from "./models/imageModel";
 import { pool } from "./settings";
+import fetch from "node-fetch"; // For older versions of Node.js
 import { generateHash } from "./utils/bcrypt";
 
 interface ApiUser {
@@ -19,6 +20,20 @@ interface ApiUser {
     longitude: number;
   };
   image_url: string;
+}
+
+interface RandomUserResponse {
+  results: {
+    name: { first: string; last: string };
+    login: { username: string; password: string };
+    email: string;
+    gender: string;
+    dob: { date: string };
+    location: { coordinates: { latitude: string; longitude: string } };
+    picture: { large: string };
+    // Other fields are ignored
+  }[];
+  // Other fields are ignored
 }
 
 /**
@@ -47,7 +62,6 @@ async function fetchRandomUsers(
   seed: string = "foobar"
 ): Promise<ApiUser[]> {
   const url_api = `${url}?results=${quantitiy}&seed=${seed}`;
-  console.log(url_api);
   const response = await fetch(url_api);
 
   // Check if the response is OK
@@ -57,8 +71,8 @@ async function fetchRandomUsers(
     );
   }
 
-  const data = await response.json();
-  const users = data.results.map((user: any, i: number) => {
+  const data = (await response.json()) as RandomUserResponse;
+  const users = data.results.map((user, i: number) => {
     return {
       first_name: user.name.first,
       last_name: user.name.last,
