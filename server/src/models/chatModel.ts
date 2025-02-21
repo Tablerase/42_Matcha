@@ -1,6 +1,6 @@
 import { QueryResult } from "pg";
 import { pool } from "../settings";
-import { Chat } from "@interfaces/chatInterface";
+import { Chat, Message } from "@interfaces/chatInterface";
 
 interface DbChat {
   id: number;
@@ -8,12 +8,13 @@ interface DbChat {
   user2_id: number;
   created_at: Date;
   deleted_by: number[] | null;
-  messages: DbMessage[];
+  messages?: DbMessage[];
 }
 
 interface DbMessage {
   id: number;
   content: string;
+  chat_id: number;
   from_user_id: number;
   created_at: Date;
 }
@@ -44,19 +45,92 @@ class ChatModel {
           user1Id: chat.user1_id,
           user2Id: chat.user2_id,
           createdAt: chat.created_at,
-          messages: chat.messages.map((message: DbMessage) => {
-            return {
-              id: message.id,
-              content: message.content,
-              fromUserId: message.from_user_id,
-              createdAt: message.created_at,
-            };
-          }),
+          messages: chat.messages
+            ? chat.messages.map((message: DbMessage) => {
+                return {
+                  id: message.id,
+                  chatId: message.chat_id,
+                  content: message.content,
+                  fromUserId: message.from_user_id,
+                  createdAt: message.created_at,
+                } as Message;
+              })
+            : [],
           deletedBy: chat.deleted_by,
         } as Chat;
       });
-      console.log("[ChatModel] Fetched chat messages:", parsedChats);
       return parsedChats;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async createChat(user1Id: number, user2Id: number): Promise<Chat> {
+    try {
+      const createChatQuery = {
+        text: "INSERT INTO chats (user1_id, user2_id) VALUES ($1, $2) RETURNING *",
+        values: [user1Id, user2Id],
+      };
+      const result: QueryResult<DbChat> = await pool.query(createChatQuery);
+      const newChat: DbChat = result.rows[0];
+      console.log("[ChatModel] Created new chat:", newChat);
+      return {
+        id: newChat.id,
+        user1Id: newChat.user1_id,
+        user2Id: newChat.user2_id,
+        createdAt: newChat.created_at,
+        messages: [],
+        deletedBy: newChat.deleted_by,
+      } as Chat;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async saveMessage(
+    message: Message
+  ): Promise<{ message: Message; chat: Chat }> {
+    try {
+      // Check if chat exists and user is part of the chat
+      const checkChatQuery = {
+        text: "SELECT * FROM chats WHERE id = $1",
+        values: [message.chatId],
+      };
+      const resultChat: QueryResult<DbChat> = await pool.query(checkChatQuery);
+      if (resultChat.rowCount === 0) {
+        throw new Error("Chat not found");
+      }
+      const chat: DbChat = resultChat.rows[0];
+      if (
+        chat.user1_id !== message.fromUserId &&
+        chat.user2_id !== message.fromUserId
+      ) {
+        throw new Error("User not part of chat");
+      }
+      // Save the message to the database
+      const saveMessageQuery = {
+        text: "INSERT INTO messages (content, chat_id, from_user_id) VALUES ($1, $2, $3) RETURNING *",
+        values: [message.content, message.chatId, message.fromUserId],
+      };
+      const result: QueryResult<DbMessage> = await pool.query(saveMessageQuery);
+      const newMessage: DbMessage = result.rows[0];
+      console.log("[ChatModel] Saved new message:", newMessage);
+      return {
+        message: {
+          id: newMessage.id,
+          chatId: newMessage.chat_id,
+          content: newMessage.content,
+          fromUserId: newMessage.from_user_id,
+          createdAt: newMessage.created_at,
+        } as Message,
+        chat: {
+          id: chat.id,
+          user1Id: chat.user1_id,
+          user2Id: chat.user2_id,
+          createdAt: chat.created_at,
+          deletedBy: chat.deleted_by,
+        } as Chat,
+      };
     } catch (error) {
       throw new Error((error as Error).message);
     }

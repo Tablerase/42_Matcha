@@ -22,6 +22,7 @@ export enum SOCKET_EVENTS {
   // Chats events
   CHATS_FETCH = "chatsFetch",
   CHATS = "chats",
+  MESSAGE_NEW = "messageNew",
   MESSAGE = "message",
   // Matching events
   MATCH = "match",
@@ -75,6 +76,7 @@ export enum NotificationStatus {
 
 export interface Message {
   id: number;
+  chatId: number;
   content: string;
   fromUserId: number;
   createdAt: Date;
@@ -105,10 +107,6 @@ export const initializeSocket = (userId: number) => {
       console.log("Socket: Join Error", error);
       socket.disconnect();
     });
-  });
-
-  socket.on(SOCKET_EVENTS.MESSAGE, (payload: NotificationPayload) => {
-    console.log("Socket: Message received", payload);
   });
 
   socket.on(SOCKET_EVENTS.DISCONNECT, () => {

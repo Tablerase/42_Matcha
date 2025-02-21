@@ -4,11 +4,11 @@ import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
 import { FRONTEND_ORIGIN, JWT_SECRET_KEY } from "@settings";
 import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
-import { Request, Response, NextFunction } from "express";
+import e, { Request, Response, NextFunction } from "express";
 import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
 import { notificationModel } from "@src/models/notificationModel";
 import { chatModel } from "@src/models/chatModel";
-import { Chat } from "./interfaces/chatInterface";
+import { Chat, Message } from "./interfaces/chatInterface";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   /* ________________________________ Socket Setup ________________________________ */
@@ -163,6 +163,35 @@ export const initializeSocket = (httpServer: HttpServer) => {
           message: "Failed to fetch chat messages",
         });
         callback([]);
+      }
+    });
+
+    socket.on(SOCKET_EVENTS.MESSAGE_NEW, async (message: Message, callback) => {
+      console.log("[Socket] New chat message:", message);
+      // Save new message to database
+      try {
+        // Ensure message is from current user
+        message.fromUserId = socket.data.user;
+        const newMessage = await chatModel.saveMessage(message);
+        // Confirm message saved
+        callback(newMessage.message);
+        // Emit new message to chat participants
+        socket.emit(SOCKET_EVENTS.MESSAGE, newMessage.message);
+        const otherUserId =
+          newMessage.chat.user1Id === socket.data.user
+            ? newMessage.chat.user2Id
+            : newMessage.chat.user1Id;
+        io.to(`user_${otherUserId}`).emit(
+          SOCKET_EVENTS.MESSAGE,
+          newMessage.message
+        );
+        // TODO: Add notification for new message
+      } catch (error) {
+        console.error("[Socket] Error saving new message:", error);
+        socket.emit(SOCKET_EVENTS.ERROR, {
+          message: "Failed to save new message",
+        });
+        callback(error);
       }
     });
 

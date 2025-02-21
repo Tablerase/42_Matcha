@@ -6,29 +6,24 @@ import {
   Box,
   List,
   ListItem,
-  Avatar,
   ListItemAvatar,
   ListItemText,
   Paper,
   IconButton,
-  Icon,
   Button,
 } from "@mui/material";
-import { useAuth } from "@/utils/authContext";
 import { useFetchCurrentUser } from "../browse/usersActions";
-import { useState } from "react";
-import { NotificationInterface, NotificationPayload } from "@/utils/socket";
+import { NotificationInterface } from "@/utils/socket";
 import { usePayload } from "@/utils/payloadProvider";
 import {
   Delete,
   NotificationsActive,
   NotificationsNone,
 } from "@mui/icons-material";
-import { D } from "@tanstack/react-query-devtools/build/legacy/ReactQueryDevtools-Cn7cKi7o";
 
 export const Notifications = () => {
   const {
-    data: userData,
+    // data: userData,
     isSuccess: userIsSuccess,
     isLoading: userIsLoading,
   } = useFetchCurrentUser();

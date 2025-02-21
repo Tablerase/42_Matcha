@@ -1,10 +1,26 @@
 import { QueryResult } from "pg";
 import { pool } from "../settings";
+import { chatModel } from "./chatModel";
+import { PublicUser } from "@src/interfaces/userInterface";
 
 class MatchModel {
   async getUserMatches(userId: number): Promise<any[]> {
+    // TODO: add tags in the query
     const query = {
-      text: `SELECT * FROM matches WHERE user_id1 = $1 OR user_id2 = $1 ORDER BY created_at DESC`,
+      text: `SELECT * FROM (
+                SELECT us.id, us.first_name, us.last_name, us.email, us.username, us.gender, us.preferences, us.date_of_birth, us.bio, us.city, us.fame_rate, us.last_seen, us.created_at, ma.id AS match_id, ma.created_at AS match_date
+                FROM users AS us
+                JOIN matches AS ma
+                ON us.id = ma.user_id1
+                WHERE ma.user_id2 = $1
+                UNION
+                SELECT us.id, us.first_name, us.last_name, us.email, us.username, us.gender, us.preferences, us.date_of_birth, us.bio, us.city, us.fame_rate, us.last_seen, us.created_at, ma.id AS match_id, ma.created_at AS match_date
+                FROM users AS us
+                JOIN matches AS ma
+                ON us.id = ma.user_id2
+                WHERE ma.user_id1 = $1
+              ) AS matched_users
+            ORDER BY match_date DESC`,
       values: [userId],
     };
     const result: QueryResult = await pool.query(query);

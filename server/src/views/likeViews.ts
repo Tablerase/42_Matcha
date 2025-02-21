@@ -15,6 +15,7 @@ import {
 } from "@interfaces/notificationInterface";
 import { addNotification } from "./notificationViews";
 import { user } from "@src/models/userModel";
+import { chatModel } from "@src/models/chatModel";
 
 export const checkUserLiked = async (
   req: Request,
@@ -95,6 +96,8 @@ export const addUserLike = async (
         fromUserID: likerUserId,
       };
       await addNotification(notification, [likedUserId, likerUserId]);
+      // TODO: make an event to update the chats list for both users
+      await chatModel.createChat(likedUserId, likerUserId);
     } else if (like.length === 1) {
       notification = {
         type: NotificationType.LIKE,

@@ -42,11 +42,11 @@ const palette = {
     dark: deepPurple["A100"],
   },
   secondary: {
-    main: deepPurple[200], // Subtle matcha green for secondary actions or buttons
+    main: deepPurple[200],
   },
   background: {
-    default: lightGreen[100], // Light background for a calm aesthetic
-    paper: "#FFFFFF", // Clean white for card elements and containers
+    default: lightGreen[100],
+    paper: "#FFFFFF",
   },
   text: {
     primary: "#333333", // Darker text for readability

@@ -22,6 +22,7 @@ import { set } from "date-fns";
 
 interface payloadInterface {
   chats: ChatInterface[];
+  chatNewMessage: (message: Message) => void;
   notifications: NotificationInterface[];
   notifMarkAsRead: (id: number) => void;
   notifMarkAsUnread: (id: number) => void;
@@ -111,7 +112,41 @@ export const PayloadProvider = ({
         console.log("Socket: Chat Fetch", data);
         setChats(data);
       });
+
+    // Chat event listeners
+    socket.on(SOCKET_EVENTS.MESSAGE, (payload: Message) => {
+      console.log("Socket: Message received", payload);
+      setChats((prev) =>
+        prev.map((chat) => {
+          if (chat.id === payload.chatId) {
+            if (!chat.messages.find((msg) => msg.id === payload.id)) {
+              return {
+                ...chat,
+                messages: [...chat.messages, payload],
+              };
+            }
+          }
+          return chat;
+        })
+      );
+    });
   }, [isAuth, authIsLoading, socket]);
+
+  const chatNewMessage = (message: Message) => {
+    if (!socket) return;
+    console.log("Socket: Sending New Chat Message", message);
+    socket
+      .timeout(5000)
+      .emit(SOCKET_EVENTS.MESSAGE_NEW, message, (err: any, response: any) => {
+        if (err) {
+          console.error("Socket: New Chat Message Error", err);
+          return;
+        }
+        if (response) {
+          console.log("Socket: New Chat Message Confirmed", response);
+        }
+      });
+  };
 
   const notifMarkAsRead = (id: number) => {
     if (!socket) return;
@@ -149,6 +184,7 @@ export const PayloadProvider = ({
     <PayloadContext.Provider
       value={{
         chats,
+        chatNewMessage,
         notifications,
         notifMarkAsRead,
         notifMarkAsUnread,
