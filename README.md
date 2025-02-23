@@ -152,6 +152,7 @@ erDiagram
 ### React
 
 https://react.dev/learn/typescript#typescript-with-react-components
+https://tigerabrodi.blog/become-expert-in-react-query?ref=dailydev
 
 ### Sockets
 
