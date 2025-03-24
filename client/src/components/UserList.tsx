@@ -3,7 +3,13 @@ import { UserCard } from "./UserCard";
 import { Box } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 
-export const UserList = ({ users }: { users: User[] }) => {
+export const UserList = ({
+  users,
+  match,
+}: {
+  users: User[];
+  match: boolean;
+}) => {
   if (users.length === 0) {
     return (
       <Box sx={{ flexGrow: 1, p: 2 }}>
@@ -24,7 +30,7 @@ export const UserList = ({ users }: { users: User[] }) => {
               md: users.length > 2 ? 4 : 12,
             }}
           >
-            <UserCard user={user} />
+            <UserCard user={user} match={match} />
           </Grid>
         ))}
       </Grid>

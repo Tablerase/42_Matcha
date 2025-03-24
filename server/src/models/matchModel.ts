@@ -33,6 +33,11 @@ class MatchModel {
             SELECT $1, $2
             WHERE NOT EXISTS (
               SELECT 1 FROM matches WHERE user_id1 = $1 AND user_id2 = $2)
+            AND $1 <> $2
+            AND NOT EXISTS (
+              SELECT 1 FROM matches WHERE user_id1 = $2 AND user_id2 = $1
+            )
+            RETURNING *
             `,
       values: [userId, matchedUserId],
     };

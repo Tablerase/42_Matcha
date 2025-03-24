@@ -173,7 +173,7 @@ export const Browse = () => {
   if (usersIsSuccess && users) {
     content = (
       <>
-        <UserList users={displayedUsers} />
+        <UserList users={displayedUsers} match={false} />
         <Pagination
           count={Math.ceil(sortedUsers.length / itemsPerPage)}
           page={page}

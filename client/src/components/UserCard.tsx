@@ -10,18 +10,20 @@ import {
 } from "@mui/material";
 import { UserCardProps } from "@app/interfaces";
 import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
-import { Favorite, FavoriteBorder } from "@mui/icons-material";
+import { Favorite, FavoriteBorder, PersonRemove } from "@mui/icons-material";
 import { client } from "@/utils/axios";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import LoadingCup from "./LoadingCup/LoadingCup";
 import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
 import { grey } from "@mui/material/colors";
+import { set } from "date-fns";
 
-export const UserCard = ({ user }: UserCardProps) => {
+export const UserCard = ({ user, match }: UserCardProps) => {
   const { data: profilePic, isLoading: profilePicIsLoading } =
     useFetchUserProfilePic(user.id);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const [subButtonClicked, setSubButtonClicked] = useState(false);
 
   // Check if user is liked
   const { data: isUserLiked, refetch: refetchLikeStatus } = useQuery({
@@ -52,8 +54,29 @@ export const UserCard = ({ user }: UserCardProps) => {
   });
 
   const handleLike = async () => {
+    setSubButtonClicked(true);
     if (!isLikeLoading) {
       toggleLike();
+    }
+  };
+
+  const { mutate: removeMatch } = useMutation({
+    mutationFn: async () => {
+      await client.delete(`/users/${user.id}/matches/`);
+    },
+    onSuccess: () => {
+      console.log("Match removed successfully");
+      // Optionally, you can refetch the matches or update the UI accordingly
+    },
+    onError: (error) => {
+      console.error("Error removing match:", error);
+    },
+  });
+  const handleMatchRemove = async () => {
+    setSubButtonClicked(true);
+    console.log("Removing match");
+    if (window.confirm("Are you sure you want to remove this match?")) {
+      removeMatch();
     }
   };
 
@@ -87,6 +110,10 @@ export const UserCard = ({ user }: UserCardProps) => {
   const id = open ? "profile-popover" : undefined;
 
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
+    if (subButtonClicked) {
+      setSubButtonClicked(false);
+      return;
+    }
     try {
       client.post(`/users/${user.id}/views/`);
     } catch (error) {
@@ -121,24 +148,43 @@ export const UserCard = ({ user }: UserCardProps) => {
             },
           }}
         >
-          <IconButton
-            sx={{
-              position: "absolute",
-              top: 8,
-              right: 8,
-              backgroundColor: grey[50],
-              "&:hover": {
-                backgroundColor: grey[300],
-              },
-              zIndex: 1,
-            }}
-            aria-label="Like"
-            color="primary"
-            onMouseDown={handleLike}
-          >
-            {/* <FavoriteIcon /> */}
-            {isUserLiked ? <Favorite /> : <FavoriteBorder />}
-          </IconButton>
+          {match ? (
+            <IconButton
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                backgroundColor: grey[50],
+                "&:hover": {
+                  backgroundColor: grey[300],
+                },
+                zIndex: 1,
+              }}
+              aria-label="Remove Match"
+              color="error"
+              onMouseDown={handleMatchRemove}
+            >
+              <PersonRemove />
+            </IconButton>
+          ) : (
+            <IconButton
+              sx={{
+                position: "absolute",
+                top: 8,
+                right: 8,
+                backgroundColor: grey[50],
+                "&:hover": {
+                  backgroundColor: grey[300],
+                },
+                zIndex: 1,
+              }}
+              aria-label="Like"
+              color="primary"
+              onMouseDown={handleLike}
+            >
+              {isUserLiked ? <Favorite /> : <FavoriteBorder />}
+            </IconButton>
+          )}
           <CardMedia
             component="img"
             height="200"

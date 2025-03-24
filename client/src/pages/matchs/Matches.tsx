@@ -13,7 +13,7 @@ export const Matches = () => {
   }
 
   if (isSuccess) {
-    content = <UserList users={users} />;
+    content = <UserList users={users} match={true} />;
   }
   return <Layout>{content}</Layout>;
 };
