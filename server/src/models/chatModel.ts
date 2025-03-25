@@ -68,11 +68,20 @@ class ChatModel {
   async createChat(user1Id: number, user2Id: number): Promise<Chat> {
     try {
       const createChatQuery = {
-        text: "INSERT INTO chats (user1_id, user2_id) VALUES ($1, $2) RETURNING *",
+        text: `INSERT INTO chats (user1_id, user2_id)
+              SELECT $1, $2
+              WHERE NOT EXISTS (
+                SELECT 1 FROM chats WHERE (user1_id = $1 AND user2_id = $2) OR (user1_id = $2 AND user2_id = $1)
+              )
+              AND $1 <> $2
+              RETURNING *`,
         values: [user1Id, user2Id],
       };
       const result: QueryResult<DbChat> = await pool.query(createChatQuery);
       const newChat: DbChat = result.rows[0];
+      if (!newChat) {
+        return {} as Chat; // No new chat created, return empty chat
+      }
       console.log("[ChatModel] Created new chat:", newChat);
       return {
         id: newChat.id,
@@ -82,6 +91,24 @@ class ChatModel {
         messages: [],
         deletedBy: newChat.deleted_by,
       } as Chat;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async deleteChat(userId: number, matchedUserId: number): Promise<void> {
+    try {
+      const deleteChatQuery = {
+        text: `DELETE FROM chats
+              WHERE (user1_id = $1 AND user2_id = $2) OR (user1_id = $2 AND user2_id = $1)`,
+        values: [userId, matchedUserId],
+      };
+      await pool.query(deleteChatQuery);
+      console.log(
+        "[ChatModel] Deleted chat between users:",
+        userId,
+        matchedUserId
+      );
     } catch (error) {
       throw new Error((error as Error).message);
     }

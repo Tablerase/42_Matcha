@@ -14,7 +14,7 @@ import { text } from "body-parser";
 class NotificationModel {
   async getNotifications(userId: number): Promise<NotificationInterface[]> {
     const query = {
-      text: `SELECT * 
+      text: `SELECT nr.id, no.type, no.content, nr.to_user_id, nr.from_user_id, nr.status, nr.is_read, nr.read_at, nr.created_at 
           FROM notification_recipients AS nr 
           JOIN notification_objects AS no ON nr.notification_object_id = no.id
           WHERE nr.to_user_id = $1`,

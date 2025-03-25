@@ -92,6 +92,10 @@ export const PayloadProvider = ({
       (payload: NotificationInterface, callback) => {
         console.log("Socket: Notification", payload);
         callback("Notification received");
+        if (payload.id in notifications.map((n) => n.id)) {
+          console.log("Socket: Notification already exists", payload);
+          return;
+        }
         enqueueSnackbar(payload.content.message, {
           variant: payload.ui_variant || "default",
         });

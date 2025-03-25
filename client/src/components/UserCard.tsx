@@ -153,7 +153,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               transform: "scale(1.02)",
               cursor: "pointer",
             },
-            borderWidth: 20,
+            borderWidth: 10,
             borderColor: theme.palette.primary.main,
             borderStyle: "solid",
             borderRadius: 5,
@@ -232,7 +232,9 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               }}
             >
               <Typography variant="h6" sx={{ textTransform: "capitalize" }}>
-                {user.username}
+                {user.username.length > 12
+                  ? `${user.username.slice(0, 12)}...`
+                  : user.username}
               </Typography>
               <Typography variant="body1">{user.age} years</Typography>
             </Box>
