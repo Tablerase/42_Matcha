@@ -1,5 +1,4 @@
 import { theme } from "@/components/theme";
-import { useAuth } from "@/utils/authContext";
 import { usePayload } from "@/utils/payloadProvider";
 import { ChatInterface, Message } from "@/utils/socket";
 import { Layout } from "@components/Layout";
@@ -10,7 +9,6 @@ import {
   Drawer,
   Fab,
   List,
-  ListItem,
   ListItemAvatar,
   ListItemButton,
   ListItemText,
@@ -19,7 +17,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { alpha, Box, useMediaQuery } from "@mui/system";
+import { Box, useMediaQuery } from "@mui/system";
 import { useEffect, useState } from "react";
 import {
   useFetchCurrentUser,
@@ -217,7 +215,21 @@ export const Chat = ({
   const messages = chat?.messages;
 
   if (!chat || !messages) {
-    return <Typography variant="h4">Chat not found</Typography>;
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          width: "100%",
+          height: "80vh",
+        }}
+      >
+        <Typography variant="h4">
+          ⬅️ Select a chat (or chat not found)
+        </Typography>
+      </Box>
+    );
   }
   const ChatArea = () => {
     return (
@@ -285,7 +297,6 @@ export const Chat = ({
       sx={{
         width: "100%",
         height: "100%",
-        // backgroundColor: alpha(theme.palette.background.paper, 0.1),
       }}
     >
       <ChatArea />
@@ -321,15 +332,20 @@ export const ChatPage = () => {
     content = <LoadingCup />;
   }
 
-  // TODO: Create an empty chat when match is made
   // TODO: Create event listener for new chat messages
-  // TODO: Add chat messages and create a chat component
   if (userDataIsSuccess && userData && chats) {
     if (chats.length === 0) {
       content = (
-        <Typography variant="h4" textAlign={"center"}>
-          To chat with someone, you need to match with them first
-        </Typography>
+        <>
+          <Typography
+            variant="h4"
+            textAlign={"center"}
+            padding={"16px"}
+            color="text.secondary"
+          >
+            To chat with someone, you need to match with them first 🍵
+          </Typography>
+        </>
       );
     } else {
       content = (

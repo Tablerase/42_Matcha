@@ -117,6 +117,7 @@ export const Sidebar = () => {
             color="secondary"
             anchorOrigin={{ vertical: "top", horizontal: "right" }}
             aria-label="notifications"
+            max={99}
           >
             <NotificationsIcon fontSize="small" />
           </Badge>
@@ -157,6 +158,7 @@ export const Sidebar = () => {
               right: 0,
               padding: 0,
               flexGrow: 1,
+              whiteSpace: "nowrap",
             }),
       }}
     >

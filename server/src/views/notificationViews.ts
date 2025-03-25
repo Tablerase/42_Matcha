@@ -3,6 +3,7 @@ import { notificationModel } from "@src/models/notificationModel";
 import { io } from "@src/server";
 import { NotificationPayload } from "@interfaces/notificationInterface";
 import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
+import { Chat } from "@src/interfaces/chatInterface";
 
 export const addNotification = async (
   notification: NotificationInterface,
@@ -60,6 +61,65 @@ export const addNotification = async (
           error
         );
       }
+    }
+  }
+  return;
+};
+
+export const addChatEvent = async (
+  chat: Chat,
+  userIds: number[]
+): Promise<void> => {
+  // Emit chat event to users
+  const chatPayload: Chat = {
+    id: chat.id,
+    messages: chat.messages,
+    user1Id: chat.user1Id,
+    user2Id: chat.user2Id,
+    createdAt: chat.createdAt,
+    deletedBy: chat.deletedBy,
+  };
+
+  for (const userId of userIds) {
+    try {
+      const userRoom = `user_${userId}`;
+      if (!io.sockets.adapter.rooms.has(userRoom)) {
+        // User is offline
+        console.log(`[Socket] User_${userId} is offline, skipping chat event`);
+        continue;
+      }
+      console.log(io.sockets.adapter.rooms);
+      // TODO: Emit chat event to user (here not working)
+      io.to(userRoom).emit(SOCKET_EVENTS.CHATS_NEW, chatPayload);
+      console.log(`[Socket] Emitting new chat to user_${userId}`);
+    } catch (error) {
+      console.log(
+        `[Socket] Error emitting chat event to user_${userId}:`,
+        error
+      );
+    }
+  }
+  return;
+};
+
+export const deleteChatEvent = async (chatId: number, userIds: number[]) => {
+  // Emit chat event to users
+  for (const userId of userIds) {
+    try {
+      const userRoom = `user_${userId}`;
+      if (!io.sockets.adapter.rooms.has(userRoom)) {
+        // User is offline
+        console.log(`[Socket] User_${userId} is offline, skipping chat event`);
+        continue;
+      }
+      console.log(io.sockets.adapter.rooms);
+      io.to(userRoom).emit(SOCKET_EVENTS.CHATS_DELETE, chatId);
+      console.log(`[Socket] Emitting delete chat to user_${userId}`);
+    } catch (error) {
+      console.log(
+        `[Socket] Error emitting delete chat to user_${userId}:`,
+        error
+      );
     }
   }
   return;

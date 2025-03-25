@@ -1,5 +1,4 @@
 import { io } from "socket.io-client";
-import { enqueueSnackbar } from "notistack";
 import { SERVER_URL } from "@/utils/config";
 
 /* ______________________________ Socket Events ______________________________ */
@@ -21,7 +20,8 @@ export enum SOCKET_EVENTS {
   NOTIFICATION_UNREAD = "notificationUnread",
   // Chats events
   CHATS_FETCH = "chatsFetch",
-  CHATS = "chats",
+  CHATS_NEW = "chatsNew",
+  CHATS_DELETE = "chatsDelete",
   MESSAGE_NEW = "messageNew",
   MESSAGE = "message",
   // Matching events

@@ -11,7 +11,7 @@ import {
   NotificationType,
 } from "@src/interfaces/notificationInterface";
 import { user } from "@src/models/userModel";
-import { addNotification } from "./notificationViews";
+import { addNotification, deleteChatEvent } from "./notificationViews";
 import { likeModel } from "@src/models/likeModel";
 import { chatModel } from "@src/models/chatModel";
 
@@ -70,7 +70,10 @@ export const deleteUserMatch = async (
         fromUserID: userId,
       };
       await addNotification(notification, [matchedUserId]);
-      await chatModel.deleteChat(userId, matchedUserId);
+      const res = await chatModel.deleteChat(userId, matchedUserId);
+      if (res && res.id) {
+        deleteChatEvent(res.id, [userId, matchedUserId]);
+      }
     }
     res
       .status(200)

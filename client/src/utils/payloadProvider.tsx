@@ -18,7 +18,6 @@ import { Socket } from "socket.io-client";
 import { initializeSocket } from "./socket";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { useFetchCurrentUser } from "@/pages/browse/usersActions";
-import { set } from "date-fns";
 
 interface payloadInterface {
   chats: ChatInterface[];
@@ -116,6 +115,23 @@ export const PayloadProvider = ({
         console.log("Socket: Chat Fetch", data);
         setChats(data);
       });
+
+    // New chat group
+    socket.on(SOCKET_EVENTS.CHATS_NEW, (payload: ChatInterface) => {
+      console.log("Socket: New Chat", payload);
+      setChats((prev) => {
+        if (prev.find((chat) => chat.id === payload.id)) {
+          return prev;
+        }
+        return [...prev, payload];
+      });
+    });
+
+    // Delete chat group
+    socket.on(SOCKET_EVENTS.CHATS_DELETE, (id: number) => {
+      console.log("Socket: Delete Chat", id);
+      setChats((prev) => prev.filter((chat) => chat.id !== id));
+    });
 
     // Chat event listeners
     socket.on(SOCKET_EVENTS.MESSAGE, (payload: Message) => {

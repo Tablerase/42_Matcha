@@ -13,7 +13,7 @@ import {
   NotificationStatus,
   NotificationType,
 } from "@interfaces/notificationInterface";
-import { addNotification } from "./notificationViews";
+import { addNotification, addChatEvent } from "./notificationViews";
 import { user } from "@src/models/userModel";
 import { chatModel } from "@src/models/chatModel";
 
@@ -97,7 +97,10 @@ export const addUserLike = async (
       };
       await addNotification(notification, [likedUserId, likerUserId]);
       // TODO: make an event to update the chats list for both users
-      await chatModel.createChat(likedUserId, likerUserId);
+      const res = await chatModel.createChat(likedUserId, likerUserId);
+      if (res) {
+        await addChatEvent(res, [likedUserId, likerUserId]);
+      }
     } else if (like.length === 1) {
       notification = {
         type: NotificationType.LIKE,

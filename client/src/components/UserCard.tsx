@@ -18,7 +18,6 @@ import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
 import { grey } from "@mui/material/colors";
 import { theme } from "./theme";
-import { useMatch } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query"; // Add this import
 
 export const UserCard = ({ user, match }: UserCardProps) => {

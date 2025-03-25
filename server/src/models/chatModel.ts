@@ -96,19 +96,28 @@ class ChatModel {
     }
   }
 
-  async deleteChat(userId: number, matchedUserId: number): Promise<void> {
+  async deleteChat(userId: number, matchedUserId: number): Promise<Chat> {
     try {
       const deleteChatQuery = {
         text: `DELETE FROM chats
-              WHERE (user1_id = $1 AND user2_id = $2) OR (user1_id = $2 AND user2_id = $1)`,
+              WHERE (user1_id = $1 AND user2_id = $2) OR (user1_id = $2 AND user2_id = $1)
+              RETURNING *`,
         values: [userId, matchedUserId],
       };
-      await pool.query(deleteChatQuery);
+      const res = await pool.query(deleteChatQuery);
       console.log(
         "[ChatModel] Deleted chat between users:",
         userId,
         matchedUserId
       );
+      const deletedChat: DbChat = res.rows[0];
+      return {
+        id: deletedChat.id,
+        user1Id: deletedChat.user1_id,
+        user2Id: deletedChat.user2_id,
+        createdAt: deletedChat.created_at,
+        deletedBy: deletedChat.deleted_by,
+      } as Chat;
     } catch (error) {
       throw new Error((error as Error).message);
     }
