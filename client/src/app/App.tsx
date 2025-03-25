@@ -17,6 +17,7 @@ import { AuthProvider, ProtectedRoute } from "@utils/authContext";
 import { SnackbarProvider } from "notistack";
 import { PayloadProvider } from "@/utils/payloadProvider";
 import { Insights } from "@/pages/insights/Insights";
+import { NotFound } from "@/pages/notFound";
 export const queryClient = new QueryClient();
 
 export const App = () => {
@@ -46,6 +47,9 @@ export const App = () => {
                       element={<Notifications />}
                     />
                   </Route>
+
+                  {/* 404 route */}
+                  <Route path="*" element={<NotFound />} />
                 </Routes>
               </SnackbarProvider>
             </PayloadProvider>

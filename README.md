@@ -170,7 +170,7 @@ https://tigerabrodi.blog/become-expert-in-react-query?ref=dailydev
 ### Favicon
 
 - [Tea Cup by Solar Icons](https://www.svgrepo.com/svg/527916/tea-cup)
-- [Matcha Tea mug Icon by Freepik - SVG not free](https://www.flaticon.com/free-icons/tea-mug)
+- [Matcha Tea mug Icon by Freepik](https://www.flaticon.com/free-icons/tea-mug)
 
 ### Loading
 
