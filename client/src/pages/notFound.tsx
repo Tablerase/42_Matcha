@@ -22,7 +22,7 @@ export const NotFound = () => {
         <Typography variant="h4" component="h2" gutterBottom>
           Page Not Found
         </Typography>
-        <Typography variant="body1" color="text.secondary" paragraph>
+        <Typography variant="body1" color="text.secondary">
           The page you're looking for doesn't exist or has been moved.
         </Typography>
         <Button
