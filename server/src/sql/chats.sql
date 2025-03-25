@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS messages (
     chat_id INT REFERENCES chats(id) ON DELETE CASCADE,
     from_user_id INT REFERENCES users(id) ON DELETE CASCADE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    is_read BOOLEAN DEFAULT FALSE,
     -- Add constraints
     CONSTRAINT fk_chat FOREIGN KEY (chat_id) 
         REFERENCES chats(id) ON DELETE CASCADE,

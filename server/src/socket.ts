@@ -9,6 +9,8 @@ import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
 import { notificationModel } from "@src/models/notificationModel";
 import { chatModel } from "@src/models/chatModel";
 import { Chat, Message } from "./interfaces/chatInterface";
+import { addNotification } from "./views/notificationViews";
+import { NotificationType } from "./interfaces/notificationInterface";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   /* ________________________________ Socket Setup ________________________________ */
@@ -185,7 +187,16 @@ export const initializeSocket = (httpServer: HttpServer) => {
           SOCKET_EVENTS.MESSAGE,
           newMessage.message
         );
-        // TODO: Add notification for new message
+        addNotification(
+          {
+            type: NotificationType.MESSAGE,
+            ui_variant: "info",
+            content: { message: "You have a new message!" },
+            toUserID: otherUserId,
+            fromUserID: socket.data.user,
+          },
+          [otherUserId]
+        );
       } catch (error) {
         console.error("[Socket] Error saving new message:", error);
         socket.emit(SOCKET_EVENTS.ERROR, {
@@ -194,6 +205,36 @@ export const initializeSocket = (httpServer: HttpServer) => {
         callback(error);
       }
     });
+
+    socket.on(
+      SOCKET_EVENTS.MESSAGES_READ,
+      async (messageIds: number[], callback) => {
+        // Mark message as read in database
+        try {
+          if (messageIds.length === 0) {
+            return;
+          }
+          if (messageIds.some((id) => isNaN(id))) {
+            throw new Error("Invalid message id");
+          }
+          const userId = socket.data.user;
+          const updatedMessages = await chatModel.markMessagesAsRead(
+            userId,
+            messageIds
+          );
+          console.log(
+            `[Socket] Marked messages as read for ${userId}:`,
+            updatedMessages
+          );
+          callback(updatedMessages);
+        } catch (error) {
+          console.error("[Socket] Error marking message as read:", error);
+          socket.emit(SOCKET_EVENTS.ERROR, {
+            message: "Failed to mark message as read",
+          });
+        }
+      }
+    );
 
     socket.on(SOCKET_EVENTS.DISCONNECT, async () => {
       console.log("[Socket] Client disconnected:", socket.id);

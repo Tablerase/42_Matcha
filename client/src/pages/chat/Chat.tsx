@@ -179,12 +179,13 @@ const ChatInput = ({
       <TextField
         sx={{ flexGrow: 2 }}
         fullWidth
-        label="Message"
+        name="newMessage"
+        id="newMessage"
         variant="outlined"
         margin="normal"
         multiline
         slotProps={{ htmlInput: { maxLength: 1000 } }}
-        placeholder="Type your message here (1000 chars max)"
+        placeholder="Type your message here"
         value={newMessage}
         onChange={(e) => setNewMessage(e.target.value)}
         helperText={`${newMessage.length}/1000`}
@@ -192,6 +193,7 @@ const ChatInput = ({
       <Button
         variant="contained"
         onClick={handleSendMessage}
+        id="sendButton"
         size="small"
         sx={{ marginLeft: "8px", height: "100%" }}
       >
@@ -204,15 +206,32 @@ const ChatInput = ({
 export const Chat = ({
   chatId,
   chatNewMessage,
+  messagesMarkAsRead,
   currentUser,
 }: {
   chatId: number;
   chatNewMessage: (message: Message) => void;
+  messagesMarkAsRead: (messageIds: number[]) => void;
   currentUser: User;
 }): React.JSX.Element => {
   const { chats } = usePayload();
   const chat = chats?.find((chat) => chat.id === chatId);
   const messages = chat?.messages;
+
+  // Mark messages as read when chat is opened
+  useEffect(() => {
+    if (chat && messages) {
+      // console.log("Mark as read running, triggered by:", new Error().stack);
+      // Make a list of unread messages
+      const unreadMessages = messages.filter(
+        (msg) => !msg.isRead && msg.fromUserId !== currentUser.id
+      );
+      if (unreadMessages.length > 0) {
+        console.log("Unread messages:", unreadMessages);
+        messagesMarkAsRead(unreadMessages.map((msg) => msg.id));
+      }
+    }
+  }, [chat, messages, currentUser.id, messagesMarkAsRead]);
 
   if (!chat || !messages) {
     return (
@@ -231,6 +250,7 @@ export const Chat = ({
       </Box>
     );
   }
+
   const ChatArea = () => {
     return (
       <Box
@@ -310,7 +330,7 @@ export const Chat = ({
 };
 
 export const ChatPage = () => {
-  const { chats, chatNewMessage } = usePayload();
+  const { chats, chatNewMessage, messagesMarkAsRead } = usePayload();
 
   const [activeChat, setActiveChat] = useState<number | null>(() => {
     const saved = localStorage.getItem("activeChat");
@@ -377,6 +397,7 @@ export const ChatPage = () => {
                 chatId={activeChat}
                 currentUser={userData}
                 chatNewMessage={chatNewMessage}
+                messagesMarkAsRead={messagesMarkAsRead}
               />
             ) : (
               <Box

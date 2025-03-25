@@ -17,6 +17,7 @@ interface DbMessage {
   chat_id: number;
   from_user_id: number;
   created_at: Date;
+  is_read: boolean;
 }
 
 class ChatModel {
@@ -53,6 +54,7 @@ class ChatModel {
                   content: message.content,
                   fromUserId: message.from_user_id,
                   createdAt: message.created_at,
+                  isRead: message.is_read,
                 } as Message;
               })
             : [],
@@ -158,6 +160,7 @@ class ChatModel {
           content: newMessage.content,
           fromUserId: newMessage.from_user_id,
           createdAt: newMessage.created_at,
+          isRead: false,
         } as Message,
         chat: {
           id: chat.id,
@@ -167,6 +170,41 @@ class ChatModel {
           deletedBy: chat.deleted_by,
         } as Chat,
       };
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async markMessagesAsRead(
+    userId: number,
+    messageIds: number[]
+  ): Promise<Message[]> {
+    try {
+      const markMessagesQuery = {
+        text: `UPDATE messages m
+          SET is_read = true
+          FROM chats c
+          WHERE m.chat_id = c.id
+          AND m.id = ANY($1)
+          AND (c.user1_id = $2 OR c.user2_id = $2)  -- Ensure user is part of chat
+          AND m.from_user_id != $2                  -- Ensure user is not sender
+          RETURNING m.*`,
+        values: [messageIds, userId],
+      };
+      const result: QueryResult<DbMessage> = await pool.query(
+        markMessagesQuery
+      );
+      const updatedMessages: DbMessage[] = result.rows;
+      return updatedMessages.map((message) => {
+        return {
+          id: message.id,
+          chatId: message.chat_id,
+          content: message.content,
+          fromUserId: message.from_user_id,
+          createdAt: message.created_at,
+          isRead: message.is_read,
+        } as Message;
+      });
     } catch (error) {
       throw new Error((error as Error).message);
     }

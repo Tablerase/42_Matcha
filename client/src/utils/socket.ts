@@ -23,6 +23,7 @@ export enum SOCKET_EVENTS {
   CHATS_NEW = "chatsNew",
   CHATS_DELETE = "chatsDelete",
   MESSAGE_NEW = "messageNew",
+  MESSAGES_READ = "messageRead",
   MESSAGE = "message",
   // Matching events
   MATCH = "match",
@@ -80,6 +81,7 @@ export interface Message {
   content: string;
   fromUserId: number;
   createdAt: Date;
+  isRead?: boolean;
 }
 
 export interface ChatInterface {

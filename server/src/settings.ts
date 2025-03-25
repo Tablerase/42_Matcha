@@ -56,7 +56,7 @@ async function seed() {
       DROP TABLE IF EXISTS likes CASCADE;
       DROP TABLE IF EXISTS blocked CASCADE;
       DROP TABLE IF EXISTS chats CASCADE;
-      DROP TABLE IF EXISTS msgs CASCADE;
+      DROP TABLE IF EXISTS messages CASCADE;
       DROP TABLE IF EXISTS reported_users CASCADE;
       DROP TABLE IF EXISTS users CASCADE;
     `;

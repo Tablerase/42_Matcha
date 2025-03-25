@@ -1,27 +1,17 @@
-import {
-  useCallback,
-  createContext,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "@utils/authContext";
 import { enqueueSnackbar } from "notistack";
 import {
   NotificationInterface,
   ChatInterface,
   Message,
-  NotificationPayload,
   SOCKET_EVENTS,
 } from "@utils/socket";
-import { Socket } from "socket.io-client";
-import { initializeSocket } from "./socket";
-import LoadingCup from "@/components/LoadingCup/LoadingCup";
-import { useFetchCurrentUser } from "@/pages/browse/usersActions";
 
 interface payloadInterface {
   chats: ChatInterface[];
   chatNewMessage: (message: Message) => void;
+  messagesMarkAsRead: (messageIds: number[]) => void;
   notifications: NotificationInterface[];
   notifMarkAsRead: (id: number) => void;
   notifMarkAsUnread: (id: number) => void;
@@ -168,6 +158,36 @@ export const PayloadProvider = ({
       });
   };
 
+  const messagesMarkAsRead = (messageIds: number[]) => {
+    if (!socket) return;
+    console.log("Socket: Marking Message as Read", messageIds);
+    socket
+      .timeout(5000)
+      .emit(
+        SOCKET_EVENTS.MESSAGES_READ,
+        messageIds,
+        (err: any, response: any) => {
+          if (err) {
+            console.error("Socket: Mark Messages as Read Error", err);
+            return;
+          }
+          if (response) {
+            console.log("Socket: Mark Messages as Read Confirmed", response);
+            setChats((prev) =>
+              prev.map((chat) => {
+                return {
+                  ...chat,
+                  messages: chat.messages.map((msg) =>
+                    messageIds.includes(msg.id) ? { ...msg, isRead: true } : msg
+                  ),
+                };
+              })
+            );
+          }
+        }
+      );
+  };
+
   const notifMarkAsRead = (id: number) => {
     if (!socket) return;
     socket.emit(SOCKET_EVENTS.NOTIFICATION_READ, id);
@@ -205,6 +225,7 @@ export const PayloadProvider = ({
       value={{
         chats,
         chatNewMessage,
+        messagesMarkAsRead,
         notifications,
         notifMarkAsRead,
         notifMarkAsUnread,

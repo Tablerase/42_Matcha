@@ -73,7 +73,7 @@ export const Sidebar = () => {
   const navigate = useNavigate();
   const logout = useLogout();
   const { data: userData } = useFetchCurrentUser();
-  const { notifications } = usePayload();
+  const { notifications, chats } = usePayload();
 
   const handleLogout = () => {
     logout();
@@ -103,7 +103,25 @@ export const Sidebar = () => {
     },
     {
       route: routes.CHAT,
-      icon: <ChatIcon fontSize="small" />,
+      icon: (
+        <>
+          <Badge
+            badgeContent={
+              chats.filter((c) =>
+                c.messages.some(
+                  (m) => !m.isRead && m.fromUserId !== userData?.id
+                )
+              ).length
+            }
+            color="secondary"
+            anchorOrigin={{ vertical: "top", horizontal: "right" }}
+            aria-label="chat"
+            max={99}
+          >
+            <ChatIcon fontSize="small" />
+          </Badge>
+        </>
+      ),
       label: "Chat",
     },
     {

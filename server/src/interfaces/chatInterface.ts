@@ -4,6 +4,7 @@ export interface Message {
   chatId: number;
   fromUserId: number;
   createdAt: Date;
+  isRead?: boolean;
 }
 
 export interface Chat {
