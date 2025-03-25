@@ -37,7 +37,7 @@ export interface User {
 }
 
 export interface UserCardProps {
-  user: SortUser;
+  user: User;
   match: boolean;
 }
 

@@ -12,14 +12,19 @@ import { UserCardProps } from "@app/interfaces";
 import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
 import { Favorite, FavoriteBorder, PersonRemove } from "@mui/icons-material";
 import { client } from "@/utils/axios";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingCup from "./LoadingCup/LoadingCup";
 import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
 import { grey } from "@mui/material/colors";
-import { set } from "date-fns";
+import { theme } from "./theme";
+import { useMatch } from "react-router-dom";
+import { useQueryClient } from "@tanstack/react-query"; // Add this import
 
 export const UserCard = ({ user, match }: UserCardProps) => {
+  // Add this at the top of your component
+  const queryClient = useQueryClient();
+
   const { data: profilePic, isLoading: profilePicIsLoading } =
     useFetchUserProfilePic(user.id);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -66,7 +71,9 @@ export const UserCard = ({ user, match }: UserCardProps) => {
     },
     onSuccess: () => {
       console.log("Match removed successfully");
-      // Optionally, you can refetch the matches or update the UI accordingly
+
+      // Invalidate the matches query to trigger a refetch
+      queryClient.invalidateQueries({ queryKey: ["matches"] });
     },
     onError: (error) => {
       console.error("Error removing match:", error);
@@ -146,6 +153,11 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               transform: "scale(1.02)",
               cursor: "pointer",
             },
+            borderWidth: 20,
+            borderColor: theme.palette.primary.main,
+            borderStyle: "solid",
+            borderRadius: 5,
+            boxShadow: 3,
           }}
         >
           {match ? (
@@ -193,7 +205,14 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
             }
             alt={`${user.username}'s profile picture`}
-            sx={{ objectFit: "cover" }}
+            sx={{
+              objectFit: "cover",
+              borderTopLeftRadius: 5,
+              borderTopRightRadius: 5,
+              backgroundColor: theme.palette.primary.main,
+              width: "100%",
+              height: "auto",
+            }}
           />
           {/* <ul>
             <li> Username: {user.username}</li>
