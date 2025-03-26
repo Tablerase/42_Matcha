@@ -4,6 +4,7 @@ import { image } from "./models/imageModel";
 import { pool } from "./settings";
 import fetch from "node-fetch"; // For older versions of Node.js
 import { generateHash } from "./utils/bcrypt";
+import { user } from "./models/userModel";
 
 interface ApiUser {
   first_name: string;
@@ -18,6 +19,7 @@ interface ApiUser {
   location: {
     latitude: number;
     longitude: number;
+    city: string;
   };
   image_url: string;
 }
@@ -29,7 +31,10 @@ interface RandomUserResponse {
     email: string;
     gender: string;
     dob: { date: string };
-    location: { coordinates: { latitude: string; longitude: string } };
+    location: {
+      city: string;
+      coordinates: { latitude: string; longitude: string };
+    };
     picture: { large: string };
     // Other fields are ignored
   }[];
@@ -89,6 +94,7 @@ async function fetchRandomUsers(
       date_of_birth: user.dob.date,
       bio: `Hi, I''m ${user.name.first}!`,
       location: {
+        city: user.location.city || "Faraway",
         latitude: parseFloat(user.location.coordinates.latitude),
         longitude: parseFloat(user.location.coordinates.longitude),
       },
@@ -143,26 +149,32 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     await pool.query(insertUsersQuery);
 
     // Insert loads of users for testing
+    console.log("Fetching random users...");
     const users = await fetchRandomUsers("https://randomuser.me/api/", 500);
-    let insertRandomUsersQuery = `INSERT INTO users (first_name, last_name, username, email, password, gender, preferences, date_of_birth, bio, location)\n`;
-    insertRandomUsersQuery += `VALUES\n`;
+    console.log("Creating random users (can take a while)...");
     for (const user of users) {
-      insertRandomUsersQuery += `( '${user.first_name}', '${
-        user.last_name
-      }', '${user.username}', '${user.email}', '${await generateHash(
-        user.password
-      )}', '${user.gender}', ARRAY['${user.preferences.join(
-        "','"
-      )}']::Gender[], '${user.date_of_birth}', '${user.bio}', POINT(${
-        user.location.latitude
-      }, ${user.location.longitude}))`;
-      if (users.indexOf(user) !== users.length - 1) {
-        insertRandomUsersQuery += `,\n`;
-      } else {
-        insertRandomUsersQuery += `;`;
-      }
+      const query = `
+        INSERT INTO users (first_name, last_name, username, email, password, gender, preferences, date_of_birth, bio, city, location)
+        VALUES ($1, $2, $3, $4, $5, $6, $7::Gender[], $8, $9, $10, POINT($11, $12))
+      `;
+      const hashedPassword = await generateHash(user.password);
+      const values = [
+        user.first_name,
+        user.last_name,
+        user.username,
+        user.email,
+        hashedPassword,
+        user.gender,
+        user.preferences,
+        user.date_of_birth,
+        user.bio,
+        user.location.city,
+        user.location.latitude,
+        user.location.longitude,
+      ];
+      await pool.query(query, values);
     }
-    await pool.query(insertRandomUsersQuery);
+    console.log("Random users created!");
 
     // Insert data into the `images` table
     console.log("Inserting images...");
@@ -176,6 +188,13 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
       (5, 'https://randomuser.me/api/portraits/men/3.jpg', TRUE);
     `;
     await pool.query(insertImagesQuery);
+    for (const user of users) {
+      const query = `
+        INSERT INTO images (user_id, image_url, is_profile)
+        VALUES ($1, $2, $3)`;
+      const values = [users.indexOf(user) + 6, user.image_url, true];
+      await pool.query(query, values);
+    }
 
     // Insert data into the `user_tags` table
     console.log("Inserting user tags...");
@@ -192,6 +211,27 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
         (5, 5);
     `;
     await pool.query(insertUsersTagsQuery);
+
+    // Insert data into the `likes` table
+    console.log("Inserting likes...");
+    const insertLikesQuery = `
+      INSERT INTO likes (liker_user_id, liked_user_id)
+      VALUES
+        (16, 2),
+        (2, 16),
+        (3, 16),
+        (4, 16);
+    `;
+    await pool.query(insertLikesQuery);
+
+    // Insert data into the `matches` table
+    console.log("Inserting matches...");
+    const insertMatchesQuery = `
+      INSERT INTO matches (user_id1, user_id2)
+      VALUES
+        (2, 16);
+    `;
+    await pool.query(insertMatchesQuery);
 
     // Insert data into the `chats` table
     console.log("Inserting chats...");

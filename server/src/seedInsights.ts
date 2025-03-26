@@ -6,7 +6,6 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
 
     // Cleaning Insights Tables content
     console.log("Cleaning existing data...");
-    await pool.query("TRUNCATE TABLE likes RESTART IDENTITY CASCADE;");
     await pool.query("TRUNCATE TABLE views RESTART IDENTITY CASCADE;");
 
     // Insert data into the `views` table
@@ -31,21 +30,6 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
         (15, 16);
     `;
     await pool.query(insertViewsQuery);
-
-    // Insert data into the `likes` table
-    console.log("Inserting likes...");
-    const insertLikesQuery = `
-      INSERT INTO likes (liker_user_id, liked_user_id)
-      VALUES
-        (3, 16),
-        (5, 16),
-        (7, 16),
-        (9, 16),
-        (11, 16),
-        (13, 16),
-        (15, 16);
-    `;
-    await pool.query(insertLikesQuery);
 
     console.log("Fixtures completed successfully!");
   } catch (error) {

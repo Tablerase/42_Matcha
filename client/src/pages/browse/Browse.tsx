@@ -149,7 +149,7 @@ export const Browse = () => {
   }, [sortParams, browseStatus, browseUsers, userData, users]); // Do not include sortedUsers here to avoid infinite loop
 
   /* _____________________________ Pagination ____________________________ */
-  const itemsPerPage = 9;
+  const itemsPerPage = 12;
   useEffect(() => {
     if (users) {
       const offset = (page - 1) * itemsPerPage;
