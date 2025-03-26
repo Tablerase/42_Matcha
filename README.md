@@ -2,13 +2,77 @@
 
 A dating website that allows users to register, log in, complete their profile, search and view the profiles of other users, and show interest in them with a “like” , chat with those that “liked” back.
 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+```mermaid
+---
+config:
+  curve: basis
+  htmlLabels: true
+---
+flowchart
+  direction TB
+  classDef black fill:#000,stroke:#333,stroke-width:1px;
+  classDef white fill:#fff,color:#555,stroke:#333,stroke-width:1px;
+  classDef white_border fill:#fff,color:#000,stroke:#333,stroke-width:1px, stroke-dasharray: 5, 5;
+  classDef green fill:#0f0,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightblue fill:#99f,color:#fff,stroke:#333,stroke-width:1px;
+  classDef lightgreen fill:#9f9,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightred fill:#f99,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightyellow fill:#ff9,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightorange fill:#f90,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightpurple fill:#f0f,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightcyan fill:#9ff,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightpink fill:#f9f,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightbrown fill:#963,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightgrey fill:#999,color:#555,stroke:#333,stroke-width:1px;
+  classDef lightblack fill:#000,stroke:#333,stroke-width:1px;
+  classDef lightwhite fill:#fff,color:#555,stroke:#333,stroke-width:1px;
+
+  Project:::white_border
+  subgraph Project
+    direction TB
+    WorldWideWeb <-->|"`*443*`"| Nginx
+    WorldWideWeb((fa:fa-globe World Wide<br>Web)):::lightgreen
+    Browser <-->|"`*443*`"| WorldWideWeb
+
+    subgraph Client_Host["fas:fa-laptop-code Client Host"]
+      Browser:::lightcyan
+
+      subgraph Browser["fas:fa-globe Browser"]
+        React_App("fab:fa-react ReactJS<br>App")
+      end
+
+    end
+
+    subgraph Server_Host["fas:fa-computer Server Host"]
+      Docker_Network:::lightblue
+
+      subgraph Docker_Network["fas:fa-network-wired Docker Network"]
+        Postgres("fa:fa-database Postgres<br>Container")
+        Nginx("fa:fa-server Nginx + TLS<br>Container")
+        Express_Server("fab:fa-node Express<br>Container")
+        React_Build("fab:fa-react ReactJS<br>Container")
+      end
+      Nginx <-.->|"`*8000*`"| Express_Server
+      Express_Server <-.->|"`*5432*`"| Postgres
+      Nginx <-.-> React_Build
+
+    Volume_Postgres[("fas:fa-hdd Postgres<br>Volume")]:::lightorange
+    Postgres <-.-> Volume_Postgres
+    end
+  end
+
+  linkStyle 0,1 stroke:lightgreen,stroke-width:4px;
+  linkStyle 2,3,4 stroke:lightblue,stroke-width:2px;
+
+```
+
 ## Users Generation
 
 ### Random User API
 
 The Random User API is a free API that allows you to generate random user data. It is a RESTful API that responds with JSON data.
-
-#### Base URL
 
 ```http
 https://randomuser.me/api/
@@ -18,7 +82,7 @@ https://randomuser.me/api/
 
 [API Documentation - How to use](https://randomuser.me/documentation#howto)
 
-## Design
+<!-- ## Design
 
 Browse profiles/users with tea bags opening and closing, and a cup of tea that fills up as you scroll down the page.
 
@@ -36,7 +100,7 @@ Browse profiles/users with tea bags opening and closing, and a cup of tea that f
 
 ### Map
 
-- [React Leaflet](https://react-leaflet.js.org/)
+- [React Leaflet](https://react-leaflet.js.org/) -->
 
 ## Notifications
 
