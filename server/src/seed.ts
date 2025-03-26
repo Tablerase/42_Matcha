@@ -192,7 +192,7 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
       const query = `
         INSERT INTO images (user_id, image_url, is_profile)
         VALUES ($1, $2, $3)`;
-      const values = [users.indexOf(user) + 6, user.image_url, true];
+      const values = [users.indexOf(user) + 16, user.image_url, true];
       await pool.query(query, values);
     }
 

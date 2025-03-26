@@ -147,6 +147,26 @@ erDiagram
 
 ```
 
+## Fame Rate
+
+```mermaid
+pie
+    title Fame Rate
+    "profile_infos": 10
+    "profile_pictures": 25
+    "likes": 35
+    "matches": 30
+```
+
+- Profile Infos: max 10 Fame Points
+  - 1 Fame Point per field
+- Profile Pictures: max 25 Fame Points
+  - 5 Fame Points per picture
+- Likes: max 35 Fame Points
+  - 1 Fame Point per like
+- Matches: max 30 Fame Points
+  - 2 Fame Points per match
+
 ## Resources
 
 ### React

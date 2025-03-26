@@ -1,6 +1,7 @@
 import { Image } from "@interfaces/imageInterface";
 import { image as imageModel } from "@models/imageModel";
 import { Request, Response } from "express";
+import { updateFameRate } from "./userViews";
 
 export const createUserImage = async (
   req: Request,
@@ -10,6 +11,7 @@ export const createUserImage = async (
     const imageData: Partial<Image> = req.body;
     const newImage = await imageModel.createImage(imageData);
 
+    if (imageData.userId) updateFameRate(imageData.userId);
     res.status(201).json({
       status: 201,
       message: "Image created successfully",
@@ -71,6 +73,7 @@ export const deleteUserImage = async (
     const imageId: number = parseInt(req.query.imageId as string);
     const deletedImage = await imageModel.deleteImageById(imageId);
 
+    if (deletedImage.userId) updateFameRate(deletedImage.userId);
     res.status(200).json({
       status: 200,
       message: "Image deleted successfully",

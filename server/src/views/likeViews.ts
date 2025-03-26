@@ -16,6 +16,7 @@ import {
 import { addNotification, addChatEvent } from "./notificationViews";
 import { user } from "@src/models/userModel";
 import { chatModel } from "@src/models/chatModel";
+import { updateFameRate } from "./userViews";
 
 export const checkUserLiked = async (
   req: Request,
@@ -86,6 +87,7 @@ export const addUserLike = async (
 
     const like = await likeModel.addUserLike(likerUserId, likedUserId);
     const match = await matchModel.checkForMatch(likerUserId, likedUserId);
+    updateFameRate(likedUserId);
     let notification: NotificationInterface;
     if (match) {
       notification = {
@@ -131,6 +133,7 @@ export const deleteUserLike = async (
     }
 
     await likeModel.deleteUserLike(likerUserId!, likedUserId);
+    updateFameRate(likedUserId);
     res.status(200).json({ status: 200, message: "Like deleted" });
   } catch (error) {
     handleErrorResponse(res, error);

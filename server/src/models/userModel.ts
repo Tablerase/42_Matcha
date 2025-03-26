@@ -158,7 +158,7 @@ class UserModel {
         text: `
 			  INSERT INTO users (first_name, last_name, username, email, password)
 			  VALUES ($1, $2, $3, $4, $5)
-			  RETURNING *
+			  RETURNING first_name, last_name, username, email
 			`,
         values: [
           userData.firstName,
@@ -211,7 +211,7 @@ class UserModel {
           UPDATE users
           SET ${updates.join(", ")}, updated_at = NOW()
           WHERE id = $${parameterIndex}
-          RETURNING *
+          RETURNING id, first_name, last_name, username, email, gender, preferences, date_of_birth, bio, location, city, fame_rate, last_seen, created_at, updated_at
         `,
         values,
       };
@@ -222,6 +222,23 @@ class UserModel {
       throw new Error((error as Error).message);
     }
   }
+
+  async updateUserFameRate(id: number, fameRate: number): Promise<void> {
+    try {
+      const query = {
+        text: `
+          UPDATE users
+          SET fame_rate = $1
+          WHERE id = $2 RETURNING fame_rate
+        `,
+        values: [fameRate, id],
+      };
+      const res = await pool.query(query);
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
   /**
    * VIEWS
    */
