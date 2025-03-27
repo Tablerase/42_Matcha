@@ -20,6 +20,7 @@ import {
   useDeleteImage,
 } from "@/pages/browse/usersActions";
 import AttachFileIcon from "@mui/icons-material/AttachFile";
+import { useEffect } from "react";
 
 interface ProfilePicturesProps {
   images?: Image[];
@@ -43,9 +44,20 @@ export const ProfilePictures = ({
 
   const [files, setFiles] = useState<File[]>([]);
   const [filesError, setFilesError] = useState("");
-  const [selectedProfilePic, setSelectedProfilePic] = useState<number | null>(
-    images?.find((img) => img.isProfilePic)?.id || null
+  const [selectedProfilePic, setSelectedProfilePic] = useState<number | undefined>(
+    images?.find((img) => img.isProfilePic)?.id || images?.[0]?.id || undefined
   );
+
+  useEffect(() => {
+    if (images && images.length === 1) {
+      updateImageStatus({
+        userId: userId!,
+        id: images[0].id,
+        isProfilePic: true,
+      });
+      setSelectedProfilePic(images[0].id);
+    }
+  }, [images?.length]);
 
   const handleFileUpload = (newFiles: File[]) => {
     if (!newFiles || !newFiles.length) {
