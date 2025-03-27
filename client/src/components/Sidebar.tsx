@@ -17,7 +17,10 @@ import { routes } from "@/utils/routes";
 import { useLogout } from "@/pages/auth/authActions";
 // import { useAuth } from "@/utils/authContext";
 import { theme } from "./theme";
-import { useFetchCurrentUser, useFetchUserImages } from "@/pages/browse/usersActions";
+import {
+  useFetchCurrentUser,
+  useFetchUserImages,
+} from "@/pages/browse/usersActions";
 import { usePayload } from "@/utils/payloadProvider";
 
 interface SidebarButtonProps {
@@ -90,7 +93,7 @@ export const Sidebar = () => {
     {
       route: routes.MATCHES,
       icon: <FavoriteIcon fontSize="small" />,
-      label: "Matches",
+      label: "Matchas",
     },
     {
       route: routes.INSIGHTS,

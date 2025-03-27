@@ -11,3 +11,12 @@
     background-size: calc(var(--s) - 3px) calc(var(--s) - 3px);
   }
 }
+
+@keyframes scroll {
+  0% {
+    background-position: 0 0;
+  }
+  100% {
+    background-position: 0 calc(var(--s) - 3px);
+  }
+}

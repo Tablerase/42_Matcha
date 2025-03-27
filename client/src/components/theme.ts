@@ -1,5 +1,6 @@
 import { createTheme } from "@mui/material";
 import { deepPurple, lightGreen } from "@mui/material/colors";
+import { light } from "@mui/material/styles/createPalette";
 // import { light } from "@mui/material/styles/createPalette";
 
 // const lightGreen = '#d6e2a4';
