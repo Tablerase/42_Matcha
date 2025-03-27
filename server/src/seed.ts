@@ -173,8 +173,9 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
         user.location.longitude,
       ];
       await pool.query(query, values);
+      process.stdout.write(`\r${users.indexOf(user) + 1} / ${users.length}`);
     }
-    console.log("Random users created!");
+    console.log("\nRandom users created!");
 
     // Insert data into the `images` table
     console.log("Inserting images...");
@@ -185,14 +186,24 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
       (2, 'https://randomuser.me/api/portraits/women/1.jpg', TRUE),
       (3, 'https://randomuser.me/api/portraits/women/2.jpg', TRUE),
       (4, 'https://randomuser.me/api/portraits/men/2.jpg', TRUE),
-      (5, 'https://randomuser.me/api/portraits/men/3.jpg', TRUE);
+      (5, 'https://randomuser.me/api/portraits/men/3.jpg', TRUE),
+      (6, 'https://randomuser.me/api/portraits/men/6.jpg', TRUE),
+      (7, 'https://randomuser.me/api/portraits/women/3.jpg', TRUE),
+      (8, 'https://randomuser.me/api/portraits/men/4.jpg', TRUE),
+      (9, 'https://randomuser.me/api/portraits/women/4.jpg', TRUE),
+      (10, 'https://randomuser.me/api/portraits/men/5.jpg', TRUE),
+      (11, 'https://randomuser.me/api/portraits/women/5.jpg', TRUE),
+      (12, 'https://randomuser.me/api/portraits/men/7.jpg', TRUE),
+      (13, 'https://randomuser.me/api/portraits/women/7.jpg', TRUE),
+      (14, 'https://randomuser.me/api/portraits/men/8.jpg', TRUE),
+      (15, 'https://randomuser.me/api/portraits/women/8.jpg', TRUE);
     `;
     await pool.query(insertImagesQuery);
     for (const user of users) {
       const query = `
         INSERT INTO images (user_id, image_url, is_profile)
         VALUES ($1, $2, $3)`;
-      const values = [users.indexOf(user) + 16, user.image_url, true];
+      const values = [users.indexOf(user) + 17, user.image_url, true];
       await pool.query(query, values);
     }
 

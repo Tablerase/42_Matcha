@@ -222,10 +222,11 @@ export const initializeSocket = (httpServer: HttpServer) => {
             userId,
             messageIds
           );
-          console.log(
-            `[Socket] Marked messages as read for ${userId}:`,
-            updatedMessages
-          );
+          // console.log(
+          //   `[Socket] Marked messages as read for ${userId}:`,
+          //   updatedMessages
+          // );
+          console.log(`[Socket] Marked messages as read for ${userId}:`);
           callback(updatedMessages);
         } catch (error) {
           console.error("[Socket] Error marking message as read:", error);

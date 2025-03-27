@@ -103,7 +103,7 @@ class ChatModel {
       const deleteChatQuery = {
         text: `DELETE FROM chats
               WHERE (user1_id = $1 AND user2_id = $2) OR (user1_id = $2 AND user2_id = $1)
-              RETURNING *`,
+              RETURNING chats.id, chats.user1_id, chats.user2_id, chats.created_at, chats.deleted_by`,
         values: [userId, matchedUserId],
       };
       const res = await pool.query(deleteChatQuery);
@@ -113,6 +113,9 @@ class ChatModel {
         matchedUserId
       );
       const deletedChat: DbChat = res.rows[0];
+      if (!deletedChat) {
+        return {} as Chat; // No chat deleted, return empty chat
+      }
       return {
         id: deletedChat.id,
         user1Id: deletedChat.user1_id,

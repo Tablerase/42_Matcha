@@ -70,9 +70,9 @@ export const deleteUserMatch = async (
         fromUserID: userId,
       };
       await addNotification(notification, [matchedUserId]);
-      const res = await chatModel.deleteChat(userId, matchedUserId);
-      if (res && res.id) {
-        deleteChatEvent(res.id, [userId, matchedUserId]);
+      const result = await chatModel.deleteChat(userId, matchedUserId);
+      if (result && result.id) {
+        deleteChatEvent(result.id, [userId, matchedUserId]);
       }
     }
     res

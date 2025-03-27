@@ -1,6 +1,6 @@
 # 42-matcha
 
-A dating website that allows users to register, log in, complete their profile, search and view the profiles of other users, and show interest in them with a “like” , chat with those that “liked” back.
+A dating website that allows users to register, log in, complete their profile, search and view the profiles of other users, and show interest in them with a “like”, chat with those that “liked” back.
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
@@ -250,6 +250,10 @@ https://tigerabrodi.blog/become-expert-in-react-query?ref=dailydev
 
 - [OpenLicence Image Sharing - Unsplash](https://unsplash.com/)
 - [Unsplash - teacup filled with matcha tea](https://unsplash.com/photos/white-ceramic-teacup-filled-of-matcha-tea-Z-hvocTfR_s)
+
+### Patterns
+
+- [Kind Panther by Marcelo Dolza](https://uiverse.io/marcelodolza/kind-panther-75)
 
 ### Favicon
 
