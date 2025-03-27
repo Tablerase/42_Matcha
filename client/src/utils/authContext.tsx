@@ -16,6 +16,9 @@ import LoadingCup from "@/components/LoadingCup/LoadingCup";
 // } from "@/pages/browse/usersActions";
 import { Socket } from "socket.io-client";
 import { initializeSocket, SOCKET_EVENTS } from "./socket";
+import { AxiosError } from "axios";
+import { NotFound } from "@/pages/notFound";
+import { OfflineElem } from "@/components/Offline/OfflineElem";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -34,6 +37,7 @@ const AuthContext = createContext<AuthContextType>({} as AuthContextType);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
+  const [networkError, setNetworkError] = useState(false);
   const [socket, setSocket] = useState<Socket | null>(null);
   // const {
   //   data: userData,
@@ -101,8 +105,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           }
         }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error checking auth status:", error);
+      if (error.code === "ERR_NETWORK") {
+        setNetworkError(true);
+        return;
+      }
       logout();
     } finally {
       setIsLoading(false);
@@ -141,10 +149,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     };
   }, [isAuthenticated]); // Only re-run when authentication status changes
 
-  if (isLoading) {
-    return <LoadingCup />;
-  }
-
   return (
     <AuthContext.Provider
       value={{
@@ -152,14 +156,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         login,
         logout,
         isLoading,
-        // userData,
         socket,
-        // isError,
-        // isSuccess,
-        // tags,
       }}
     >
-      {children}
+      {isLoading ? <LoadingCup /> : networkError ? <OfflineElem /> : children}
     </AuthContext.Provider>
   );
 };

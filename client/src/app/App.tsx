@@ -48,7 +48,7 @@ export const App = () => {
                     />
                   </Route>
 
-                  {/* 404 route */}
+                  {/* Error route */}
                   <Route path="*" element={<NotFound />} />
                 </Routes>
               </SnackbarProvider>
