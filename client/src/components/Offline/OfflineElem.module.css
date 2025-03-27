@@ -137,7 +137,7 @@
   stroke-width: 1;
 }
 
-@keyframes blink {
+@keyframes blink2 {
   0%,
   100% {
     opacity: 1;
@@ -150,5 +150,5 @@
 .networkError {
   stroke: var(--alertColor);
   stroke-width: 1.5;
-  animation: blink 1s linear infinite;
+  animation: blink2 1s linear infinite;
 }
