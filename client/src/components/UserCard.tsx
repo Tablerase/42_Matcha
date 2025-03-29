@@ -16,8 +16,9 @@ import { useMutation, useQuery } from "@tanstack/react-query";
 import LoadingCup from "./LoadingCup/LoadingCup";
 import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
-import { grey } from "@mui/material/colors";
+import { grey, red } from "@mui/material/colors";
 import { theme } from "./theme";
+import BlockIcon from '@mui/icons-material/Block';
 import { useQueryClient } from "@tanstack/react-query"; // Add this import
 
 export const UserCard = ({ user, match }: UserCardProps) => {
@@ -132,6 +133,10 @@ export const UserCard = ({ user, match }: UserCardProps) => {
     setAnchorEl(null);
   };
 
+  const handleBlock = () => {
+    console.log("Blocking user");
+  }
+  
   return (
     <>
       <Box
@@ -196,6 +201,21 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               {isUserLiked ? <Favorite /> : <FavoriteBorder />}
             </IconButton>
           )}
+          <IconButton
+            sx={{
+              position: "absolute",
+              top: 8,
+              left: 8,
+              backgroundColor: grey[50],
+              "&:hover": {
+                backgroundColor: grey[300],
+              },
+              color: red[500],
+              zIndex: 1,
+            }}
+            onMouseDown={handleBlock}>
+              <BlockIcon/>
+            </IconButton>
           <CardMedia
             component="img"
             // height="200"
