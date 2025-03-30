@@ -7,9 +7,13 @@ import {
   Skeleton,
   IconButton,
   Popover,
+  Button,
 } from "@mui/material";
 import { UserCardProps } from "@app/interfaces";
-import { useFetchUserProfilePic } from "@/pages/browse/usersActions";
+import {
+  useBlockUser,
+  useFetchUserProfilePic,
+} from "@/pages/browse/usersActions";
 import { Favorite, FavoriteBorder, PersonRemove } from "@mui/icons-material";
 import { client } from "@/utils/axios";
 import { useMutation, useQuery } from "@tanstack/react-query";
@@ -18,18 +22,20 @@ import { useState } from "react";
 import { Profile } from "@/pages/profile/Profile";
 import { grey, red } from "@mui/material/colors";
 import { theme } from "./theme";
-import BlockIcon from '@mui/icons-material/Block';
-import { useQueryClient } from "@tanstack/react-query"; // Add this import
+import BlockIcon from "@mui/icons-material/Block";
+import { useQueryClient } from "@tanstack/react-query";
+import { closeSnackbar, useSnackbar } from "notistack";
 
 export const UserCard = ({ user, match }: UserCardProps) => {
-  // Add this at the top of your component
   const queryClient = useQueryClient();
+  const { enqueueSnackbar } = useSnackbar();
 
   const { data: profilePic, isLoading: profilePicIsLoading } =
     useFetchUserProfilePic(user.id);
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const [subButtonClicked, setSubButtonClicked] = useState(false);
-
+  // Add this near other state declarations
+  const [isBlockClicked, setIsBlockClicked] = useState(false);
   // Check if user is liked
   const { data: isUserLiked, refetch: refetchLikeStatus } = useQuery({
     queryKey: ["isUserLiked", user.id],
@@ -87,6 +93,8 @@ export const UserCard = ({ user, match }: UserCardProps) => {
     }
   };
 
+  const blockUser = useBlockUser();
+
   if (profilePicIsLoading) {
     return (
       <Card
@@ -133,10 +141,41 @@ export const UserCard = ({ user, match }: UserCardProps) => {
     setAnchorEl(null);
   };
 
-  const handleBlock = () => {
-    console.log("Blocking user");
-  }
-  
+  const handleBlock = (event: React.MouseEvent<HTMLElement>) => {
+    event.stopPropagation();
+    setIsBlockClicked(true);
+    enqueueSnackbar(`Are you sure you want to block ${user.username}?`, {
+      variant: "error",
+      autoHideDuration: null,
+      action: (key) => (
+        <>
+          <Button
+            color="inherit"
+            size="small"
+            onClick={() => {
+              blockUser(user.id);
+              handleClose();
+              setIsBlockClicked(false);
+            }}
+          >
+            Yes
+          </Button>
+          <Button
+            color="inherit"
+            size="small"
+            onClick={() => {
+              closeSnackbar(key);
+              setIsBlockClicked(false);
+            }}
+          >
+            No
+          </Button>
+        </>
+      ),
+      onClose: () => setIsBlockClicked(false),
+    });
+  };
+
   return (
     <>
       <Box
@@ -158,7 +197,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               cursor: "pointer",
             },
             borderWidth: 10,
-            borderColor: theme.palette.primary.main,
+            borderColor: isBlockClicked ? red[500] : theme.palette.primary.main,
             borderStyle: "solid",
             borderRadius: 5,
             boxShadow: 3,
@@ -213,9 +252,10 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               color: red[500],
               zIndex: 1,
             }}
-            onMouseDown={handleBlock}>
-              <BlockIcon/>
-            </IconButton>
+            onClick={handleBlock}
+          >
+            <BlockIcon />
+          </IconButton>
           <CardMedia
             component="img"
             // height="200"

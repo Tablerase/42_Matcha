@@ -1,5 +1,6 @@
 import {
   useFetchAllTags,
+  useFetchBlockedUsers,
   useFetchCurrentUser,
   useFetchUsers,
 } from "./usersActions";
@@ -11,13 +12,13 @@ import {
 } from "@app/interfaces";
 import { useState, useEffect } from "react";
 import { Pagination, AppBar, Tabs, Tab, Box } from "@mui/material";
-// import { useAuth } from "@/utils/authContext";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { UserList } from "@components/UserList";
 import { Layout } from "@components/Layout";
 import SearchBar from "@components/SearchBar";
 import { sortUsersByCommonTags, sortWeightedUsers } from "./usersSorting";
 import { DEFAULT_SEARCH_PARAMS } from "@/utils/config";
+import { filterBlockedUsers } from "@/utils/helpers";
 
 export const Browse = () => {
   /* _____________________________ State ____________________________ */
@@ -98,6 +99,7 @@ export const Browse = () => {
     }
   }, [browseStatus, users, userData]);
 
+  const { data: blockedUsers } = useFetchBlockedUsers(userData?.id);
   /* _____________________________ Sort Params ____________________________ */
   // Sort users
   useEffect(() => {
@@ -151,12 +153,16 @@ export const Browse = () => {
   /* _____________________________ Pagination ____________________________ */
   const itemsPerPage = 12;
   useEffect(() => {
-    if (users) {
+    if (users && blockedUsers) {
+      console.log(blockedUsers)
+      const filteredUsers = filterBlockedUsers(users, blockedUsers);
+      
       const offset = (page - 1) * itemsPerPage;
       const endOffset = offset + itemsPerPage;
-      setDisplayedUsers(sortedUsers.slice(offset, endOffset));
+      setDisplayedUsers(filteredUsers.slice(offset, endOffset));
     }
-  }, [page, users, sortedUsers]);
+  }, [page, users, sortedUsers, blockedUsers]);
+
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
     value: number

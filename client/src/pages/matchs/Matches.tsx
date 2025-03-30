@@ -3,10 +3,14 @@ import { useMatches } from "./useMatches";
 import { UserList } from "@/components/UserList";
 import LoadingCup from "@/components/LoadingCup/LoadingCup";
 import { Box, Typography } from "@mui/material";
+import { useFetchBlockedUsers, useFetchCurrentUser } from "../browse/usersActions";
+import { filterBlockedUsers } from "@/utils/helpers";
 
 export const Matches = () => {
   const { data: users, isLoading, isSuccess } = useMatches();
-  console.log("Matches", users);
+  const { data: userData } = useFetchCurrentUser();
+  const { data: blockedUsers } = useFetchBlockedUsers(userData?.id);
+  const filteredUsers = filterBlockedUsers(users, blockedUsers);
 
   let content: JSX.Element = <></>;
   if (isLoading) {
@@ -35,7 +39,7 @@ export const Matches = () => {
         </Box>
       );
     } else {
-      content = <UserList users={users} match={true} />;
+      content = <UserList users={filteredUsers} match={true} />;
     }
   }
   return <Layout>{content}</Layout>;
