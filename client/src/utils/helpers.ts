@@ -1,3 +1,5 @@
+import { User, UserBlock } from "@/app/interfaces";
+
 export function formatCoordinates(obj: any) {
   if (
     typeof obj !== "object" ||
@@ -48,4 +50,12 @@ export const formatPreferences = (preferences: string): string[] => {
     .slice(0, -1)
     .split(",")
     .map((preference) => preference.trim());
+};
+
+export const filterBlockedUsers = (users?: User[], blockedUsers?: UserBlock[]) => {
+  if (!users) return [];
+  if (!blockedUsers) return users;
+  return users.filter(
+    (user) => !blockedUsers.some((blocked: UserBlock) => blocked.blockedUserId === user.id)
+  );
 };

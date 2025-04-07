@@ -7,6 +7,7 @@ import {
   UserResponse,
   Tag,
   UserSearchQuery,
+  UserBlock,
 } from "@app/interfaces";
 import { useMutation } from "@tanstack/react-query";
 import { queryClient } from "@/app/App";
@@ -331,3 +332,38 @@ export const useUpdateImageStatus = () => {
   });
   return updateImage;
 };
+
+export const useFetchBlockedUsers = (userId?: number) => {
+  return useQuery<UserBlock[]>({
+    queryKey: ["blockedUsers", userId],
+    queryFn: async () => {
+      if (!userId) return [];
+      
+      const response = await client.get(`/users/${userId}/blocked`);
+      
+      return response.data.data.map((block: any) => ({
+        id: block.id,
+        blockerId: block.blocker_id,
+        blockedUserId: block.blocked_user_id,
+      }));
+    },
+    enabled: !!userId,
+  });
+};
+
+export const useBlockUser = () => {
+  const { mutate: blockUser } = useMutation({
+    mutationKey: ["blockedUsers"],
+    mutationFn: async (userId: number) => {
+      await client.post(`/users/${userId}/blocked/`, {
+        blockedUserId: userId
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["users"] });
+      queryClient.invalidateQueries({ queryKey: ["blockedUsers"] });
+      queryClient.invalidateQueries({ queryKey: ["matches"] });
+    },
+  });
+  return blockUser;
+}

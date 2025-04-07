@@ -169,3 +169,9 @@ export interface UserLike {
   likedId: number;
   likedAt: Date;
 }
+
+export interface UserBlock {
+  id: number;
+  blockerId: number;
+  blockedUserId: number;
+}
