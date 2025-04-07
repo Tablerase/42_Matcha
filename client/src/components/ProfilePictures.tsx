@@ -44,7 +44,9 @@ export const ProfilePictures = ({
 
   const [files, setFiles] = useState<File[]>([]);
   const [filesError, setFilesError] = useState("");
-  const [selectedProfilePic, setSelectedProfilePic] = useState<number | undefined>(
+  const [selectedProfilePic, setSelectedProfilePic] = useState<
+    number | undefined
+  >(
     images?.find((img) => img.isProfilePic)?.id || images?.[0]?.id || undefined
   );
 
@@ -201,59 +203,57 @@ export const ProfilePictures = ({
                 }}
               >
                 {images.map((image) => (
-                  <>
-                    <Stack>
-                      <FormControl>
-                        <RadioGroup
-                          value={selectedProfilePic}
-                          onChange={(event) => handleProfilePicChange(event)}
-                        >
-                          <Badge
-                            anchorOrigin={{
-                              vertical: "top",
-                              horizontal: "right",
-                            }}
-                            badgeContent={
-                              <Box
-                                key={image.id}
-                                sx={{
-                                  bgcolor: "primary.main",
-                                  borderRadius: "50%",
-                                  p: 0.5,
-                                  display: "flex",
-                                  alignItems: "center",
-                                  justifyContent: "center",
-                                  cursor: "pointer",
-                                }}
-                              >
-                                <DeleteForeverIcon
-                                  fontSize="small"
-                                  onClick={() => {
-                                    deleteImage({
-                                      userId: userId!,
-                                      id: image.id,
-                                    });
-                                  }}
-                                />
-                              </Box>
-                            }
-                          >
-                            <Avatar
+                  <Stack key={image.id}>
+                    <FormControl>
+                      <RadioGroup
+                        value={selectedProfilePic}
+                        onChange={(event) => handleProfilePicChange(event)}
+                      >
+                        <Badge
+                          anchorOrigin={{
+                            vertical: "top",
+                            horizontal: "right",
+                          }}
+                          badgeContent={
+                            <Box
                               key={image.id}
-                              sx={{ width: 100, height: 100 }}
-                              src={image.url}
-                            />
-                          </Badge>
-                          <Radio
-                            disableRipple
-                            disableTouchRipple
-                            value={image.id}
-                            checked={selectedProfilePic === image.id}
+                              sx={{
+                                bgcolor: "primary.main",
+                                borderRadius: "50%",
+                                p: 0.5,
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                              }}
+                            >
+                              <DeleteForeverIcon
+                                fontSize="small"
+                                onClick={() => {
+                                  deleteImage({
+                                    userId: userId!,
+                                    id: image.id,
+                                  });
+                                }}
+                              />
+                            </Box>
+                          }
+                        >
+                          <Avatar
+                            key={image.id}
+                            sx={{ width: 100, height: 100 }}
+                            src={image.url}
                           />
-                        </RadioGroup>
-                      </FormControl>
-                    </Stack>
-                  </>
+                        </Badge>
+                        <Radio
+                          disableRipple
+                          disableTouchRipple
+                          value={image.id}
+                          checked={selectedProfilePic === image.id}
+                        />
+                      </RadioGroup>
+                    </FormControl>
+                  </Stack>
                 ))}
               </Box>
             </>
