@@ -2,7 +2,7 @@ import { UserSearchQuery } from "@app/interfaces";
 
 /* ___________________________________ Server ___________________________________ */
 
-export const SERVER_URL = "http://localhost:8000";
+export const SERVER_URL = process.env.BACKEND_URL || "http://localhost:8000";
 
 /* ________________________________ Query Params ________________________________ */
 

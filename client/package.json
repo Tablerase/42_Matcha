@@ -1,8 +1,9 @@
 {
   "name": "client",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
+    "@base-ui-components/react": "^1.0.0-alpha.7",
     "@mui/icons-material": "^6.4.1",
     "@mui/joy": "^5.0.0-beta.51",
     "@mui/material": "^6.4.1",
@@ -59,8 +60,17 @@
     ]
   },
   "devDependencies": {
-    "@craco/craco": "^5.9.0",
+    "@babel/plugin-transform-class-properties": "^7.25.9",
+    "@babel/plugin-transform-nullish-coalescing-operator": "^7.26.6",
+    "@babel/plugin-transform-numeric-separator": "^7.25.9",
+    "@babel/plugin-transform-optional-chaining": "^7.25.9",
+    "@babel/plugin-transform-private-methods": "^7.25.9",
+    "@babel/plugin-transform-private-property-in-object": "^7.25.9",
+    "@craco/craco": "^7.1.0",
+    "@typescript-eslint/eslint-plugin": "^8.29.0",
+    "@typescript-eslint/parser": "^8.29.0",
     "ajv": "^8.17.1",
+    "eslint": "^8.57.1",
     "nth-check": "^2.0.1",
     "postcss": "^8.4.31",
     "web-vitals": "^4.2.4"
