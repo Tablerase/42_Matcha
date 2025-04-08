@@ -19,6 +19,7 @@ import { initializeSocket, SOCKET_EVENTS } from "./socket";
 import { AxiosError } from "axios";
 import { NotFound } from "@/pages/notFound";
 import { OfflineElem } from "@/components/Offline/OfflineElem";
+import { SERVER_URL } from "./config";
 
 interface AuthContextType {
   isAuthenticated: boolean;
@@ -46,6 +47,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //   isSuccess,
   // } = useFetchCurrentUser();
   // const { data: tags, isLoading: tagLoading } = useFetchAllTags();
+  console.log("config:", SERVER_URL);
 
   const establishSocketConnection = useCallback(
     (userId: number) => {

@@ -2,7 +2,10 @@ import { UserSearchQuery } from "@app/interfaces";
 
 /* ___________________________________ Server ___________________________________ */
 
-export const SERVER_URL = process.env.BACKEND_URL || "http://localhost:8000";
+// https://create-react-app.dev/docs/adding-custom-environment-variables/
+
+export const SERVER_URL =
+  process.env.REACT_APP_API_URL || "http://localhost:8000";
 
 /* ________________________________ Query Params ________________________________ */
 

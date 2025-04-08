@@ -16,5 +16,9 @@ EXPOSE 3000
 # Package management tool
 RUN npm install -g @craco/craco
 
+# Set environment variables
+ARG REACT_APP_API_URL
+ENV REACT_APP_API_URL=$REACT_APP_API_URL
+
 # Build the application
 CMD ["npm", "run", "build"]
