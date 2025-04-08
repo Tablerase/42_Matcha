@@ -32,9 +32,9 @@ flowchart
   Project:::white_border
   subgraph Project
     direction TB
-    WorldWideWeb <-->|"`*443*`"| Nginx
+    WorldWideWeb <-->|"`*80<br>443*`"| Nginx
     WorldWideWeb((fa:fa-globe World Wide<br>Web)):::lightgreen
-    Browser <-->|"`*443*`"| WorldWideWeb
+    Browser <-->|"`*80<br>443*`"| WorldWideWeb
 
     subgraph Client_Host["fas:fa-laptop-code Client Host"]
       Browser:::lightcyan
@@ -50,13 +50,13 @@ flowchart
 
       subgraph Docker_Network["fas:fa-network-wired Docker Network"]
         Postgres("fa:fa-database Postgres<br>Container")
-        Nginx("fa:fa-server Nginx + TLS<br>Container")
+        Nginx("fa:fa-server Nginx<br>Container")
         Express_Server("fab:fa-node Express<br>Container")
-        React_Build("fab:fa-react ReactJS<br>Container")
+        React_Build("fab:fa-react ReactJS<br>Builder")
       end
-      Nginx <-.->|"`*8000*`"| Express_Server
+      Nginx <-.->|"`*/api/<br>8000*`"| Express_Server
       Express_Server <-.->|"`*5432*`"| Postgres
-      Nginx <-.-> React_Build
+      Nginx -->|"static files"| React_Build
 
     Volume_Postgres[("fas:fa-hdd Postgres<br>Volume")]:::lightorange
     Postgres <-.-> Volume_Postgres
@@ -64,7 +64,7 @@ flowchart
   end
 
   linkStyle 0,1 stroke:lightgreen,stroke-width:4px;
-  linkStyle 2,3,4 stroke:lightblue,stroke-width:2px;
+  linkStyle 2,3 stroke:lightblue,stroke-width:2px;
 
 ```
 

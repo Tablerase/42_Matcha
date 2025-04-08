@@ -86,7 +86,7 @@ VERSION="1.0"
 PROJECT_PATH="$(cd "$(dirname "$0")" && pwd)"
 CLIENT_PATH="${PROJECT_PATH}/client"
 SERVER_PATH="${PROJECT_PATH}/server"
-DOCKER_COMPOSE_DEV="${SERVER_PATH}/docker-compose.yml"
+DOCKER_COMPOSE_FILE="${SERVER_PATH}/docker-compose.yml"
 GIT_BRANCH=$(git branch --show-current)
 
 # Pids
@@ -144,7 +144,7 @@ cleanup() {
         kill $CLIENT_PID 2>/dev/null
         log_msg "Client stopped (PID: $CLIENT_PID)"
     fi
-    docker compose -f ${DOCKER_COMPOSE_DEV} down
+    docker compose -f ${DOCKER_COMPOSE_FILE} down
     log_msg "Docker containers stopped"
     exit 0
 }
@@ -155,7 +155,7 @@ trap cleanup 2 15
 dev () {
     log_msg "Starting Matcha in development mode"
     log_msg "Starting the postgres container"
-    docker compose -f ${DOCKER_COMPOSE_DEV} up --detach
+    docker compose -f ${DOCKER_COMPOSE_FILE} up --detach
     server_launch
     client_launch
     
@@ -175,6 +175,34 @@ dev () {
             cleanup
         fi
     done
+}
+
+# ____________________ Docker ____________________ #
+
+# Check and start Docker services
+check_docker_and_start() {
+    # Check if Docker is installed
+    if ! command -v docker >/dev/null 2>&1; then
+        echo "${RED}Docker is not installed. Please install Docker to use this script.${RESET}"
+        exit 1
+    fi
+    # Check if Docker is running
+    if ! docker info >/dev/null 2>&1; then
+        echo "${RED}Docker is not running. Please start Docker to use this script.${RESET}"
+        exit 1
+    fi
+    # Check if Docker Compose Project is running
+    if [ $(docker ps -a | grep matcha | grep Up | wc -l) -gt 0 ]; then
+        echo "${RED}Matcha is already running. Please stop it before starting a new instance.${RESET}"
+        exit 1
+    fi
+    # Launch Docker Compose
+    echo "${GREEN}Starting Docker Compose...${RESET}"
+    docker compose -f ${DOCKER_COMPOSE_FILE} up --detach --remove-orphans
+    if [ $? -ne 0 ]; then
+        echo "${RED}Failed to start Docker Compose. Please check the logs.${RESET}"
+        exit 1
+    fi
 }
 
 # ____________________ Arguments ___________________ #
@@ -205,6 +233,6 @@ done
 
 # If no arguments are passed, show help and header
 header
-usage
+check_docker_and_start
 
 exit 0
