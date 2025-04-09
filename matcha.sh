@@ -86,7 +86,7 @@ VERSION="1.0"
 PROJECT_PATH="$(cd "$(dirname "$0")" && pwd)"
 CLIENT_PATH="${PROJECT_PATH}/client"
 SERVER_PATH="${PROJECT_PATH}/server"
-DOCKER_COMPOSE_FILE="${SERVER_PATH}/docker-compose.yml"
+DOCKER_COMPOSE_FILE="./docker-compose.yml"
 GIT_BRANCH=$(git branch --show-current)
 
 # Pids

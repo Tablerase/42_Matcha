@@ -7,7 +7,7 @@
       "path": "server",
       "problemMatcher": [],
       "label": "npm: re - server",
-      "detail": "rm -rf ./dist && tsc && npm run start"
+      "detail": "rm -rf ./dist && npm run build && npm run start"
     },
     {
       "type": "npm",
@@ -42,6 +42,56 @@
       "problemMatcher": [],
       "label": "npm: seedInsights - server",
       "detail": "ts-node src/seedInsights.ts"
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "path": "client",
+      "problemMatcher": [],
+      "label": "npm: build - client",
+      "detail": "Build the React client app"
+    },
+    {
+      "type": "npm",
+      "script": "build",
+      "path": "server",
+      "problemMatcher": [],
+      "label": "npm: build - server",
+      "detail": "Build the Node.js server"
+    },
+    {
+      "type": "npm",
+      "script": "dev",
+      "path": "server",
+      "problemMatcher": [],
+      "label": "npm: dev - server",
+      "detail": "Start server in development mode"
+    },
+    {
+      "type": "shell",
+      "command": "docker-compose down",
+      "options": {
+        "cwd": "${workspaceFolder}/server"
+      },
+      "problemMatcher": [],
+      "label": "docker-compose: down",
+      "detail": "Stop docker containers"
+    },
+    {
+      "type": "shell",
+      "command": "./matcha.sh",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "problemMatcher": [],
+      "label": "Run matcha.sh script",
+      "detail": "Run the project using the matcha.sh script"
+    },
+    {
+      "label": "Start Full Development Environment",
+      "dependsOrder": "parallel",
+      "dependsOn": ["npm: dev - server", "npm: start - client"],
+      "problemMatcher": []
     }
   ]
 }

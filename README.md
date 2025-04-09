@@ -71,29 +71,144 @@ flowchart
 
 ```
 
-## Setup
+## Demo
+
+- Homepage: http://localhost
+
+- API: http://localhost/api
+
+## Installation
+
+### Prerequisites
+
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/install/)
+- [Git](https://git-scm.com/downloads)
+- [Node.js](https://nodejs.org/en/download/) (optional, for development)
+
+### Steps
+
+#### Clone the repository
+
+```bash
+# Clone the repository
+git clone git@github.com:Tablerase/42_Matcha.git
+cd 42_Matcha
+```
+
+#### Environment Variables
+
+Add the `.env` file in the root directory of the project.
+
+```bash
+.
+├── client
+├── docker-compose.yml
+├── .env
+├── .git
+├── .gitignore
+├── matcha.sh
+├── nginx.conf
+├── README.md
+├── server
+└── .vscode
+```
+
+```bash
+# Here is an example of the .env file
+echo "
+# Database
+
+POSTGRES_USER=matcha
+POSTGRES_PASSWORD=matcha
+POSTGRES_DB=matcha
+POSTGRES_HOST=database
+DB_PORT=5432
+
+# Client
+
+FRONTEND_URL=http://localhost
+
+# Server
+
+SOCKET_URL=http://localhost/
+API_URL=http://localhost/api
+SERVER_PORT=8000
+# NODE_ENV=development
+NODE_ENV=production
+TZ=UTC
+
+# JWT
+
+JWT_SECRET_KEY=secret
+ACCESS_TOKEN_EXPIRES_IN=1d
+REFRESH_TOKEN_EXPIRES_IN=7d
+" > .env
+```
+
+#### Script launch
+
+```bash
+./matcha.sh
+```
+
+#### Manual launch
+
+```bash
+# Launch the Docker containers in detached mode
+docker compose up -d
+```
+
+or
+
+```bash
+# Launch the Docker containers in attached mode
+docker compose up
+```
+
+````bash
+# Open the browser and go to
+http://localhost
+```
+
+## Commands
 
 ### Nginx
 
 ```bash
 # Reload Nginx
 docker compose exec nginx nginx -s reload
-```
+````
 
 ### Docker
 
 ```bash
 # Build the Docker containers
 docker compose build
+```
+
+```bash
 # Start the Docker containers
 docker compose up -d
+```
+
+```bash
 # Stop the Docker containers
 docker compose down
+```
+
+```bash
 # Stop and remove all containers
 docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)
+```
+
+```bash
 # Remove all images
 docker rmi $(docker images -q)
+```
+
+```bash
 # Remove all volumes
 docker volume rm $(docker volume ls -q)
 ```
