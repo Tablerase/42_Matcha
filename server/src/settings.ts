@@ -4,6 +4,7 @@ import { promises as fs } from "fs";
 import { truncate } from "fs";
 import { validTags } from "./interfaces/tagInterface";
 import path from "path";
+import { truncateAndInsertFixtures } from "./seed";
 
 dotenv.config();
 
@@ -47,6 +48,7 @@ export { pool };
 async function seed() {
   try {
     await pool.connect();
+    console.log("Connected to the database.");
 
     const dropTablesQuery = `
       DROP TABLE IF EXISTS user_tags CASCADE;
@@ -229,6 +231,9 @@ async function seed() {
       "utf-8"
     );
     await pool.query(notificationsSchema);
+
+    // Insert users (if needed)
+    await initDatabase();
   } catch (err) {
     console.error("Error seeding the database:", err);
   } finally {
@@ -256,6 +261,25 @@ async function enableExtensions() {
 
 // Enable the extensions
 enableExtensions();
+
+// Seed users and users images to the database (when < 500 users)
+async function initDatabase() {
+  try {
+    console.log("Starting database initialization check...");
+    const result = await pool.query("SELECT COUNT(*) FROM users");
+    const userCount = parseInt(result.rows[0].count, 10);
+    console.log(`Current user count: ${userCount}`);
+
+    if (userCount < 500) {
+      await truncateAndInsertFixtures();
+      console.log("Database seeded successfully.");
+    } else {
+      console.log("Database already seeded. No action taken.");
+    }
+  } catch (error) {
+    console.error("Error checking user count:", error);
+  }
+}
 
 // Run the seed function
 seed();

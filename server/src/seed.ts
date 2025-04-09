@@ -256,19 +256,19 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     // Insert data into the `msgs` table
     console.log("Inserting messages...");
     const insertMsgsQuery = `
-      INSERT INTO messages (content, chat_id, from_user_id)
+      INSERT INTO messages (content, chat_id, from_user_id, created_at)
       VALUES
-      ('Hello, how are you?', 1, 2),
-      ('I am fine, thank you.', 1, 16),
-      ('I''m looking for a long-term contract.', 1, 2),
-      ('Sounds good. Send me your resume.', 1, 16),
-      ('I''m an excellent cook.', 1, 2),
-      ('I love to eat. Can you cook for me?', 1, 16),
-      ('It depends on what you want to eat.', 1, 2),
-      ('I love Italian food.', 1, 16),
-      ('I''m not Italian, but I can cook Italian food.', 1, 2),
-      ('Nothing fishy, I hope.', 1, 16),
-      ('No, I don''t like fish.', 1, 2);
+      ('Hello, how are you?', 1, 2, TIMESTAMP '2023-10-01 10:00:00'),
+      ('I am fine, thank you.', 1, 16, TIMESTAMP '2023-10-01 10:01:00'),
+      ('I''m looking for a long-term contract.', 1, 2, TIMESTAMP '2023-10-01 10:02:00'),
+      ('Sounds good. Send me your resume.', 1, 16, TIMESTAMP '2023-10-01 10:03:00'),
+      ('I''m an excellent cook.', 1, 2, TIMESTAMP '2023-10-01 10:04:00'),
+      ('I love to eat. Can you cook for me?', 1, 16, TIMESTAMP '2023-10-01 10:05:00'),
+      ('It depends on what you want to eat.', 1, 2, TIMESTAMP '2023-10-01 10:06:00'),
+      ('I love Italian food.', 1, 16, TIMESTAMP '2023-10-01 10:07:00'),
+      ('I''m not Italian, but I can cook Italian food.', 1, 2, TIMESTAMP '2023-10-01 10:08:00'),
+      ('Nothing fishy, I hope.', 1, 16, TIMESTAMP '2023-10-01 10:09:00'),
+      ('No, I don''t like fish.', 1, 2, TIMESTAMP '2023-10-01 10:10:00');
     `;
     await pool.query(insertMsgsQuery);
 

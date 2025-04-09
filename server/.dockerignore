@@ -30,6 +30,7 @@ tests
 
 # Build outputs
 dist
+./dist/*
 build
 out
 

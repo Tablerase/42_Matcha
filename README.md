@@ -32,9 +32,9 @@ flowchart
   Project:::white_border
   subgraph Project
     direction TB
-    WorldWideWeb <-->|"`*80<br>443*`"| Nginx
+    WorldWideWeb <-->|"`*80<br>(443)*`"| Nginx
     WorldWideWeb((fa:fa-globe World Wide<br>Web)):::lightgreen
-    Browser <-->|"`*80<br>443*`"| WorldWideWeb
+    Browser <-->|"`*80<br>(443)*`"| WorldWideWeb
 
     subgraph Client_Host["fas:fa-laptop-code Client Host"]
       Browser:::lightcyan
@@ -57,10 +57,12 @@ flowchart
       Nginx <-.->|"`*/api/<br>8000*`"| Express_Server
       Nginx <-.->|"`*/socket.io/<br>8000*`"| Express_Server
       Express_Server <-.->|"`*5432*`"| Postgres
-      Nginx -->|"static files"| React_Build
 
     Volume_Postgres[("fas:fa-hdd Postgres<br>Volume")]:::lightorange
     Postgres <-.-> Volume_Postgres
+    Volume_Client_Build[("fas:fa-hdd Client Build<br>Volume")]:::lightorange
+    React_Build -.-> Volume_Client_Build
+    Nginx -->|"static files"| Volume_Client_Build
     end
   end
 
@@ -76,6 +78,24 @@ flowchart
 ```bash
 # Reload Nginx
 docker compose exec nginx nginx -s reload
+```
+
+### Docker
+
+```bash
+# Build the Docker containers
+docker compose build
+# Start the Docker containers
+docker compose up -d
+# Stop the Docker containers
+docker compose down
+# Stop and remove all containers
+docker stop $(docker ps -aq)
+docker rm $(docker ps -aq)
+# Remove all images
+docker rmi $(docker images -q)
+# Remove all volumes
+docker volume rm $(docker volume ls -q)
 ```
 
 ## Users Generation
