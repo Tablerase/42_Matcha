@@ -166,11 +166,6 @@ or
 docker compose up
 ```
 
-````bash
-# Open the browser and go to
-http://localhost
-```
-
 ## Commands
 
 ### Nginx
@@ -178,7 +173,7 @@ http://localhost
 ```bash
 # Reload Nginx
 docker compose exec nginx nginx -s reload
-````
+```
 
 ### Docker
 
