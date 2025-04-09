@@ -27,6 +27,11 @@ export const initializeSocket = (httpServer: HttpServer) => {
   // Add middleware to authenticate token
   io.engine.use(authenticateSocketToken);
 
+  // Log connection errors
+  io.engine.on("connection_error", (err: Error) => {
+    console.log("[Socket] Connection error:", err);
+  });
+
   // Socket.IO connection handling
   io.on(SOCKET_EVENTS.CONNECT, (socket: Socket) => {
     console.log("[Socket] Client connected:", socket.id);

@@ -47,7 +47,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   //   isSuccess,
   // } = useFetchCurrentUser();
   // const { data: tags, isLoading: tagLoading } = useFetchAllTags();
-  console.log("config:", SERVER_URL);
 
   const establishSocketConnection = useCallback(
     (userId: number) => {

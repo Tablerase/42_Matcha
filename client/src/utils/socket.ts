@@ -1,5 +1,5 @@
 import { io } from "socket.io-client";
-import { SERVER_URL } from "@/utils/config";
+import { SOCKET_URL } from "@/utils/config";
 
 /* ______________________________ Socket Events ______________________________ */
 export enum SOCKET_EVENTS {
@@ -96,8 +96,18 @@ export interface ChatInterface {
 /* ________________________________ Socket.io ________________________________ */
 
 export const initializeSocket = (userId: number) => {
-  const socket = io(SERVER_URL, {
+  console.log("Connecting to Socket.IO server:", SOCKET_URL);
+
+  const socket = io(SOCKET_URL, {
     withCredentials: true,
+    // Try explicitly setting path
+    path: "/socket.io/",
+    // Try without automatic reconnection for testing
+    reconnection: false,
+  });
+
+  socket.on("connect_error", (error) => {
+    console.error("Socket connection error:", error.message);
   });
 
   socket.on(SOCKET_EVENTS.CONNECT, () => {

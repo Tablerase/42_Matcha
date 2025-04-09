@@ -55,6 +55,7 @@ flowchart
         React_Build("fab:fa-react ReactJS<br>Builder")
       end
       Nginx <-.->|"`*/api/<br>8000*`"| Express_Server
+      Nginx <-.->|"`*/socket.io/<br>8000*`"| Express_Server
       Express_Server <-.->|"`*5432*`"| Postgres
       Nginx -->|"static files"| React_Build
 
@@ -64,8 +65,17 @@ flowchart
   end
 
   linkStyle 0,1 stroke:lightgreen,stroke-width:4px;
-  linkStyle 2,3 stroke:lightblue,stroke-width:2px;
+  linkStyle 2,3,4 stroke:lightblue,stroke-width:2px;
 
+```
+
+## Setup
+
+### Nginx
+
+```bash
+# Reload Nginx
+docker compose exec nginx nginx -s reload
 ```
 
 ## Users Generation
