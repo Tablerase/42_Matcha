@@ -16,6 +16,7 @@ import {
   validateUserBlocked,
 } from "../middlewares/validateUser";
 import { validateUserSearchQuery } from "@middlewares/validateSearchQuery";
+import { getUserReport, reportUser } from "@src/views/reportsView";
 
 const router: Router = express.Router();
 
@@ -28,6 +29,9 @@ router.get("/:id", UserViews.getUserById);
 router.put("/:id", validateUserUpdate, UserViews.updateUser);
 
 router.get("/:id/online", UserViews.getUserOnlineStatus);
+
+router.get("/:id/reports", getUserReport);
+router.post("/:id/reports", reportUser);
 
 router.get("/:id/blocked", validateUserBlocked, getUserBlockedUsers);
 router.post("/:id/blocked", validateUserBlocked, blockUser);

@@ -191,7 +191,9 @@ async function seed() {
             reporter_id INT REFERENCES users(id) ON DELETE CASCADE,
             reported_id INT REFERENCES users(id) ON DELETE CASCADE,
             reason VARCHAR(255) NOT NULL,
-            reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            reported_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            UNIQUE (reporter_id, reported_id),
+            CHECK (reporter_id != reported_id)
         );
     `;
     await pool.query(createReportedUsersQuery);
