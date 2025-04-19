@@ -3,6 +3,7 @@ import { routes } from "../utils/routes";
 import { Home } from "@pages/home/Home";
 import { Signup } from "@pages/auth/Signup";
 import { Login } from "@pages/auth/Login";
+import { VerifyEmail } from "@pages/auth/VerifyEmail";
 import { Matches } from "@pages/matchs/Matches";
 import { Browse } from "@pages/browse/Browse";
 import { Notifications } from "@pages/notifications/Notifications";
@@ -34,7 +35,7 @@ export const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path={routes.REGISTER} element={<Signup />} />
                   <Route path={routes.LOGIN} element={<Login />} />
-
+                  <Route path={routes.VERIFY_EMAIL} element={<VerifyEmail />} />
                   {/* Protected routes */}
                   <Route element={<ProtectedRoute />}>
                     <Route path={routes.MATCHES} element={<Matches />} />

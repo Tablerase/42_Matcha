@@ -37,7 +37,11 @@ export const userCreationSchema = z
       })
       .trim()
       .min(8, "Password must be at least 8 characters")
-      .max(32),
+      .max(32)
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+        "Password must contain at least one letter, one number and one special character"
+      ),
   })
   .strict();
 
@@ -55,7 +59,11 @@ export const userLoginSchema = z
       })
       .trim()
       .min(8, "Password must be at least 8 characters")
-      .max(32),
+      .max(32)
+      .regex(
+        /^(?=.*[A-Za-z])(?=.*\d)(?=.*[@$!%*#?&])[A-Za-z\d@$!%*#?&]{8,}$/,
+        "Password must contain at least one letter, one number and one special character"
+      ),
   })
   .strict();
 

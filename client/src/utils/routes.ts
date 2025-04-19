@@ -1,6 +1,7 @@
 export const routes = {
   REGISTER: "/auth/signup",
   LOGIN: "/auth/login",
+  VERIFY_EMAIL: "/verify-email",
   BROWSE: "/browse",
   // PROFILE: '/profile/:username',
   ME: "/profile/me",

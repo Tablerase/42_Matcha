@@ -40,6 +40,15 @@ export const authenticateUser = async (
       });
       return;
     }
+    if (!isUserExist.is_verified) {
+      res.status(403).json({
+        status: 403,
+        message:
+          "Email not verified. Please check your inbox for the verification link.",
+        data: { email: isUserExist.email },
+      });
+      return;
+    }
 
     const isPasswordMatched = await validatePassword(
       password,
@@ -74,16 +83,6 @@ export const logoutUser = async (
   res: Response
 ): Promise<void> => {
   try {
-    // const token = req.cookies.authToken;
-
-    // if (!token) {
-    //   res.status(401).json({
-    //     status: 401,
-    //     message: "Unauthorized",
-    //   });
-    //   return;
-    // }
-
     res.clearCookie("authToken", {
       httpOnly: true,
       secure: NODE_ENV === "production",

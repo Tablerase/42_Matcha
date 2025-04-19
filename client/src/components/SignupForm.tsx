@@ -11,8 +11,14 @@ import { IChangeEvent } from "@rjsf/core";
 import { FormEvent } from "react";
 import { UserSignup } from "@/app/interfaces";
 import { useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Alert, CircularProgress } from "@mui/material";
 import { useSignup } from "@/pages/auth/authActions";
+import { Link } from "react-router-dom";
+import { routes } from "@/utils/routes";
+
+interface CustomSubmitButtonProps extends SubmitButtonProps {
+  isLoading?: boolean;
+}
 
 const schema: RJSFSchema = {
   required: ["firstName", "lastName", "username", "email", "password"],
@@ -41,12 +47,13 @@ const schema: RJSFSchema = {
       type: "string",
       minLength: 8,
       maxLength: 255,
+      pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
     },
   },
 };
 
-const SignupButton = (props: SubmitButtonProps) => {
-  const { uiSchema } = props;
+const SignupButton = (props: CustomSubmitButtonProps) => {
+  const { uiSchema, isLoading } = props;
   const { norender } = getSubmitButtonOptions(uiSchema);
   if (norender) {
     return null;
@@ -65,8 +72,9 @@ const SignupButton = (props: SubmitButtonProps) => {
         sx={{
           minWidth: "120px",
         }}
+        disabled={isLoading}
       >
-        Sign up
+        {isLoading ? <CircularProgress size={24} /> : "Sign up"}
       </Button>
     </Box>
   );
@@ -75,6 +83,8 @@ const SignupButton = (props: SubmitButtonProps) => {
 export const SignupForm = () => {
   const signup = useSignup();
   const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState<UserSignup>({
     firstName: "",
     lastName: "",
@@ -108,8 +118,35 @@ export const SignupForm = () => {
     event: FormEvent<any>
   ) => {
     setIsSubmitted(true);
-    signup(formData);
+    setIsLoading(true);
+
+    signup(formData, {
+      onSuccess: () => {
+        setIsSuccess(true);
+        setIsLoading(false);
+      },
+      onError: () => {
+        setIsLoading(false);
+      },
+    });
   };
+
+  if (isSuccess) {
+    return (
+      <Alert severity="success" sx={{ mt: 2 }}>
+        <div>
+          <strong>Registration successful!</strong>
+          <p>
+            Please check your email inbox to verify your account before logging
+            in.
+          </p>
+          <p>
+            <Link to={routes.LOGIN}>Return to Login</Link>
+          </p>
+        </div>
+      </Alert>
+    );
+  }
 
   return (
     <Form
@@ -123,7 +160,9 @@ export const SignupForm = () => {
       customValidate={customValidate}
       templates={{
         ButtonTemplates: {
-          SubmitButton: SignupButton,
+          SubmitButton: (props) => (
+            <SignupButton {...props} isLoading={isLoading} />
+          ),
         },
       }}
       liveValidate={isSubmitted}

@@ -4,20 +4,20 @@ import {
   validateUserCreation,
 } from "@middlewares/validateUser";
 import { authenticateUser, logoutUser, checkUser } from "@views/authViews";
-import { createUser } from "@views/userViews";
-import { authenticateToken } from "@middlewares/auth";
+import {
+  createUser,
+  verifyEmail,
+} from "@views/userViews";
 
 const router: Router = express.Router();
 
+// Auth endpoints
 router.post("/login", validateUserLogin, authenticateUser);
 router.post("/signup", validateUserCreation, createUser);
-
-// router.post("/logout", authenticateToken, logoutUser);
 router.post("/logout", logoutUser);
-
 router.get("/check", checkUser);
 
-// router.post('/forgot-password', validateEmail, forgotPassword);
-// router.post('/refresh-token', validateRefreshToken, refreshToken);
+// Email verification endpoints
+router.get("/verify-email", verifyEmail);
 
 export default router;

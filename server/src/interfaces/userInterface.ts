@@ -1,8 +1,3 @@
-// export interface Point {
-//   x: number; // longitude
-//   y: number; // latitude
-// }
-
 import { Tag } from "./tagInterface";
 
 export enum Gender {
@@ -28,7 +23,8 @@ export interface User {
   lastSeen?: Date;
   created?: Date;
   updated?: Date;
-  // Details
+  is_verified?: boolean;
+  verificationToken?: string;
   tags?: Tag[];
 }
 

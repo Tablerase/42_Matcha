@@ -5,6 +5,8 @@ import { likeModel } from "@src/models/likeModel";
 import { matchModel } from "@src/models/matchModel";
 import { Request, Response } from "express";
 import { jwtDecode } from "jwt-decode";
+import { generateVerificationToken } from "@utils/jwt";
+import { sendVerificationEmail } from "@utils/emailService";
 
 export const createUser = async (
   req: Request,
@@ -30,11 +32,21 @@ export const createUser = async (
       return;
     }
 
+    const verificationToken = generateVerificationToken();
+    userData.verificationToken = verificationToken;
+
     const newUser = await userModel.createUser(userData);
+
+    try {
+      await sendVerificationEmail(userData.email!, verificationToken);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
 
     res.status(201).json({
       status: 201,
-      message: "User created successfully",
+      message:
+        "User created successfully. Please verify your email to complete registration.",
       data: newUser,
     });
   } catch (error) {
@@ -196,6 +208,47 @@ export const updateUser = async (
       status: 200,
       message: "User updated successfully",
       data: updatedUser,
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const verifyEmail = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { token } = req.query;
+    console.log(req.query);
+    console.log(token);
+    if (!token || typeof token !== "string") {
+      res.status(400).json({
+        status: 400,
+        message: "Verification token is required",
+      });
+      return;
+    }
+    const verifiedUser = await userModel.verifyEmailQuery(token);
+    if (!verifiedUser) {
+      res.status(400).json({
+        status: 400,
+        message: "Invalid or expired verification token",
+      });
+      return;
+    }
+    res.status(200).json({
+      status: 200,
+      message: "Email verified successfully. You can now log in.",
+      data: {
+        id: verifiedUser.id,
+        username: verifiedUser.username,
+        email: verifiedUser.email,
+        isVerified: true,
+      },
     });
   } catch (error) {
     res.status(500).json({
