@@ -5,6 +5,8 @@ import { likeModel } from "@src/models/likeModel";
 import { matchModel } from "@src/models/matchModel";
 import { Request, Response } from "express";
 import { jwtDecode } from "jwt-decode";
+import { date } from "zod";
+import { io } from "@src/server";
 
 export const createUser = async (
   req: Request,
@@ -201,6 +203,49 @@ export const updateUser = async (
     res.status(500).json({
       status: 500,
       message: (error as Error).message,
+    });
+  }
+};
+
+export const getUserOnlineStatus = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const userRoom = `user_${req.params.id}`;
+    if (io.sockets.adapter.rooms.has(userRoom)) {
+      // User is online
+      console.log(
+        `[Socket] User_${req.params.id} is online, sending online status`
+      );
+      res.status(200).json({
+        success: true,
+        message: "Online status retrieved successfully",
+        data: {
+          online: true,
+        },
+      });
+    } else {
+      // User is offline
+      console.log(
+        `[Socket] User_${req.params.id} is offline, skipping online status`
+      );
+      res.status(200).json({
+        message: "User is offline",
+        success: true,
+        data: {
+          online: false,
+        },
+      });
+      return;
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: "Failed to get online status",
+      data: {
+        online: false,
+      },
     });
   }
 };

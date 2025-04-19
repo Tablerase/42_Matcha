@@ -27,6 +27,8 @@ router.get("/me", UserViews.getCurrentUser);
 router.get("/:id", UserViews.getUserById);
 router.put("/:id", validateUserUpdate, UserViews.updateUser);
 
+router.get("/:id/online", UserViews.getUserOnlineStatus);
+
 router.get("/:id/blocked", validateUserBlocked, getUserBlockedUsers);
 router.post("/:id/blocked", validateUserBlocked, blockUser);
 router.delete("/:id/blocked", validateUserBlocked, unblockUser);

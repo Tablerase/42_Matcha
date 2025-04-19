@@ -16,6 +16,7 @@ import { ProfilePictures } from "@/components/ProfilePictures";
 import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
 import { FameLinearProgress } from "@/components/FameLinearProgress";
+import { OnlineStatus } from "@/components/onlineStatus";
 
 export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   if (!user.dateOfBirth) {
@@ -60,6 +61,7 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
             {capitalize(user.firstName)} {capitalize(user.lastName)}
           </Typography>
           <Typography>@{user.username?.toLowerCase()}</Typography>
+          {!me && <OnlineStatus user={user} />}
 
           <Typography>{user.bio || "No bio provided"}</Typography>
           <Stack
