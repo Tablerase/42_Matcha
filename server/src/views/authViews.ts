@@ -1,8 +1,8 @@
 import { Request, Response } from "express";
 import { User } from "@interfaces/userInterface";
-import { user, user as userModel } from "@models/userModel";
-import { auth, auth as authModel } from "@models/authModel";
-import { createAccessToken, createRefreshToken } from "@utils/jwt";
+import {user as userModel } from "@models/userModel";
+import { auth as authModel } from "@models/authModel";
+import { createRefreshToken } from "@utils/jwt";
 import { validatePassword } from "@utils/bcrypt";
 import { NODE_ENV, JWT_SECRET_KEY, REFRESHTOKEN_EXPIRES_IN } from "@settings";
 import jwt from "jsonwebtoken";
@@ -126,13 +126,10 @@ export const checkUser = async (req: Request, res: Response): Promise<void> => {
       });
       return;
     }
-
-    // const user = await userModel.getClientUserById(decoded.id);
     res.status(200).json({
       isAuthenticated: true,
       message: "User is authenticated",
       userId: decoded.id,
-      // user: user,
     });
   } catch (err) {
     res.status(200).json({

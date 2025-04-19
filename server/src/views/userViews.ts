@@ -6,7 +6,7 @@ import { matchModel } from "@src/models/matchModel";
 import { Request, Response } from "express";
 import { jwtDecode } from "jwt-decode";
 import { generateVerificationToken } from "@utils/jwt";
-import { sendVerificationEmail } from "@utils/emailService";
+import { sendResetPasswordEmail, sendVerificationEmail } from "@utils/emailService";
 
 export const createUser = async (
   req: Request,
@@ -110,7 +110,6 @@ export const getCurrentUser = async (
       const decoded = jwtDecode(token);
       const userId = (decoded as { id: number }).id;
       const user = await userModel.getUserById(userId);
-      // const user = await userModel.getClientUserById(userId);
       if (!user) {
         res.status(404).json({
           status: 404,
@@ -223,8 +222,6 @@ export const verifyEmail = async (
 ): Promise<void> => {
   try {
     const { token } = req.query;
-    console.log(req.query);
-    console.log(token);
     if (!token || typeof token !== "string") {
       res.status(400).json({
         status: 400,
@@ -257,3 +254,58 @@ export const verifyEmail = async (
     });
   }
 };
+
+export const setResetToken = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const token = generateVerificationToken();
+    await userModel.setResetToken(req.body.email, token);
+    await sendResetPasswordEmail(req.body.email, token);
+  }
+  catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+}
+
+export const resetPassword = async (
+  req: Request,
+  res: Response
+): Promise<void> => { 
+  try {
+    const { token } = req.body;
+    if (!token || typeof token !== "string") {
+      res.status(400).json({
+        status: 400,
+        message: "Verification token is required",
+      });
+      return;
+    }
+    const verifiedUser = await userModel.resetPassword(token, req.body.password);
+    if (!verifiedUser) {
+      res.status(400).json({
+        status: 400,
+        message: "Invalid or expired verification token",
+      });
+      return;
+    }
+    res.status(200).json({
+      status: 200,
+      message: "Password changed successfully. You can now log in.",
+      data: {
+        id: verifiedUser.id,
+        username: verifiedUser.username,
+        email: verifiedUser.email
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+}

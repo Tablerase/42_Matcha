@@ -86,3 +86,45 @@ export const sendVerificationEmail = async (
     console.error(`Failed to send verification email to ${email}:`, error);
   }
 };
+
+export const sendResetPasswordEmail = async (
+    email: string,
+    token: string
+): Promise<void> => {
+    const resetLink = `${FRONTEND_ORIGIN}/reset-password?token=${token}`;
+    
+    const mailOptions = {
+        from: `"Matcha Dating App" <${
+        process.env.SMTP_USER
+        }>`,
+        to: email,
+        subject: "Reset your Matcha password",
+        html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
+            <h1 style="color: #4CAF50;">Reset Your Password</h1>
+            <p>We received a request to reset your password. To proceed, please click the button below:</p>
+            <div style="text-align: center; margin: 30px 0;">
+            <a href="${resetLink}" 
+                 style="background-color: #4CAF50; color: white; padding: 12px 20px; text-decoration: none; border-radius: 4px; font-weight: bold;">
+                Reset Password
+            </a>
+            </div>
+            <p>Or copy and paste the following link in your browser:</p>
+            <p><a href="${resetLink}">${resetLink}</a></p>
+            <p>If you didn't request this, please ignore this email.</p>
+            <p>Best regards,<br>The Matcha Team</p>
+        </div>
+        `,
+    };
+    
+    const { success, error, previewUrl } = await safelySendEmail(mailOptions);
+    
+    if (success) {
+        console.log(`Password reset email sent to: ${email}`);
+        if (previewUrl) {
+        console.log(`View password reset email at: ${previewUrl}`);
+        }
+    } else {
+        console.error(`Failed to send password reset email to ${email}:`, error);
+    }
+    }

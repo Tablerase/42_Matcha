@@ -121,7 +121,8 @@ async function seed() {
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         is_verified BOOLEAN DEFAULT FALSE,
-        verification_token VARCHAR(255)
+        verification_token VARCHAR(255),
+        token_password VARCHAR(255)
       );
     `;
 

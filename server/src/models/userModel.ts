@@ -8,6 +8,7 @@ import {
 } from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
+import { generateVerificationToken } from "@src/utils/jwt";
 
 class UserModel {
   async getUsers(params: SortParams | undefined): Promise<User[]> {
@@ -271,16 +272,13 @@ class UserModel {
       const checkResult = await pool.query(checkQuery);
       console.log("Check token result:", checkResult.rows[0]);
       
-      // If no user found with that token
       if (!checkResult.rows[0]) {
         console.log("No user found with token:", token);
         return null;
       }
       
-      // If user is already verified
       if (checkResult.rows[0].is_verified) {
         console.log("User already verified:", checkResult.rows[0].id);
-        // Return the user anyway, as they are verified (just not by this operation)
         const userQuery = {
           text: `
             SELECT id, first_name, last_name, username, email, is_verified
@@ -293,7 +291,6 @@ class UserModel {
         return userResult.rows[0];
       }
       
-      // Now perform the update
       const updateQuery = {
         text: `
           UPDATE users
@@ -305,14 +302,55 @@ class UserModel {
       };
       
       const result = await pool.query(updateQuery);
-      console.log("Update result:", result.rows[0]);
-      
       return result.rows[0] || null;
     } catch (error) {
       console.error("Error in verifyEmail:", error);
       throw new Error((error as Error).message);
     }
   }
+
+  async setResetToken(
+    email: string,
+    token: string
+  ): Promise<User | null> {
+    try {
+      const query = {
+        text: `
+          UPDATE users
+          SET token_password = $1
+          WHERE email = $2
+        `,
+        values: [token, email],
+      };
+      const result: QueryResult<User> = await pool.query(query);
+      return result.rows[0] || null;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<User | null> {
+    try {
+      const hashedPassword = await generateHash(newPassword);
+      const query = {
+        text: `
+          UPDATE users
+          SET password = $1
+          WHERE token_password = $2
+          RETURNING id, username, email
+        `,
+        values: [hashedPassword, token],
+      };
+      const result: QueryResult<User> = await pool.query(query);
+      return result.rows[0] || null;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
   /**
    * VIEWS
    */
