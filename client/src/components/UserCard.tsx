@@ -155,6 +155,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
             onClick={() => {
               blockUser(user.id);
               handleClose();
+              closeSnackbar(key);
               setIsBlockClicked(false);
             }}
           >
