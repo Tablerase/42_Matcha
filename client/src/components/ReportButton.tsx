@@ -19,8 +19,9 @@ export const ReportButton = ({ userId }: { userId: number }) => {
 
     try {
       const response = await client.post(`/users/${userId}/reports`);
-      if (response && response.status === 201) {
-        console.log("User reported successfully:", response.data);
+      if (response && (response.status === 201 || response.status === 200)) {
+        // Handle success response
+        console.log("User reported:", response.data);
       } else {
         console.log(
           "Failed to report user. Status code:",
