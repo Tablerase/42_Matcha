@@ -11,6 +11,7 @@ import { chatModel } from "@src/models/chatModel";
 import { Chat, Message } from "./interfaces/chatInterface";
 import { addNotification } from "./views/notificationViews";
 import { NotificationType } from "./interfaces/notificationInterface";
+import { user } from "./models/userModel";
 
 export const initializeSocket = (httpServer: HttpServer) => {
   /* ________________________________ Socket Setup ________________________________ */
@@ -244,6 +245,12 @@ export const initializeSocket = (httpServer: HttpServer) => {
 
     socket.on(SOCKET_EVENTS.DISCONNECT, async () => {
       console.log("[Socket] Client disconnected:", socket.id);
+      try {
+        // Update last seen time in database
+        await user.updateLastSeen(socket.data.user);
+      } catch (error) {
+        console.error("[Socket] Error updating last seen:", error);
+      }
     });
   });
 
