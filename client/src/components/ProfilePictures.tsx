@@ -41,25 +41,28 @@ export const ProfilePictures = ({
   const uploadImage = useUploadImage();
   const updateImageStatus = useUpdateImageStatus();
   const deleteImage = useDeleteImage();
-
   const [files, setFiles] = useState<File[]>([]);
   const [filesError, setFilesError] = useState("");
-  const [selectedProfilePic, setSelectedProfilePic] = useState<
-    number | undefined
-  >(
-    images?.find((img) => img.isProfilePic)?.id || images?.[0]?.id || undefined
+  const [selectedProfilePic, setSelectedProfilePic] = useState<number | null>(
+    images?.find((img) => img.isProfilePic)?.id ?? images?.[0]?.id ?? null
   );
 
   useEffect(() => {
-    if (images && images.length === 1) {
+    if (images && images.length > 0 && selectedProfilePic === null) {
+      const profilePic = images.find((img) => img.isProfilePic);
+      if (profilePic) {
+        setSelectedProfilePic(profilePic.id ?? null);
+      }
+    }
+    if (images && images.length === 1 && !images[0].isProfilePic) {
       updateImageStatus({
         userId: userId!,
         id: images[0].id,
         isProfilePic: true,
       });
-      setSelectedProfilePic(images[0].id);
+      setSelectedProfilePic(images[0].id ?? null);
     }
-  }, [images?.length]);
+  }, [images, userId, updateImageStatus, selectedProfilePic]);
 
   const handleFileUpload = (newFiles: File[]) => {
     if (!newFiles || !newFiles.length) {
@@ -206,7 +209,7 @@ export const ProfilePictures = ({
                   <Stack key={image.id}>
                     <FormControl>
                       <RadioGroup
-                        value={selectedProfilePic}
+                        value={selectedProfilePic ?? ""}
                         onChange={(event) => handleProfilePicChange(event)}
                       >
                         <Badge
