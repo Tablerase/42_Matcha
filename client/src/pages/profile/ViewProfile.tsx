@@ -16,6 +16,9 @@ import { ProfilePictures } from "@/components/ProfilePictures";
 import { capitalize } from "@/utils/helpers";
 import { tagChipColors } from "@/components/theme";
 import { FameLinearProgress } from "@/components/FameLinearProgress";
+import { OnlineStatus } from "@/components/OnlineStatus";
+import { ReportedIndicator } from "@/components/ReportedStatus";
+import { ReportButton } from "@/components/ReportButton";
 
 export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   if (!user.dateOfBirth) {
@@ -24,6 +27,7 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
   }
   const [editMode, setEditMode] = useState(false);
   const [editPictures, setEditPictures] = useState(false);
+
   if (editMode || !user.dateOfBirth) {
     return (
       <EditProfile
@@ -56,18 +60,24 @@ export const ViewProfile = ({ user, tags, images, me }: ViewProfileProps) => {
           }}
         >
           <ProfilePictures images={images} editMode={false} />
-          <Typography variant="h3">
-            {capitalize(user.firstName)} {capitalize(user.lastName)}
-          </Typography>
+          <Stack direction="row" alignItems="center" spacing={1}>
+            <Typography variant="h3">
+              {capitalize(user.firstName)} {capitalize(user.lastName)}
+            </Typography>
+            {!me && <ReportedIndicator user={user} />}
+          </Stack>
           <Typography>@{user.username?.toLowerCase()}</Typography>
+          {!me && <OnlineStatus user={user} />}
 
           <Typography>{user.bio || "No bio provided"}</Typography>
+          {!me && user.id && <ReportButton userId={user.id} />}
           <Stack
             direction="row"
             spacing={1.5}
             flexWrap="wrap"
             sx={{
               rowGap: 0.5,
+              mt: 2,
             }}
           >
             {tags && tags?.length > 0 ? (

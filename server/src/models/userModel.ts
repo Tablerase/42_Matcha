@@ -238,7 +238,23 @@ class UserModel {
         `,
         values: [fameRate, id],
       };
-      const res = await pool.query(query);
+      await pool.query(query);
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async updateLastSeen(id: number): Promise<void> {
+    try {
+      const query = {
+        text: `
+          UPDATE users
+          SET last_seen = NOW()
+          WHERE id = $1
+        `,
+        values: [id],
+      };
+      await pool.query(query);
     } catch (error) {
       throw new Error((error as Error).message);
     }

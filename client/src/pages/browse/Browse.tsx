@@ -153,15 +153,26 @@ export const Browse = () => {
   /* _____________________________ Pagination ____________________________ */
   const itemsPerPage = 12;
   useEffect(() => {
-    if (users && blockedUsers) {
-      console.log(blockedUsers)
-      const filteredUsers = filterBlockedUsers(users, blockedUsers);
-      
+    // Use sortedUsers as the source for pagination
+    if (sortedUsers && blockedUsers) {
+      console.log(blockedUsers);
+      // Filter the already sorted list
+      const filteredUsers = filterBlockedUsers(sortedUsers, blockedUsers);
+
       const offset = (page - 1) * itemsPerPage;
       const endOffset = offset + itemsPerPage;
+      // Slice the filtered AND sorted list
       setDisplayedUsers(filteredUsers.slice(offset, endOffset));
+    } else if (sortedUsers) {
+      // Handle case where blockedUsers might not be loaded yet
+      const offset = (page - 1) * itemsPerPage;
+      const endOffset = offset + itemsPerPage;
+      setDisplayedUsers(sortedUsers.slice(offset, endOffset));
+    } else {
+      setDisplayedUsers([]); // Ensure displayedUsers is empty if sortedUsers is not ready
     }
-  }, [page, users, sortedUsers, blockedUsers]);
+    // The dependency array should primarily react to changes in the source list (sortedUsers) and pagination controls (page)
+  }, [page, sortedUsers, blockedUsers]); // Removed 'users' dependency as it's implicitly handled via sortedUsers
 
   const handlePageChange = (
     event: React.ChangeEvent<unknown>,
