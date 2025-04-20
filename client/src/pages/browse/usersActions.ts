@@ -189,6 +189,7 @@ export const useAddUserTags = () => {
       updateUserTags(variables),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userTags"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return update;
@@ -201,6 +202,7 @@ export const useDeleteUserTags = () => {
       deleteUserTags(variables),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userTags"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return update;
@@ -307,6 +309,7 @@ export const useUploadImage = () => {
     mutationFn: uploadImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return upload;
@@ -318,6 +321,7 @@ export const useDeleteImage = () => {
     mutationFn: deleteImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return deleteImageMutation;
