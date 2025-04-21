@@ -119,7 +119,10 @@ async function seed() {
         fame_rate INT DEFAULT 0,
         last_seen TIMESTAMP,
         created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+        updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+        is_verified BOOLEAN DEFAULT FALSE,
+        verification_token VARCHAR(255),
+        token_password VARCHAR(255)
       );
     `;
 

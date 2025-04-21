@@ -15,6 +15,7 @@ import { formatCoordinates } from "@/utils/helpers";
 import { Image, FormData, ErrorResponse } from "@/app/interfaces";
 import { capitalize } from "@/utils/helpers";
 import { enqueueSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 
 const fetchUsers = async (params?: UserSearchQuery) => {
   return await client.get("/users/search", {
@@ -188,6 +189,7 @@ export const useAddUserTags = () => {
       updateUserTags(variables),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userTags"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return update;
@@ -200,6 +202,7 @@ export const useDeleteUserTags = () => {
       deleteUserTags(variables),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["userTags"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return update;
@@ -306,6 +309,7 @@ export const useUploadImage = () => {
     mutationFn: uploadImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return upload;
@@ -317,6 +321,7 @@ export const useDeleteImage = () => {
     mutationFn: deleteImage,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["currentUserImages"] });
+      queryClient.invalidateQueries({ queryKey: ["currentUser"] });
     },
   });
   return deleteImageMutation;
@@ -366,4 +371,52 @@ export const useBlockUser = () => {
     },
   });
   return blockUser;
+}
+
+export const useResetPassword = () => { 
+  const { mutate: resetPassword } = useMutation({
+    mutationKey: ["resetPassword"],
+    mutationFn: async (email: string) => {
+      await client.post(`/auth/reset-password`, { email });
+    },
+    onSuccess: () => {
+      enqueueSnackbar("Password reset link sent to your email", {
+        variant: "success",
+      });
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      if (error.response?.data?.status === 400) {
+        if (error.response?.data.message) {
+          enqueueSnackbar(error.response.data.message, { variant: "error" });
+        }
+      }
+    },
+  });
+  return resetPassword;
+}
+
+export const useUpdatePassword = () => {
+  const navigate = useNavigate();
+  const { mutate: updatePassword } = useMutation({
+    mutationKey: ["updatePassword"],
+    mutationFn: async (data: { token: string; password: string }) => {
+      await client.put(`/auth/reset-password`, data);
+    },
+    onSuccess: () => {
+      enqueueSnackbar("Password updated successfully, redirecting to log in...", {
+        variant: "success",
+      });
+      setTimeout(() => {
+        navigate("/auth/login");
+      }, 3000);
+    },
+    onError: (error: AxiosError<ErrorResponse>) => {
+      if (error.response?.data?.status === 400) {
+        if (error.response?.data.message) {
+          enqueueSnackbar(error.response.data.message, { variant: "error" });
+        }
+      }
+    },
+  });
+  return updatePassword;
 }

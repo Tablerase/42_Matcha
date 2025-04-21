@@ -8,6 +8,7 @@ import {
 } from "@interfaces/userInterface";
 import { generateHash } from "@utils/bcrypt";
 import { UserSearchQuery } from "@interfaces/userSearchQuery";
+import { generateVerificationToken } from "@src/utils/jwt";
 
 class UserModel {
   async getUsers(params: SortParams | undefined): Promise<User[]> {
@@ -154,11 +155,13 @@ class UserModel {
   async createUser(userData: Partial<User>): Promise<User> {
     try {
       const password = await generateHash(userData.password);
+      const verificationToken = userData.verificationToken;
+
       const query = {
         text: `
-			  INSERT INTO users (first_name, last_name, username, email, password)
-			  VALUES ($1, $2, $3, $4, $5)
-			  RETURNING first_name, last_name, username, email
+			  INSERT INTO users (first_name, last_name, username, email, password, verification_token, is_verified)
+			  VALUES ($1, $2, $3, $4, $5, $6, $7)
+			  RETURNING id, first_name, last_name, username, email, verification_token, is_verified
 			`,
         values: [
           userData.firstName,
@@ -166,6 +169,8 @@ class UserModel {
           userData.username,
           userData.email,
           password,
+          verificationToken,
+          false,
         ],
       };
       const result: QueryResult<User> = await pool.query(query);
@@ -250,6 +255,113 @@ class UserModel {
         values: [id],
       };
       await pool.query(query);
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async getUserByVerificationToken(token: string): Promise<User | null> {
+    try {
+      const query = {
+        text: "SELECT * FROM users WHERE verification_token = $1",
+        values: [token],
+      };
+      const result: QueryResult<User> = await pool.query(query);
+      return result.rows[0] || null;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async verifyEmailQuery(token: string): Promise<User | null> {
+    try {
+      // First, check if the token exists and get user details
+      const checkQuery = {
+        text: `
+          SELECT id, is_verified, verification_token 
+          FROM users 
+          WHERE verification_token = $1
+        `,
+        values: [token],
+      };
+      
+      const checkResult = await pool.query(checkQuery);
+      console.log("Check token result:", checkResult.rows[0]);
+      
+      if (!checkResult.rows[0]) {
+        console.log("No user found with token:", token);
+        return null;
+      }
+      
+      if (checkResult.rows[0].is_verified) {
+        console.log("User already verified:", checkResult.rows[0].id);
+        const userQuery = {
+          text: `
+            SELECT id, first_name, last_name, username, email, is_verified
+            FROM users
+            WHERE id = $1
+          `,
+          values: [checkResult.rows[0].id],
+        };
+        const userResult = await pool.query(userQuery);
+        return userResult.rows[0];
+      }
+      
+      const updateQuery = {
+        text: `
+          UPDATE users
+          SET is_verified = true, verification_token = NULL
+          WHERE verification_token = $1 AND is_verified = false
+          RETURNING id, first_name, last_name, username, email, is_verified
+        `,
+        values: [token],
+      };
+      
+      const result = await pool.query(updateQuery);
+      return result.rows[0] || null;
+    } catch (error) {
+      console.error("Error in verifyEmail:", error);
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async setResetToken(
+    email: string,
+    token: string
+  ): Promise<User | null> {
+    try {
+      const query = {
+        text: `
+          UPDATE users
+          SET token_password = $1
+          WHERE email = $2
+        `,
+        values: [token, email],
+      };
+      const result: QueryResult<User> = await pool.query(query);
+      return result.rows[0] || null;
+    } catch (error) {
+      throw new Error((error as Error).message);
+    }
+  }
+
+  async resetPassword(
+    token: string,
+    newPassword: string,
+  ): Promise<User | null> {
+    try {
+      const hashedPassword = await generateHash(newPassword);
+      const query = {
+        text: `
+          UPDATE users
+          SET password = $1, token_password = NULL
+          WHERE token_password = $2
+          RETURNING id, username, email
+        `,
+        values: [hashedPassword, token],
+      };
+      const result: QueryResult<User> = await pool.query(query);
+      return result.rows[0] || null;
     } catch (error) {
       throw new Error((error as Error).message);
     }

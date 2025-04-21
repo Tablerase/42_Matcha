@@ -27,6 +27,13 @@ export const useLogin = () => {
       navigate(routes.ME, { replace: true });
     },
     onError: (error: AxiosError<ErrorResponse>) => {
+        if (error.status === 403) {
+        enqueueSnackbar(
+          "Email not verified. Please check your inbox for the verification link.",
+          { variant: "error" }
+        );
+        return;
+      }
       if (error.status === 400 || 401) {
         enqueueSnackbar("Invalid credentials", { variant: "error" });
       }
@@ -47,8 +54,14 @@ export const useSignup = () => {
   const { mutate: signup } = useMutation({
     mutationKey: ["currentUser"],
     mutationFn: signupUser,
-    onSuccess: () => {
-      navigate(routes.LOGIN, { replace: true });
+    onSuccess: (data) => {
+      enqueueSnackbar(
+        "Registration successful! Please verify your email before logging in.",
+        {
+          variant: "success",
+          autoHideDuration: 6000,
+        }
+      );
     },
     onError: (error: AxiosError<ErrorResponse>) => {
       if (error.response?.data?.status === 400) {
@@ -57,15 +70,21 @@ export const useSignup = () => {
         }
       }
     },
-    // TODO: implement with account confirmation with email
-    // onSuccess: () => {},
   });
-  return signup;
+  return (
+    data: UserSignup,
+    options?: { onSuccess?: () => void; onError?: () => void }
+  ) => {
+    signup(data, {
+      onSuccess: () => {
+        if (options?.onSuccess) options.onSuccess();
+      },
+      onError: (error) => {
+        if (options?.onError) options.onError();
+      },
+    });
+  };
 };
-
-/**
- * Logout
- */
 
 export const logoutUser = async () => {
   try {

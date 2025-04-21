@@ -44,7 +44,7 @@ export const Login = () => {
           }}
         >
           Forgot password?
-          <Link href="#" color="primary" underline="hover">
+          <Link href={routes.FORGOT_PASSWORD} color="primary" underline="hover">
             Click here
           </Link>
         </Typography>

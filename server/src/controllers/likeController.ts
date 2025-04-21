@@ -13,10 +13,10 @@ import {
   NotificationStatus,
   NotificationType,
 } from "@interfaces/notificationInterface";
-import { addNotification, addChatEvent } from "./notificationViews";
+import { addNotification, addChatEvent } from "./notificationController";
 import { user } from "@src/models/userModel";
 import { chatModel } from "@src/models/chatModel";
-import { updateFameRate } from "./userViews";
+import { updateFameRate } from "./userController";
 
 export const checkUserLiked = async (
   req: Request,

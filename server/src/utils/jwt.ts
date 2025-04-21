@@ -5,6 +5,7 @@ import {
   REFRESHTOKEN_EXPIRES_IN,
   JWT_SECRET_KEY,
 } from "../settings";
+import crypto from "crypto";
 
 export const createAccessToken = (user: Partial<User>): string => {
   return jwt.sign(
@@ -32,6 +33,14 @@ export const verifyToken = (token: string): any => {
   return jwt.verify(token, JWT_SECRET_KEY);
 };
 
-// export const decodeAuthToken = (token: string): any => {
-//   return jwt_decode(token);
-// };
+export const generateVerificationToken = (): string => {
+  return crypto.randomBytes(32).toString("hex");
+};
+
+export const verifyVerificationToken = (
+  token: string,
+  savedToken: string
+): boolean => {
+  return token === savedToken;
+};
+

@@ -29,7 +29,6 @@ export const LocationButton = (props: FieldProps) => {
           });
           setLoading(false);
         },
-        () => getLocationFromIP()
       );
     } else {
       getLocationFromIP();

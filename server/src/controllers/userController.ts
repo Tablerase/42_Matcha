@@ -5,8 +5,9 @@ import { likeModel } from "@src/models/likeModel";
 import { matchModel } from "@src/models/matchModel";
 import { Request, Response } from "express";
 import { jwtDecode } from "jwt-decode";
-import { date } from "zod";
 import { io } from "@src/server";
+import { generateVerificationToken } from "@utils/jwt";
+import { sendResetPasswordEmail, sendVerificationEmail } from "@utils/emailService";
 
 export const createUser = async (
   req: Request,
@@ -32,11 +33,21 @@ export const createUser = async (
       return;
     }
 
+    const verificationToken = generateVerificationToken();
+    userData.verificationToken = verificationToken;
+
     const newUser = await userModel.createUser(userData);
+
+    try {
+      await sendVerificationEmail(userData.email!, verificationToken);
+    } catch (emailError) {
+      console.error("Failed to send verification email:", emailError);
+    }
 
     res.status(201).json({
       status: 201,
-      message: "User created successfully",
+      message:
+        "User created successfully. Please verify your email to complete registration.",
       data: newUser,
     });
   } catch (error) {
@@ -249,3 +260,97 @@ export const getUserOnlineStatus = async (
     });
   }
 };
+
+export const verifyEmail = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const { token } = req.query;
+    if (!token || typeof token !== "string") {
+      res.status(400).json({
+        status: 400,
+        message: "Verification token is required",
+      });
+      return;
+    }
+    const verifiedUser = await userModel.verifyEmailQuery(token);
+    if (!verifiedUser) {
+      res.status(400).json({
+        status: 400,
+        message: "Invalid or expired verification token",
+      });
+      return;
+    }
+    res.status(200).json({
+      status: 200,
+      message: "Email verified successfully. You can now log in.",
+      data: {
+        id: verifiedUser.id,
+        username: verifiedUser.username,
+        email: verifiedUser.email,
+        isVerified: true,
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+};
+
+export const setResetToken = async (
+  req: Request,
+  res: Response
+): Promise<void> => {
+  try {
+    const token = generateVerificationToken();
+    await userModel.setResetToken(req.body.email, token);
+    await sendResetPasswordEmail(req.body.email, token);
+  }
+  catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+}
+
+export const resetPassword = async (
+  req: Request,
+  res: Response
+): Promise<void> => { 
+  try {
+    const { token } = req.body;
+    if (!token || typeof token !== "string") {
+      res.status(400).json({
+        status: 400,
+        message: "Verification token is required",
+      });
+      return;
+    }
+    const verifiedUser = await userModel.resetPassword(token, req.body.password);
+    if (!verifiedUser) {
+      res.status(400).json({
+        status: 400,
+        message: "Invalid or expired verification token",
+      });
+      return;
+    }
+    res.status(200).json({
+      status: 200,
+      message: "Password changed successfully. You can now log in.",
+      data: {
+        id: verifiedUser.id,
+        username: verifiedUser.username,
+        email: verifiedUser.email
+      },
+    });
+  } catch (error) {
+    res.status(500).json({
+      status: 500,
+      message: (error as Error).message,
+    });
+  }
+}

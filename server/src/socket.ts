@@ -2,14 +2,13 @@ import { Server, Socket } from "socket.io";
 import { Server as HttpServer } from "http";
 import jwt from "jsonwebtoken";
 import cookieParser from "cookie-parser";
-import { FRONTEND_ORIGIN, JWT_SECRET_KEY } from "@settings";
+import { FRONTEND_ORIGIN } from "@settings";
 import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
-import e, { Request, Response, NextFunction } from "express";
-import { authenticateSocketToken, authenticateToken } from "./middlewares/auth";
+import { authenticateSocketToken} from "./middlewares/auth";
 import { notificationModel } from "@src/models/notificationModel";
 import { chatModel } from "@src/models/chatModel";
-import { Chat, Message } from "./interfaces/chatInterface";
-import { addNotification } from "./views/notificationViews";
+import { Message } from "./interfaces/chatInterface";
+import { addNotification } from "@controllers/notificationController";
 import { NotificationType } from "./interfaces/notificationInterface";
 import { user } from "./models/userModel";
 

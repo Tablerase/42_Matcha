@@ -1,8 +1,10 @@
 export const routes = {
   REGISTER: "/auth/signup",
   LOGIN: "/auth/login",
+  VERIFY_EMAIL: "/verify-email",
+  FORGOT_PASSWORD: "/auth/forgot-password",
+  RESET_PASSWORD: "/reset-password",
   BROWSE: "/browse",
-  // PROFILE: '/profile/:username',
   ME: "/profile/me",
   EDIT_PROFILE: "/profile/edit",
   CHAT: "/chat",

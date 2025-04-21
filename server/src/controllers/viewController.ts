@@ -10,7 +10,7 @@ import {
   NotificationInterface,
   NotificationType,
 } from "@src/interfaces/notificationInterface";
-import { addNotification } from "./notificationViews";
+import { addNotification } from "./notificationController";
 import { user } from "@src/models/userModel";
 
 export const getUserViews = async (

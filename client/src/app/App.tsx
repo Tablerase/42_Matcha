@@ -3,6 +3,7 @@ import { routes } from "../utils/routes";
 import { Home } from "@pages/home/Home";
 import { Signup } from "@pages/auth/Signup";
 import { Login } from "@pages/auth/Login";
+import { VerifyEmail } from "@pages/auth/VerifyEmail";
 import { Matches } from "@pages/matchs/Matches";
 import { Browse } from "@pages/browse/Browse";
 import { Notifications } from "@pages/notifications/Notifications";
@@ -18,6 +19,9 @@ import { SnackbarProvider } from "notistack";
 import { PayloadProvider } from "@/utils/payloadProvider";
 import { Insights } from "@/pages/insights/Insights";
 import { NotFound } from "@/pages/notFound";
+import { ForgotPassword } from "@/pages/auth/ForgotPassword";
+import { ResetPassword } from "@/pages/auth/ResetPassword";
+
 export const queryClient = new QueryClient();
 
 export const App = () => {
@@ -34,7 +38,11 @@ export const App = () => {
                   <Route path="/" element={<Home />} />
                   <Route path={routes.REGISTER} element={<Signup />} />
                   <Route path={routes.LOGIN} element={<Login />} />
-
+                  <Route path={routes.VERIFY_EMAIL} element={<VerifyEmail />} />
+                  <Route path={routes.FORGOT_PASSWORD} element={<ForgotPassword/>} />
+                  <Route
+                    path={routes.RESET_PASSWORD}
+                    element={<ResetPassword />}/>
                   {/* Protected routes */}
                   <Route element={<ProtectedRoute />}>
                     <Route path={routes.MATCHES} element={<Matches />} />

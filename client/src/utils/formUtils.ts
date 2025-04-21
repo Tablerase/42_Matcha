@@ -35,6 +35,9 @@ export const transformErrors = (
     if (error.name === "minItems") {
       error.message = "Choose at least one option";
     }
+    if (error.name === "pattern") {
+      error.message = "Password must contain at least one uppercase letter, one lowercase letter, one number and one special character";
+    }
     return error;
   });
 };
