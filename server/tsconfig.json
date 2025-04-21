@@ -13,7 +13,7 @@
     "paths": {
       "@src/*": ["src/*"],
       "@models/*": ["src/models/*"],
-      "@views/*": ["src/views/*"],
+      "@controllers/*": ["src/controllers/*"],
       "@routes/*": ["src/routes/*"],
       "@interfaces/*": ["src/interfaces/*"],
       "@middlewares/*": ["src/middlewares/*"],

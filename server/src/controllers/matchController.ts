@@ -11,7 +11,7 @@ import {
   NotificationType,
 } from "@src/interfaces/notificationInterface";
 import { user } from "@src/models/userModel";
-import { addNotification, deleteChatEvent } from "./notificationViews";
+import { addNotification, deleteChatEvent } from "./notificationController";
 import { likeModel } from "@src/models/likeModel";
 import { chatModel } from "@src/models/chatModel";
 

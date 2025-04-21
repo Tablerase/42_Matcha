@@ -1,7 +1,7 @@
 import { Image } from "@interfaces/imageInterface";
 import { image as imageModel } from "@models/imageModel";
 import { Request, Response } from "express";
-import { updateFameRate } from "./userViews";
+import { updateFameRate } from "./userController";
 
 export const createUserImage = async (
   req: Request,

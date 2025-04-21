@@ -1,15 +1,11 @@
 import { QueryResult } from "pg";
-import { io } from "@src/server";
-import { SOCKET_EVENTS } from "@src/interfaces/socketEventsInterface";
 import { pool } from "../settings";
 import {
   NotificationInterface,
-  NotificationPayload,
   NotificationStatus,
   NotificationType,
 } from "@src/interfaces/notificationInterface";
-import { Server } from "socket.io";
-import { text } from "body-parser";
+
 
 class NotificationModel {
   async getNotifications(userId: number): Promise<NotificationInterface[]> {

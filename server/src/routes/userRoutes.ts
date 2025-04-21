@@ -1,34 +1,34 @@
 import express, { Router } from "express";
-import * as UserSearchView from "@views/userSearchViews";
-import * as UserViews from "@views/userViews";
-import * as TagViews from "@views/tagViews";
-import * as LikeViews from "@views/likeViews";
-import * as MatchViews from "@views/matchViews";
-import * as ImageViews from "@views/imageViews";
-import * as ViewsViews from "@views/viewViews";
+import * as UserSearchController from "@controllers/userSearchController";
+import * as UserController from "@controllers/userController";
+import * as TagViews from "@controllers/tagController";
+import * as LikeViews from "@controllers/likeController";
+import * as MatchViews from "@controllers/matchController";
+import * as ImageViews from "@controllers/imageController";
+import * as ViewsController from "@controllers/viewController";
 import {
   getUserBlockedUsers,
   blockUser,
   unblockUser,
-} from "@views/blockedViews";
+} from "@controllers/blockedController";
 import {
   validateUserUpdate,
   validateUserBlocked,
 } from "../middlewares/validateUser";
 import { validateUserSearchQuery } from "@middlewares/validateSearchQuery";
-import { getUserReport, reportUser } from "@src/views/reportsView";
+import { getUserReport, reportUser } from "@controllers/reportsController";
 
 const router: Router = express.Router();
 
 // Search routes
-router.get("/search", validateUserSearchQuery, UserSearchView.searchUsers);
+router.get("/search", validateUserSearchQuery, UserSearchController.searchUsers);
 
-router.get("/", UserViews.getUsers);
-router.get("/me", UserViews.getCurrentUser);
-router.get("/:id", UserViews.getUserById);
-router.put("/:id", validateUserUpdate, UserViews.updateUser);
+router.get("/", UserController.getUsers);
+router.get("/me", UserController.getCurrentUser);
+router.get("/:id", UserController.getUserById);
+router.put("/:id", validateUserUpdate, UserController.updateUser);
 
-router.get("/:id/online", UserViews.getUserOnlineStatus);
+router.get("/:id/online", UserController.getUserOnlineStatus);
 
 router.get("/:id/reports", getUserReport);
 router.post("/:id/reports", reportUser);
@@ -46,8 +46,8 @@ router.get("/:id/likes", LikeViews.getUserLikes);
 router.post("/:id/likes", LikeViews.addUserLike);
 router.delete("/:id/likes", LikeViews.deleteUserLike);
 
-router.get("/:id/views", ViewsViews.getUserViews);
-router.post("/:id/views", ViewsViews.addUserView);
+router.get("/:id/views", ViewsController.getUserViews);
+router.post("/:id/views", ViewsController.addUserView);
 
 router.get("/:id/matches", MatchViews.getUserMatches);
 router.delete("/:id/matches", MatchViews.deleteUserMatch);

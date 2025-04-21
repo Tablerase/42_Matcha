@@ -1,5 +1,5 @@
 import express, { Router } from "express";
-import * as TagViews from "@views/tagViews";
+import * as TagViews from "@src/controllers/tagController";
 
 const router: Router = express.Router();
 

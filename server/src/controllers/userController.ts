@@ -5,7 +5,6 @@ import { likeModel } from "@src/models/likeModel";
 import { matchModel } from "@src/models/matchModel";
 import { Request, Response } from "express";
 import { jwtDecode } from "jwt-decode";
-import { date } from "zod";
 import { io } from "@src/server";
 import { generateVerificationToken } from "@utils/jwt";
 import { sendResetPasswordEmail, sendVerificationEmail } from "@utils/emailService";

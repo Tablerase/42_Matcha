@@ -56,6 +56,7 @@
     "@interfaces": "dist/src/interfaces",
     "@middlewares": "dist/src/middlewares",
     "@utils": "dist/src/utils",
-    "@settings": "dist/src/settings.js"
+    "@settings": "dist/src/settings.js",
+    "@controllers": "dist/src/controllers"
   }
 }

@@ -2,10 +2,7 @@ import { UserSearchQuery } from "@interfaces/userSearchQuery";
 import { Request, Response } from "express";
 import { user as userModel } from "@models/userModel";
 import {
-  handleErrorResponse,
-  handleBadRequestResponse,
   handleForbiddenResponse,
-  handleNotFoundResponse,
 } from "@utils/errorHandler";
 
 export const searchUsers = async (

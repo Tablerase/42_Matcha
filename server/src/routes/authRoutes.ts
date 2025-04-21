@@ -3,13 +3,17 @@ import {
   validateUserLogin,
   validateUserCreation,
 } from "@middlewares/validateUser";
-import { authenticateUser, logoutUser, checkUser } from "@views/authViews";
+import {
+  authenticateUser,
+  logoutUser,
+  checkUser,
+} from "@src/controllers/authController";
 import {
   createUser,
   verifyEmail,
   resetPassword,
   setResetToken,
-} from "@views/userViews";
+} from "@src/controllers/userController";
 
 const router: Router = express.Router();
 
