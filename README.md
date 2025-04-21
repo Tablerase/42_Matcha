@@ -143,7 +143,13 @@ TZ=UTC
 JWT_SECRET_KEY=secret
 ACCESS_TOKEN_EXPIRES_IN=1d
 REFRESH_TOKEN_EXPIRES_IN=7d
-" > .env
+
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_SECURE=false
+SMTP_USER=your-email-address
+SMTP_PASS=your-app-password
+"> .env
 ```
 
 #### Script launch

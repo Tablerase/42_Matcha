@@ -354,7 +354,7 @@ class UserModel {
       const query = {
         text: `
           UPDATE users
-          SET password = $1
+          SET password = $1, token_password = NULL
           WHERE token_password = $2
           RETURNING id, username, email
         `,

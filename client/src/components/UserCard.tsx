@@ -100,6 +100,10 @@ export const UserCard = ({ user, match }: UserCardProps) => {
       <Card
         sx={{
           maxWidth: 345,
+          height: {
+            xs: "auto",
+            sm: 360    
+          },
           margin: 2,
         }}
       >
@@ -190,7 +194,10 @@ export const UserCard = ({ user, match }: UserCardProps) => {
           aria-describedby={id}
           sx={{
             maxWidth: 345,
-            // margin: 2,
+            height: {
+              xs: "auto",
+              sm: 360 
+            },
             position: "relative",
             transition: "transform 0.2s",
             "&:hover": {
@@ -259,7 +266,6 @@ export const UserCard = ({ user, match }: UserCardProps) => {
           </IconButton>
           <CardMedia
             component="img"
-            // height="200"
             image={
               profilePic?.url ||
               "https://images.unsplash.com/photo-1515823064-d6e0c04616a7?q=80&w=2071&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
@@ -274,15 +280,6 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               height: "auto",
             }}
           />
-          {/* <ul>
-            <li> Username: {user.username}</li>
-            <li> Age: {user.age} years</li>
-            <li> FameRate: {user.fameRate}</li>
-            <li> Distance: {user.distance} km</li>
-            <li> TotalScore: {user.totalScore}</li>
-            <li> CommonTags: {user.commonTags}</li>
-            <li>Tags: {user.tags?.map((tag) => tag).join(", ") || ""}</li>
-          </ul> */}
           <CardContent>
             <Box
               sx={{
@@ -321,9 +318,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
           horizontal: "center",
         }}
       >
-        {/* <Box sx={{ p: 2 }}> */}
         <Profile me={false} user={user} userIsSuccess={true} />
-        {/* </Box> */}
       </Popover>
     </>
   );
