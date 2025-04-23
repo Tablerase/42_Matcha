@@ -102,7 +102,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
           maxWidth: 345,
           height: {
             xs: "auto",
-            sm: 360    
+            sm: 360,
           },
           margin: 2,
         }}
@@ -196,7 +196,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
             maxWidth: 345,
             height: {
               xs: "auto",
-              sm: 360 
+              sm: 360,
             },
             position: "relative",
             transition: "transform 0.2s",
@@ -277,7 +277,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
               borderTopRightRadius: 5,
               backgroundColor: theme.palette.primary.main,
               width: "100%",
-              height: "auto",
+              height: 250,
             }}
           />
           <CardContent>
@@ -286,6 +286,7 @@ export const UserCard = ({ user, match }: UserCardProps) => {
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
+                minHeight: "50px",
               }}
             >
               <Typography variant="h6" sx={{ textTransform: "capitalize" }}>

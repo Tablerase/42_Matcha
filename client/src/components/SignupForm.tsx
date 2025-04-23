@@ -47,7 +47,8 @@ const schema: RJSFSchema = {
       type: "string",
       minLength: 8,
       maxLength: 255,
-      pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$"
+      pattern:
+        "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&#]{8,}$",
     },
   },
 };

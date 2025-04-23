@@ -125,25 +125,25 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
     // Insert data into the `users` table
     console.log("Inserting users...");
     const insertUsersQuery = `
-      INSERT INTO users (first_name, last_name, username, email, password, gender, preferences, date_of_birth, bio, location, fame_rate, last_seen)
+      INSERT INTO users (first_name, last_name, username, email, password, gender, preferences, date_of_birth, bio, location, fame_rate, last_seen, is_verified)
       VALUES
-        ('John', 'Doe', 'johndoe', 'john@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"female"}', '1990-01-01', 'Bio of John', POINT(48.862842, 2.342815), 10, NOW()),
-        ('Jane', 'Doe', 'janedoe', 'jane@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"female"}', '1992-02-02', 'Bio of Jane', POINT(48.853119, 2.349494), 20, NOW()),
-        ('Alice', 'Smith', 'alicesmith', 'alice@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"male", "female", "other"}', '1995-05-05', 'Bio of Alice', POINT(37.7749, -122.4194), 30, NOW()),
-        ('Bob', 'Smith', 'bobsmith', 'bobsmith@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'other', '{"male", "female"}', '1998-08-08', 'Bio of Bob', POINT(41.8781, -87.6298), 40, NOW()),
-        ('Charlie', 'Brown', 'charliebrown', 'charliebrown@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"male"}', '2000-10-10', 'Bio of Charlie', POINT(29.7604, -95.3698), 50, NOW()),
-        ('David', 'White', 'davidwhite', 'davidwhite@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"other"}', '2002-12-12', 'Bio of David', POINT(34.0522, -118.2437), 60, NOW()),
-        ('Eve', 'Black', 'eveblack', 'eveblack@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"male"}', '1991-03-03', 'Bio of Eve', POINT(40.7128, -74.0060), 70, NOW()),
-        ('Frank', 'Green', 'frankgreen', 'frankgreen@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"female"}', '1989-04-04', 'Bio of Frank', POINT(34.0522, -118.2437), 80, NOW()),
-        ('Grace', 'Blue', 'graceblue', 'graceblue@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"male", "female"}', '1993-06-06', 'Bio of Grace', POINT(51.5074, -0.1278), 90, NOW()),
-        ('Hank', 'Yellow', 'hankyellow', 'hankyellow@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"female", "other"}', '1994-07-07', 'Bio of Hank', POINT(35.6895, 139.6917), 100, NOW()),
-        ('Ivy', 'Red', 'ivyred', 'ivyred@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"male"}', '1996-09-09', 'Bio of Ivy', POINT(48.8566, 2.3522), 110, NOW()),
-        ('Jack', 'White', 'jackwhite', 'jackwhite@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"female"}', '1988-11-11', 'Bio of Jack', POINT(40.7306, -73.9352), 120, NOW()),
-        ('Karen', 'Black', 'karenblack', 'karenblack@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"male", "other", "female"}', '1997-12-12', 'Bio of Karen', POINT(34.0522, -118.2437), 130, NOW()),
-        ('Leo', 'Green', 'leogreen', 'leogreen@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"female"}', '1999-01-01', 'Bio of Leo', POINT(51.5074, -0.1278), 140, NOW()),
-        ('Mia', 'Blue', 'miablue', 'miablue@example.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'female', '{"male"}', '1993-02-02', 'Bio of Mia', POINT(35.6895, 139.6917), 150, NOW()),
-        ('Test', 'User', 'test', 'test@test.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Test', POINT(48.853119, 2.349494), 20, NOW()),
-        ('Server', 'User', 'server', 'server@test.com', '$2b$10$q42xJUnns6uD0fB8n4oVne6uWmyKtRMLjZbtUGSyrqyUkU7oItkBu', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Server', POINT(48.853119, 2.349494), 20, NOW())
+        ('John', 'Doe', 'johndoe', 'john@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"female"}', '1990-01-01', 'Bio of John', POINT(48.862842, 2.342815), 10, NOW(), true),
+        ('Jane', 'Doe', 'janedoe', 'jane@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"female"}', '1992-02-02', 'Bio of Jane', POINT(48.853119, 2.349494), 20, NOW(), true),
+        ('Alice', 'Smith', 'alicesmith', 'alice@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"male", "female", "other"}', '1995-05-05', 'Bio of Alice', POINT(37.7749, -122.4194), 30, NOW(), true),
+        ('Bob', 'Smith', 'bobsmith', 'bobsmith@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'other', '{"male", "female"}', '1998-08-08', 'Bio of Bob', POINT(41.8781, -87.6298), 40, NOW(), true),
+        ('Charlie', 'Brown', 'charliebrown', 'charliebrown@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"male"}', '2000-10-10', 'Bio of Charlie', POINT(29.7604, -95.3698), 50, NOW(), true),
+        ('David', 'White', 'davidwhite', 'davidwhite@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"other"}', '2002-12-12', 'Bio of David', POINT(34.0522, -118.2437), 60, NOW(), true),
+        ('Eve', 'Black', 'eveblack', 'eveblack@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"male"}', '1991-03-03', 'Bio of Eve', POINT(40.7128, -74.0060), 70, NOW(), true),
+        ('Frank', 'Green', 'frankgreen', 'frankgreen@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"female"}', '1989-04-04', 'Bio of Frank', POINT(34.0522, -118.2437), 80, NOW(), true),
+        ('Grace', 'Blue', 'graceblue', 'graceblue@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"male", "female"}', '1993-06-06', 'Bio of Grace', POINT(51.5074, -0.1278), 90, NOW(), true),
+        ('Hank', 'Yellow', 'hankyellow', 'hankyellow@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"female", "other"}', '1994-07-07', 'Bio of Hank', POINT(35.6895, 139.6917), 100, NOW(), true),
+        ('Ivy', 'Red', 'ivyred', 'ivyred@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"male"}', '1996-09-09', 'Bio of Ivy', POINT(48.8566, 2.3522), 110, NOW(), true),
+        ('Jack', 'White', 'jackwhite', 'jackwhite@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"female"}', '1988-11-11', 'Bio of Jack', POINT(40.7306, -73.9352), 120, NOW(), true),
+        ('Karen', 'Black', 'karenblack', 'karenblack@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"male", "other", "female"}', '1997-12-12', 'Bio of Karen', POINT(34.0522, -118.2437), 130, NOW(), true),
+        ('Leo', 'Green', 'leogreen', 'leogreen@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"female"}', '1999-01-01', 'Bio of Leo', POINT(51.5074, -0.1278), 140, NOW(), true),
+        ('Mia', 'Blue', 'miablue', 'miablue@example.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'female', '{"male"}', '1993-02-02', 'Bio of Mia', POINT(35.6895, 139.6917), 150, NOW(), true),
+        ('Test', 'User', 'test', 'test@test.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Test', POINT(48.853119, 2.349494), 20, NOW(), true),
+        ('Server', 'User', 'server', 'server@test.com', '$2b$10$twwxqovQ5nYrbcYKJ35qOOuaXpPApgnk90cdu6irUC.tKQiBV7v0G', 'male', '{"male", "other", "female"}', '1995-05-05', 'Bio of Server', POINT(48.853119, 2.349494), 20, NOW(), true)
         ;
     `;
     await pool.query(insertUsersQuery);
