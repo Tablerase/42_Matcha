@@ -21,9 +21,12 @@ import { getUserReport, reportUser } from "@controllers/reportsController";
 const router: Router = express.Router();
 
 // Search routes
-router.get("/search", validateUserSearchQuery, UserSearchController.searchUsers);
+router.get(
+  "/search",
+  validateUserSearchQuery,
+  UserSearchController.searchUsers
+);
 
-router.get("/", UserController.getUsers);
 router.get("/me", UserController.getCurrentUser);
 router.get("/:id", UserController.getUserById);
 router.put("/:id", validateUserUpdate, UserController.updateUser);
