@@ -52,10 +52,29 @@ export const formatPreferences = (preferences: string): string[] => {
     .map((preference) => preference.trim());
 };
 
-export const filterBlockedUsers = (users?: User[], blockedUsers?: UserBlock[]) => {
+export const filterBlockedUsers = (
+  users?: User[],
+  blockedUsers?: UserBlock[]
+) => {
   if (!users) return [];
   if (!blockedUsers) return users;
   return users.filter(
-    (user) => !blockedUsers.some((blocked: UserBlock) => blocked.blockedUserId === user.id)
+    (user) =>
+      !blockedUsers.some(
+        (blocked: UserBlock) => blocked.blockedUserId === user.id
+      )
   );
+};
+
+export const calculateAge = (birthDate: Date): number => {
+  const today = new Date();
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDifference = today.getMonth() - birthDate.getMonth();
+  if (
+    monthDifference < 0 ||
+    (monthDifference === 0 && today.getDate() < birthDate.getDate())
+  ) {
+    age--;
+  }
+  return age;
 };
