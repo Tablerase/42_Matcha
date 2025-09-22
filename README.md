@@ -226,6 +226,11 @@ docker compose down
 ```
 
 ```bash
+# Remove containers, networks, volumes, and images created by `up`
+docker compose down -v --rmi all --remove-orphans
+```
+
+```bash
 # Stop and remove all containers
 docker stop $(docker ps -aq)
 docker rm $(docker ps -aq)

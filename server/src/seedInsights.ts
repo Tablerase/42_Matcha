@@ -4,6 +4,12 @@ async function truncateAndInsertFixtures(shouldClosePool = false) {
   try {
     console.log("Starting database insights fixtures...");
 
+    // Check if pool is still usable
+    if (pool.ended) {
+      console.error("Database pool has been closed. Cannot proceed.");
+      return;
+    }
+
     // Cleaning Insights Tables content
     console.log("Cleaning existing data...");
     await pool.query("TRUNCATE TABLE views RESTART IDENTITY CASCADE;");

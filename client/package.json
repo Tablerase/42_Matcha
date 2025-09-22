@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@base-ui-components/react": "^1.0.0-alpha.7",
+    "@craco/craco": "^7.1.0",
     "@mui/icons-material": "^6.4.1",
     "@mui/joy": "^5.0.0-beta.51",
     "@mui/material": "^6.4.1",
@@ -29,6 +30,7 @@
     "react": "^18.0.0",
     "react-dom": "^18.0.0",
     "react-router-dom": "^7.0.2",
+    "react-scripts": "^5.0.1",
     "react-time-ago": "^7.3.3",
     "serialize-javascript": "^6.0.2",
     "socket.io-client": "^4.8.1",
@@ -65,7 +67,6 @@
     "@babel/plugin-transform-optional-chaining": "^7.25.9",
     "@babel/plugin-transform-private-methods": "^7.25.9",
     "@babel/plugin-transform-private-property-in-object": "^7.25.9",
-    "@craco/craco": "^7.1.0",
     "@typescript-eslint/eslint-plugin": "^8.29.0",
     "@typescript-eslint/parser": "^8.29.0",
     "ajv": "^8.17.1",

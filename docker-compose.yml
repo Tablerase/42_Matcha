@@ -45,21 +45,21 @@ services:
       - matcha-network
     environment:
       - NODE_ENV=${NODE_ENV:-development}
-      - POSTGRES_USER=${POSTGRES_USER:-postgres}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-postgres}
+      - POSTGRES_USER=${POSTGRES_USER:-matcha}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB:-matcha}
       - POSTGRES_HOST=${POSTGRES_HOST:-database}
       - DB_PORT=${DB_PORT:-5432}
       - SERVER_PORT=${SERVER_PORT:-8000}
       - FRONTEND_URL=${FRONTEND_URL:-http://localhost}
-      - JWT_SECRET_KEY=${JWT_SECRET_KEY:-your_jwt_secret}
+      - JWT_SECRET_KEY=${JWT_SECRET_KEY}
       - ACCESS_TOKEN_EXPIRES_IN=${ACCESS_TOKEN_EXPIRES_IN:-60}
       - REFRESH_TOKEN_EXPIRES_IN=${REFRESH_TOKEN_EXPIRES_IN:-7}
       - SMTP_HOST=${SMTP_HOST:-smtp.gmail.com}
       - SMTP_PORT=${SMTP_PORT:-587}
       - SMTP_SECURE=${SMTP_SECURE:-false}
-      - SMTP_USER=${SMTP_USER:-your_gmail_address}
-      - SMTP_PASS=${SMTP_PASS:-your_gmail_password}
+      - SMTP_USER=${SMTP_USER}
+      - SMTP_PASS=${SMTP_PASS}
     depends_on:
       database:
         condition: service_healthy
@@ -81,7 +81,7 @@ services:
     container_name: matcha-database
     environment:
       - POSTGRES_USER=${POSTGRES_USER:-matcha}
-      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD:-matcha}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
       - POSTGRES_DB=${POSTGRES_DB:-matcha}
       - TZ=UTC
     expose:
@@ -94,7 +94,7 @@ services:
       - matcha-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-matcha}"]
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
       interval: 10s
       timeout: 5s
       retries: 5

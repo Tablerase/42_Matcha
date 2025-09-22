@@ -5,16 +5,13 @@ WORKDIR /app
 # Copy package.json and package-lock.json first for better caching
 COPY package*.json ./
 
-# Install dependencies
-RUN npm ci --production
+# Install dependencies (including devDependencies for build tools)
+RUN npm ci
 
 # Copy the rest of the application code
 COPY . .
 
 EXPOSE 3000
-
-# Package management tool
-RUN npm install -g @craco/craco
 
 # Set environment variables
 ARG REACT_APP_API_URL
