@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { Box, Paper } from "@mui/material";
-import { useSearchParams } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { client } from "@utils/axios";
 import { routes } from "@/utils/routes";
 import { theme } from "@/components/theme";
@@ -41,6 +41,8 @@ export const VerifyEmail = () => {
         }}
       >
         Email verified
+        <br />
+        You can now <Link to={routes.LOGIN}>log in</Link>.
       </Paper>
     </Box>
   );

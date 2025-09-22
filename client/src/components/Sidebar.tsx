@@ -2,6 +2,7 @@ import Divider from "@mui/material/Divider";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import Tooltip from "@mui/material/Tooltip";
 import ChatIcon from "@mui/icons-material/Chat";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import SearchIcon from "@mui/icons-material/Search";
@@ -29,6 +30,7 @@ interface SidebarButtonProps {
   icon: React.ReactNode;
   label: string;
   disabled?: boolean;
+  disabledReason?: string;
   onClick: () => void;
 }
 
@@ -51,12 +53,13 @@ const SidebarButton = ({
   icon,
   label,
   disabled,
+  disabledReason,
   onClick,
 }: SidebarButtonProps) => {
   const location = useLocation();
   const isActive = location.pathname === route;
 
-  return (
+  const buttonElement = (
     <ListItemButton
       disableRipple
       disableTouchRipple
@@ -68,6 +71,21 @@ const SidebarButton = ({
       {!isMobile && <ListItemText>{label}</ListItemText>}
     </ListItemButton>
   );
+
+  // If disabled and has a reason, wrap with tooltip
+  if (disabled && disabledReason) {
+    return (
+      <Tooltip
+        title={disabledReason}
+        arrow
+        placement={isMobile ? "top" : "left"}
+      >
+        <span>{buttonElement}</span>
+      </Tooltip>
+    );
+  }
+
+  return buttonElement;
 };
 
 export const Sidebar = () => {
@@ -89,6 +107,12 @@ export const Sidebar = () => {
       icon: <SearchIcon fontSize="small" />,
       label: "Browse",
       disabled: userData && (!userData.dateOfBirth || userImages.length === 0),
+      disabledReason:
+        userData && !userData.dateOfBirth
+          ? "Please complete your profile (add date of birth) to browse."
+          : userImages.length === 0
+          ? "Add at least one profile photo to browse users."
+          : undefined,
     },
     {
       route: routes.MATCHES,
@@ -199,6 +223,7 @@ export const Sidebar = () => {
             icon={item.icon}
             label={item.label}
             disabled={item.disabled}
+            disabledReason={item.disabledReason}
             onClick={() => navigate(item.route)}
           />
         ))}

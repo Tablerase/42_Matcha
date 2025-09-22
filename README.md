@@ -2,6 +2,17 @@
 
 A dating website that allows users to register, log in, complete their profile, search and view the profiles of other users, and show interest in them with a “like”, chat with those that “liked” back.
 
+- Informations regarding security:
+  - This educational project does not include secure email handling (for password resets, etc.). It is intended for learning purposes only.
+  - For development and educational purposes, tokens are sometimes displayed in the console to facilitate debugging and explanation of the code. In a production environment, this should be avoided to prevent security risks.
+  - For development and testing, a Gmail account is used to send verification and password reset emails. In a production environment, a more robust email service should be used.
+  - Passwords are hashed using bcrypt before being stored in the database.
+  - Cookies are set with the HttpOnly and Secure flags to enhance security and prevent XSS attacks.
+  - JWT tokens are used for authentication and authorization.
+  - Input validation and sanitization are implemented to prevent common security vulnerabilities such as SQL injection and XSS attacks.
+
+## Architecture
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
 ```mermaid
@@ -77,6 +88,10 @@ flowchart
 
 - API: http://localhost/api
 
+- User:
+  - Username: Test
+  - Password: Test1234!
+
 ## Installation
 
 ### Prerequisites
@@ -151,6 +166,18 @@ SMTP_USER=your-email-address
 SMTP_PASS=your-app-password
 "> .env
 ```
+
+#### Setup the google app for email verification
+
+Do this step if you want to create an account and verify your email or reset your password.
+
+- Go to Google Account -> Security -> 2-Step Verification -> Get started and follow the steps to enable 2-Step Verification.
+- Go to Google Account -> Security -> App Passwords -> Select app: Mail, Select device: Other (Custom name) -> Generate and copy the generated app password.
+  - https://myaccount.google.com/u/1/apppasswords
+  - You might need to sign in again to your Google Account.
+  - Choose app name (e.g., Matcha) click Generate.
+  - Copy the generated app password (16 characters) and keep it safe.
+- Edit the `.env` file and set the `SMTP_USER` to your Gmail address and `SMTP_PASS` to the generated app password.
 
 #### Script launch
 

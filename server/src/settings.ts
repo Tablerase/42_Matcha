@@ -11,7 +11,9 @@ dotenv.config();
 export const NODE_ENV = process.env.NODE_ENV || "development";
 
 export const FRONTEND_ORIGIN =
-  process.env.FRONTEND_URL || "http://localhost:3000";
+  NODE_ENV === "development"
+    ? "http://localhost:3000"
+    : process.env.FRONTEND_URL!;
 export const SERVER_PORT = process.env.SERVER_PORT || 8000;
 export const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || "default secret";
 export const ACCESSTOKEN_EXPIRES_IN: number =
@@ -21,7 +23,10 @@ export const REFRESHTOKEN_EXPIRES_IN: number =
 
 const db_config = {
   user: process.env.POSTGRES_USER as string,
-  host: process.env.POSTGRES_HOST as string,
+  host:
+    NODE_ENV === "development"
+      ? "localhost"
+      : (process.env.POSTGRES_HOST as string),
   database: process.env.POSTGRES_DB as string,
   password: process.env.POSTGRES_PASSWORD as string,
   port: parseInt(process.env.DB_PORT as string, 10),
